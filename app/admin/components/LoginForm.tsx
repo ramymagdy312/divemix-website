@@ -32,7 +32,7 @@ export default function LoginForm() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            تسجيل الدخول للوحة الإدارة
+            Admin Panel Login
           </h2>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleLogin}>
@@ -44,7 +44,7 @@ export default function LoginForm() {
           <div className="space-y-4">
             <div>
               <label htmlFor="email" className="sr-only">
-                البريد الإلكتروني
+                Email
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
@@ -54,7 +54,7 @@ export default function LoginForm() {
                   type="email"
                   required
                   className="appearance-none rounded-md relative block w-full px-12 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-cyan-500 focus:border-cyan-500"
-                  placeholder="البريد الإلكتروني"
+                  placeholder="Email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -62,7 +62,7 @@ export default function LoginForm() {
             </div>
             <div>
               <label htmlFor="password" className="sr-only">
-                كلمة المرور
+                Password
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
@@ -72,7 +72,7 @@ export default function LoginForm() {
                   type="password"
                   required
                   className="appearance-none rounded-md relative block w-full px-12 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-cyan-500 focus:border-cyan-500"
-                  placeholder="كلمة المرور"
+                  placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -86,7 +86,7 @@ export default function LoginForm() {
               disabled={loading}
               className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-cyan-600 hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 disabled:opacity-50"
             >
-              {loading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
+              {loading ? 'Logging in...' : 'Login'}
             </button>
           </div>
         </form>

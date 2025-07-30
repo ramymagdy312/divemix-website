@@ -21,7 +21,7 @@ export default function NewCategoryPage() {
       router.push('/admin/categories');
     } catch (error) {
       console.error('Error creating category:', error);
-      alert('حدث خطأ أثناء إنشاء الفئة');
+      alert('Error creating category');
     } finally {
       setLoading(false);
     }

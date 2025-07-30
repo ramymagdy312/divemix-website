@@ -53,28 +53,28 @@ export default function AdminDashboard() {
 
   const statCards = [
     {
-      name: 'المنتجات',
+      name: 'Products',
       value: stats.products,
       icon: Package,
       color: 'bg-blue-500',
       href: '/admin/products',
     },
     {
-      name: 'الخدمات',
+      name: 'Services',
       value: stats.services,
       icon: Wrench,
       color: 'bg-green-500',
       href: '/admin/services',
     },
     {
-      name: 'التطبيقات',
+      name: 'Applications',
       value: stats.applications,
       icon: Target,
       color: 'bg-purple-500',
       href: '/admin/applications',
     },
     {
-      name: 'معرض الصور',
+      name: 'Gallery',
       value: stats.gallery,
       icon: Image,
       color: 'bg-pink-500',
@@ -93,8 +93,8 @@ export default function AdminDashboard() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">لوحة التحكم</h1>
-        <p className="mt-2 text-gray-600">مرحباً بك في لوحة إدارة موقع DiveMix</p>
+        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+        <p className="mt-2 text-gray-600">Welcome to DiveMix website admin panel</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
@@ -128,7 +128,7 @@ export default function AdminDashboard() {
                   href={card.href}
                   className="font-medium text-cyan-700 hover:text-cyan-900 transition-colors"
                 >
-                  عرض الكل
+                  View All
                 </a>
               </div>
             </div>
@@ -138,27 +138,27 @@ export default function AdminDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-lg font-medium text-gray-900 mb-4">الإحصائيات السريعة</h2>
+          <h2 className="text-lg font-medium text-gray-900 mb-4">Quick Statistics</h2>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">إجمالي المحتوى</span>
+              <span className="text-sm text-gray-600">Total Content</span>
               <span className="text-lg font-semibold text-gray-900">
                 {stats.products + stats.services + stats.applications + stats.gallery}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">المنتجات النشطة</span>
+              <span className="text-sm text-gray-600">Active Products</span>
               <span className="text-lg font-semibold text-green-600">{stats.products}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">آخر تحديث</span>
-              <span className="text-sm text-gray-500">اليوم</span>
+              <span className="text-sm text-gray-600">Last Update</span>
+              <span className="text-sm text-gray-500">Today</span>
             </div>
           </div>
         </div>
 
         <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-lg font-medium text-gray-900 mb-4">الإجراءات السريعة</h2>
+          <h2 className="text-lg font-medium text-gray-900 mb-4">Quick Actions</h2>
           <div className="space-y-3">
             <a
               href="/admin/products/new"
