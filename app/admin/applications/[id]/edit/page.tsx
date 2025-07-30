@@ -203,7 +203,7 @@ export default function EditApplicationPage({ params }: { params: { id: string }
             {formData.images.map((image, index) => (
               <div key={index} className="flex items-center space-x-2">
                 <input
-                  type="url"
+                  type="text"
                   placeholder="رابط الصورة"
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
                   value={image}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ImageModal from "./ImageModal";
 import Image from 'next/image';
@@ -11,6 +11,16 @@ interface ImageGalleryProps {
 const ImageGallery: React.FC<ImageGalleryProps> = ({ images, alt }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handlePrevious = useCallback((e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  }, [images.length]);
+
+  const handleNext = useCallback((e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  }, [images.length]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -27,7 +37,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images, alt }) => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isModalOpen]);
+  }, [isModalOpen, handleNext, handlePrevious]);
 
   const handleThumbnailClick = (index: number) => {
     setCurrentIndex(index);
@@ -35,16 +45,6 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images, alt }) => {
 
   const handleImageClick = () => {
     setIsModalOpen(true);
-  };
-
-  const handlePrevious = (e?: React.MouseEvent) => {
-    e?.stopPropagation();
-    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-  };
-
-  const handleNext = (e?: React.MouseEvent) => {
-    e?.stopPropagation();
-    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   };
 
   return (
@@ -57,7 +57,8 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images, alt }) => {
           <Image
             src={images[currentIndex]}
             alt={`${alt} - ${currentIndex + 1}`}
-            className="max-w-full max-h-full object-contain"
+            fill
+            className="object-contain"
           />
         </div>
         {images.length > 1 && (
@@ -96,7 +97,8 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images, alt }) => {
                 <Image
                   src={image}
                   alt={`${alt} thumbnail ${index + 1}`}
-                  className="absolute inset-0 w-full h-full object-contain"
+                  fill
+                  className="object-contain"
                 />
               </div>
             </button>

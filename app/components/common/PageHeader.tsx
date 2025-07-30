@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import Image from 'next/image';
 import AnimatedElement from './AnimatedElement';
 
 interface PageHeaderProps {
@@ -15,7 +16,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, description, backgroundI
       {backgroundImage && (
         <>
           <div className="absolute inset-0">
-            <Image src={backgroundImage} alt="" className="w-full h-full object-cover" />
+            <Image src={backgroundImage} alt="" fill className="object-cover" />
             <div className="absolute inset-0 bg-black opacity-50"></div>
           </div>
         </>

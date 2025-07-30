@@ -54,7 +54,7 @@ export default function CategoryForm({ initialData, onSubmit, loading }: Categor
           صورة الغلاف
         </label>
         <input
-          type="url"
+          type="text"
           required
           placeholder="رابط صورة الغلاف"
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
@@ -68,7 +68,7 @@ export default function CategoryForm({ initialData, onSubmit, loading }: Categor
           صورة الفئة
         </label>
         <input
-          type="url"
+          type="text"
           required
           placeholder="رابط صورة الفئة"
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"

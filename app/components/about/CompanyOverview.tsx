@@ -19,7 +19,7 @@ const CompanyOverview = () => {
           <Award className="h-6 w-6 text-cyan-600 flex-shrink-0 mt-1" />
           <p className="text-gray-600 leading-relaxed">
             DiveMix is the sole agent, representative, distributor, and authorized service point for 
-            carefully selected, high-quality products that carry the prestigious "Made in Germany" trademark.
+            carefully selected, high-quality products that carry the prestigious &ldquo;Made in Germany&rdquo; trademark.
           </p>
         </div>
 

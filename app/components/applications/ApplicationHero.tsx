@@ -8,7 +8,8 @@ const ApplicationHero: React.FC = () => {
         <Image
           src="https://images.unsplash.com/photo-1581094794329-c8112c4e5190?auto=format&fit=crop&w=2000"
           alt="Applications background"
-          className="w-full h-full object-cover opacity-20"
+          fill
+          className="object-cover opacity-20"
         />
       </div>
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

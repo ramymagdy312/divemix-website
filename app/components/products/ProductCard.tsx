@@ -28,7 +28,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <Image
           src={product.images[currentImageIndex]}
           alt={product.name}
-          className="w-full h-full object-cover"
+          fill
+          className="object-cover"
         />
         {product.images.length > 1 && (
           <>

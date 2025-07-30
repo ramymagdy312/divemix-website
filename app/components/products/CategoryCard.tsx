@@ -24,7 +24,8 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ category, index = 0 }) => {
             <Image
               src={category.image}
               alt={category.categoryName}
-              className="w-full h-full object-contain p-4"
+              fill
+              className="object-contain p-4"
             />
           </div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />

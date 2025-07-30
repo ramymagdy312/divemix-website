@@ -110,6 +110,8 @@ export default function ApplicationsPage() {
                     <Image
                       src={app.images[0]}
                       alt={app.name}
+                      width={64}
+                      height={64}
                       className="h-16 w-16 object-cover rounded-md mr-4"
                     />
                   )}

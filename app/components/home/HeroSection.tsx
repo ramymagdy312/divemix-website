@@ -12,7 +12,8 @@ const HeroSection = () => {
         <Image
           src="img/gallery/maintenence.jpg"
           alt="Industrial equipment"
-          className="w-full h-full object-cover"
+          fill
+          className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-transparent" />
       </div>
