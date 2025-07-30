@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { Plus, X } from 'lucide-react';
+import ImageUploader from '../../../components/admin/ImageUploader';
 
 interface Category {
   id: string;
@@ -21,7 +22,7 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
     name: initialData?.name || '',
     description: initialData?.description || '',
     category_id: initialData?.category_id || '',
-    images: initialData?.images || [''],
+    images: (initialData?.images || []) as string[],
     features: initialData?.features || [''],
   });
 
@@ -55,28 +56,7 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
     onSubmit(cleanedData);
   };
 
-  const addImage = () => {
-    setFormData({
-      ...formData,
-      images: [...formData.images, ''],
-    });
-  };
 
-  const removeImage = (index: number) => {
-    setFormData({
-      ...formData,
-      images: formData.images.filter((_: string, i: number) => i !== index),
-    });
-  };
-
-  const updateImage = (index: number, value: string) => {
-    const newImages = [...formData.images];
-    newImages[index] = value;
-    setFormData({
-      ...formData,
-      images: newImages,
-    });
-  };
 
   const addFeature = () => {
     setFormData({
@@ -106,7 +86,7 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
     <form onSubmit={handleSubmit} className="space-y-6 bg-white shadow rounded-lg p-6">
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          اسم المنتج
+          Product Name
         </label>
         <input
           type="text"
@@ -119,7 +99,7 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          الفئة
+          Category
         </label>
         <select
           required
@@ -127,7 +107,7 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
           value={formData.category_id}
           onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
         >
-          <option value="">اختر الفئة</option>
+          <option value="">Select Category</option>
           {categories.map((category) => (
             <option key={category.id} value={category.id}>
               {category.name}
@@ -138,7 +118,7 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          الوصف
+          Description
         </label>
         <textarea
           required
@@ -150,48 +130,19 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
       </div>
 
       <div>
-        <div className="flex justify-between items-center mb-2">
-          <label className="block text-sm font-medium text-gray-700">
-            الصور
-          </label>
-          <button
-            type="button"
-            onClick={addImage}
-            className="inline-flex items-center px-3 py-1 text-sm bg-cyan-600 text-white rounded-md hover:bg-cyan-700"
-          >
-            <Plus className="h-4 w-4 mr-1" />
-            إضافة صورة
-          </button>
-        </div>
-        <div className="space-y-2">
-          {formData.images.map((image: string, index: number) => (
-
-            <div key={index} className="flex items-center space-x-2">
-              <input
-                type="text"
-                placeholder="رابط الصورة"
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-                value={image}
-                onChange={(e) => updateImage(index, e.target.value)}
-              />
-              {formData.images.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeImage(index)}
-                  className="p-2 text-red-600 hover:text-red-800"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              )}
-            </div>
-          ))}
-        </div>
+        <ImageUploader
+          images={formData.images}
+          onImagesChange={(images) => setFormData({ ...formData, images })}
+          multiple={true}
+          maxImages={10}
+          label="Product Images"
+        />
       </div>
 
       <div>
         <div className="flex justify-between items-center mb-2">
           <label className="block text-sm font-medium text-gray-700">
-            المميزات
+            Features
           </label>
           <button
             type="button"
@@ -199,7 +150,7 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
             className="inline-flex items-center px-3 py-1 text-sm bg-cyan-600 text-white rounded-md hover:bg-cyan-700"
           >
             <Plus className="h-4 w-4 mr-1" />
-            إضافة ميزة
+            Add Feature
           </button>
         </div>
         <div className="space-y-2">
@@ -208,7 +159,7 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
             <div key={index} className="flex items-center space-x-2">
               <input
                 type="text"
-                placeholder="ميزة المنتج"
+                placeholder="Product Feature"
                 className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
                 value={feature}
                 onChange={(e) => updateFeature(index, e.target.value)}

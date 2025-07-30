@@ -16,7 +16,6 @@ DELETE FROM products;
 DELETE FROM categories;
 DELETE FROM services;
 DELETE FROM applications;
-DELETE FROM news;
 DELETE FROM gallery_images;
 
 -- Insert Categories with proper UUIDs
@@ -122,14 +121,6 @@ INSERT INTO applications (name, description, features, images) VALUES
 ('Marine and Offshore Locations', 'Marine and offshore environments demand durable and reliable compressed air and gas solutions. DiveMix offers equipment designed to withstand harsh marine conditions, ensuring safe and efficient operations for offshore drilling, shipping, and other maritime activities.', ARRAY[]::text[], ARRAY['/img/applications/Marine-or-Offshore.jpg']),
 
 ('Recreational Diving', 'Safety is paramount in the recreational diving tourism industry. DiveMix supplies high-quality compressed air systems that ensure pure breathing air for divers, enhancing safety and providing a superior diving experience for tourists around the world.', ARRAY[]::text[], ARRAY['/img/applications/2.jpg']);
-
--- Insert News
-INSERT INTO news (title, summary, content, image_url, published_date) VALUES
-('DiveMix Launches New Pro Series', 'Introducing our latest professional-grade gas mixing system', 'DiveMix is proud to announce the launch of our new Pro Series gas mixing systems, designed for professional diving operations worldwide. This cutting-edge technology represents years of research and development, incorporating the latest advances in gas mixing precision and safety protocols. The Pro Series features enhanced monitoring capabilities, improved user interfaces, and robust construction suitable for the most demanding professional environments.', '/img/gallery/IMG_4019.jpg', '2024-03-15'),
-
-('Safety Certification Achievement', 'DiveMix receives ISO certification for safety standards', 'We are pleased to announce that DiveMix has achieved ISO certification for our safety standards and quality management systems. This certification validates our commitment to maintaining the highest levels of safety and quality in all our products and services. The rigorous certification process involved comprehensive audits of our manufacturing processes, quality control procedures, and safety protocols, confirming our adherence to international standards.', '/img/gallery/maintenence.jpg', '2024-03-10'),
-
-('New Training Program Announced', 'Comprehensive training program for diving professionals', 'DiveMix announces a new comprehensive training program designed for diving professionals and equipment operators. This program covers all aspects of gas mixing technology, equipment maintenance, and safety procedures. Participants will receive hands-on training with our latest equipment and earn certifications that are recognized throughout the industry. The program is designed to enhance professional skills and ensure the safe operation of gas mixing systems.', '/img/gallery/Al_Ahmadeya.jpg', '2024-03-05');
 
 -- Insert Gallery Images
 INSERT INTO gallery_images (title, url, category) VALUES

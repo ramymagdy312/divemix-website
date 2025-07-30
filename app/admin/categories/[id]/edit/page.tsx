@@ -49,15 +49,15 @@ export default function EditCategoryPage({ params }: { params: { id: string } })
 
       if (error) {
         console.error('Error updating category:', error);
-        alert('حدث خطأ أثناء تحديث الفئة');
+        alert('Error updating category');
         return;
       }
 
-      alert('تم تحديث الفئة بنجاح!');
+      alert('Category updated successfully!');
       router.push('/admin/categories');
     } catch (error) {
       console.error('Error updating category:', error);
-      alert('حدث خطأ أثناء تحديث الفئة');
+      alert('Error updating category');
     } finally {
       setLoading(false);
     }
@@ -74,12 +74,12 @@ export default function EditCategoryPage({ params }: { params: { id: string } })
   if (!initialData) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">الفئة غير موجودة</p>
+        <p className="text-gray-500">Category not found</p>
         <button
           onClick={() => router.push('/admin/categories')}
           className="mt-4 px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700"
         >
-          العودة للفئات
+          Back to Categories
         </button>
       </div>
     );
@@ -88,8 +88,8 @@ export default function EditCategoryPage({ params }: { params: { id: string } })
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">تعديل الفئة</h1>
-        <p className="mt-2 text-gray-600">تعديل بيانات الفئة</p>
+        <h1 className="text-3xl font-bold text-gray-900">Edit Category</h1>
+        <p className="mt-2 text-gray-600">Edit category data</p>
       </div>
 
       <CategoryForm 

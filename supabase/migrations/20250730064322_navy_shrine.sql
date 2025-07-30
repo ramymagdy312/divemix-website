@@ -39,16 +39,6 @@
       - `created_at` (timestamp)
       - `updated_at` (timestamp)
     
-    - `news`
-      - `id` (uuid, primary key)
-      - `title` (text)
-      - `summary` (text)
-      - `content` (text)
-      - `image_url` (text)
-      - `published_date` (date)
-      - `created_at` (timestamp)
-      - `updated_at` (timestamp)
-    
     - `gallery_images`
       - `id` (uuid, primary key)
       - `title` (text)
@@ -143,27 +133,6 @@ CREATE POLICY "Allow authenticated users to manage applications"
   USING (true)
   WITH CHECK (true);
 
--- News table
-CREATE TABLE IF NOT EXISTS news (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  title text NOT NULL,
-  summary text NOT NULL,
-  content text NOT NULL,
-  image_url text NOT NULL,
-  published_date date NOT NULL,
-  created_at timestamptz DEFAULT now(),
-  updated_at timestamptz DEFAULT now()
-);
-
-ALTER TABLE news ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Allow authenticated users to manage news"
-  ON news
-  FOR ALL
-  TO authenticated
-  USING (true)
-  WITH CHECK (true);
-
 -- Gallery images table
 CREATE TABLE IF NOT EXISTS gallery_images (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -197,5 +166,4 @@ CREATE TRIGGER update_categories_updated_at BEFORE UPDATE ON categories FOR EACH
 CREATE TRIGGER update_products_updated_at BEFORE UPDATE ON products FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_services_updated_at BEFORE UPDATE ON services FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_applications_updated_at BEFORE UPDATE ON applications FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_news_updated_at BEFORE UPDATE ON news FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_gallery_images_updated_at BEFORE UPDATE ON gallery_images FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
