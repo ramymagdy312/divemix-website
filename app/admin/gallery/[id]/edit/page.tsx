@@ -31,7 +31,7 @@ export default function EditGalleryImagePage({ params }: { params: { id: string 
 
       if (error) {
         console.error('Error fetching image:', error);
-        alert('حدث خطأ أثناء جلب بيانات الصورة');
+        alert('Error fetching image data');
         return;
       }
       
@@ -43,7 +43,7 @@ export default function EditGalleryImagePage({ params }: { params: { id: string 
       });
     } catch (error) {
       console.error('Error fetching image:', error);
-      alert('حدث خطأ أثناء جلب بيانات الصورة');
+      alert('Error fetching image data');
     } finally {
       setFetchLoading(false);
     }
@@ -61,7 +61,7 @@ export default function EditGalleryImagePage({ params }: { params: { id: string 
 
       if (error) {
         console.error('Error updating image:', error);
-        alert('حدث خطأ أثناء تحديث الصورة');
+        alert('Error updating image');
         return;
       }
 
@@ -69,7 +69,7 @@ export default function EditGalleryImagePage({ params }: { params: { id: string 
       router.push('/admin/gallery');
     } catch (error) {
       console.error('Error updating image:', error);
-      alert('حدث خطأ أثناء تحديث الصورة');
+      alert('Error updating image');
     } finally {
       setLoading(false);
     }
@@ -86,7 +86,7 @@ export default function EditGalleryImagePage({ params }: { params: { id: string 
   if (!initialData) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">الصورة غير موجودة</p>
+        <p className="text-gray-500">Image not found</p>
         <button
           onClick={() => router.push('/admin/gallery')}
           className="mt-4 px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700"
