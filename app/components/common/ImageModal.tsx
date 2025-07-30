@@ -33,6 +33,8 @@ const ImageModal: React.FC<ImageModalProps> = ({
         <Image
           src={images[currentIndex]}
           alt={`${alt} - ${currentIndex + 1}`}
+          width={1200}
+          height={800}
           className="max-h-[85vh] mx-auto object-contain"
         />
 

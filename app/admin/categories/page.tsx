@@ -109,6 +109,8 @@ export default function CategoriesPage() {
                   <Image
                     src={category.image}
                     alt={category.name}
+                    width={64}
+                    height={64}
                     className="h-16 w-16 object-cover rounded-md mr-4"
                   />
                   <div>

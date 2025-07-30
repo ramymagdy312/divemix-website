@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabase";
 import ProductListDB from "./ProductListDB";
@@ -24,11 +24,7 @@ const CategoryDetailDB: React.FC<CategoryDetailDBProps> = ({ categoryId }) => {
   const [category, setCategory] = useState<Category | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchCategory();
-  }, [categoryId]);
-
-  const fetchCategory = async () => {
+  const fetchCategory = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('categories')
@@ -43,7 +39,11 @@ const CategoryDetailDB: React.FC<CategoryDetailDBProps> = ({ categoryId }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [categoryId]);
+
+  useEffect(() => {
+    fetchCategory();
+  }, [fetchCategory]);
 
   if (loading) {
     return (

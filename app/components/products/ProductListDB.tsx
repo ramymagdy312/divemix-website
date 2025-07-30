@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { supabase } from "../../lib/supabase";
 import ProductDetail from "./ProductDetail";
 import SearchBar from "./SearchBar";
@@ -28,11 +28,7 @@ const ProductListDB: React.FC<ProductListDBProps> = ({ categoryId }) => {
     "description",
   ]);
 
-  useEffect(() => {
-    fetchProducts();
-  }, [categoryId]);
-
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('products')
@@ -47,7 +43,11 @@ const ProductListDB: React.FC<ProductListDBProps> = ({ categoryId }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [categoryId]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   if (loading) {
     return (

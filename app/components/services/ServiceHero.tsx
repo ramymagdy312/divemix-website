@@ -8,7 +8,8 @@ const ServiceHero: React.FC = () => {
         <Image
           src="https://images.unsplash.com/photo-1581094288338-2314dddb7ece?auto=format&fit=crop&w=2000"
           alt="Service background"
-          className="w-full h-full object-cover opacity-20"
+          fill
+          className="object-cover opacity-20"
         />
       </div>
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

@@ -119,6 +119,8 @@ export default function ProductsPage() {
                     <Image
                       src={product.images[0]}
                       alt={product.name}
+                      width={64}
+                      height={64}
                       className="h-16 w-16 object-cover rounded-md mr-4"
                     />
                   )}

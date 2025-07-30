@@ -18,7 +18,8 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application, index = 
           <Image
             src={application.images[0]}
             alt={application.name}
-            className="absolute inset-0 w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105"
+            fill
+            className="object-cover transform transition-transform duration-500 group-hover:scale-105"
           />
         </div>
         <div className="p-6">
