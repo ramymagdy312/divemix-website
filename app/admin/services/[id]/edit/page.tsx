@@ -74,7 +74,7 @@ export default function EditServicePage({ params }: { params: { id: string } }) 
         return;
       }
 
-      alert('تم تحديث الخدمة بنجاح!');
+      alert('Service updated successfully!');
       router.push('/admin/services');
     } catch (error) {
       console.error('Error updating service:', error);

@@ -41,7 +41,7 @@ export default function CategoriesPage() {
   };
 
   const deleteCategory = async (id: string) => {
-    if (!confirm('هل أنت متأكد من حذف هذه الفئة؟')) return;
+    if (!confirm('Are you sure you want to delete this category?')) return;
 
     try {
       const { error } = await supabase
@@ -54,7 +54,7 @@ export default function CategoriesPage() {
       setCategories(categories.filter(c => c.id !== id));
     } catch (error) {
       console.error('Error deleting category:', error);
-      alert('حدث خطأ أثناء حذف الفئة');
+      alert('Error deleting category');
     }
   };
 
@@ -83,7 +83,7 @@ export default function CategoriesPage() {
           className="inline-flex items-center px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700 transition-colors"
         >
           <Plus className="h-5 w-5 mr-2" />
-          إضافة فئة جديدة
+          Add New Category
         </Link>
       </div>
 

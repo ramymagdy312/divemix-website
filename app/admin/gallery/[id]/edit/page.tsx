@@ -65,7 +65,7 @@ export default function EditGalleryImagePage({ params }: { params: { id: string 
         return;
       }
 
-      alert('تم تحديث الصورة بنجاح!');
+      alert('Image updated successfully!');
       router.push('/admin/gallery');
     } catch (error) {
       console.error('Error updating image:', error);

@@ -26,14 +26,14 @@ export default function EditCategoryPage({ params }: { params: { id: string } })
 
       if (error) {
         console.error('Error fetching category:', error);
-        alert('حدث خطأ أثناء جلب بيانات الفئة');
+        alert('Error fetching category data');
         return;
       }
       
       setInitialData(data);
     } catch (error) {
       console.error('Error fetching category:', error);
-      alert('حدث خطأ أثناء جلب بيانات الفئة');
+      alert('Error fetching category data');
     } finally {
       setFetchLoading(false);
     }

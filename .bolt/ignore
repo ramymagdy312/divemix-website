@@ -1,0 +1,10 @@
+app/about/*
+app/applications/*
+app/components/*
+app/contact/*
+app/data/*
+app/gallery/*
+app/hooks/*
+app/products/*
+app/services/*
+app/types/*
