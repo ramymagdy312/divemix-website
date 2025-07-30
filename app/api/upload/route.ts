@@ -1,85 +1,74 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
-import { existsSync } from 'fs';
+import { supabase } from '../../lib/supabase';
 
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
-    const data = await request.formData();
-    const file: File | null = data.get('file') as unknown as File;
+    const formData = await req.formData()
+    const file = formData.get('file') as File | null
 
     if (!file) {
-      return NextResponse.json({ error: 'No file received' }, { status: 400 });
+      return NextResponse.json({ error: 'No file uploaded' }, { status: 400 })
     }
 
-    // Validate file type
     if (!file.type.startsWith('image/')) {
-      return NextResponse.json({ error: 'Only image files are allowed' }, { status: 400 });
+      return NextResponse.json({ error: 'Only image files allowed' }, { status: 400 })
     }
 
-    // Validate file size (5MB limit)
     if (file.size > 5 * 1024 * 1024) {
-      return NextResponse.json({ error: 'File size must be less than 5MB' }, { status: 400 });
+      return NextResponse.json({ error: 'Image must be under 5MB' }, { status: 400 })
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    const buffer = Buffer.from(await file.arrayBuffer())
+    const filename = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`
 
-    // Create uploads directory if it doesn't exist
-    const uploadsDir = join(process.cwd(), 'public', 'uploads');
-    if (!existsSync(uploadsDir)) {
-      await mkdir(uploadsDir, { recursive: true });
+    const { data, error } = await supabase.storage
+      .from('images')
+      .upload(`uploads/${filename}`, buffer, {
+        contentType: file.type,
+      })
+
+    if (error) {
+      console.error(error)
+      return NextResponse.json({ error: 'Failed to upload to Supabase' }, { status: 500 })
     }
 
-    // Generate unique filename
-    const timestamp = Date.now();
-    const originalName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-    const filename = `${timestamp}_${originalName}`;
-    const filepath = join(uploadsDir, filename);
+    const { data: publicData } = supabase.storage.from('images').getPublicUrl(data.path)
 
-    // Write file
-    await writeFile(filepath, buffer);
-
-    // Return the public URL
-    const publicUrl = `/uploads/${filename}`;
-
-    return NextResponse.json({ 
-      success: true, 
-      url: publicUrl,
-      filename: filename 
-    });
-
-  } catch (error) {
-    console.error('Upload error:', error);
-    return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
+    return NextResponse.json({
+      success: true,
+      url: publicData.publicUrl,
+      filename: filename,
+    })
+  } catch (err) {
+    console.error(err)
+    return NextResponse.json({ error: 'Unexpected error occurred' }, { status: 500 })
   }
 }
 
-export async function DELETE(request: NextRequest) {
+export async function DELETE(req: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const filename = searchParams.get('filename');
+    const { searchParams } = new URL(req.url)
+    const filename = searchParams.get('filename')
 
     if (!filename) {
-      return NextResponse.json({ error: 'No filename provided' }, { status: 400 });
+      return NextResponse.json({ error: 'No filename provided' }, { status: 400 })
     }
 
-    // Security check: ensure filename doesn't contain path traversal
-    if (filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
-      return NextResponse.json({ error: 'Invalid filename' }, { status: 400 });
+    // اسم الملف لازم يكون في المسار الصحيح داخل الـ bucket
+    const filepath = `uploads/${filename}`
+
+    const { error } = await supabase.storage
+      .from('images')
+      .remove([filepath])
+
+    if (error) {
+      console.error(error)
+      return NextResponse.json({ error: 'Failed to delete file' }, { status: 500 })
     }
 
-    const filepath = join(process.cwd(), 'public', 'uploads', filename);
-    
-    if (existsSync(filepath)) {
-      const { unlink } = await import('fs/promises');
-      await unlink(filepath);
-    }
-
-    return NextResponse.json({ success: true });
-
-  } catch (error) {
-    console.error('Delete error:', error);
-    return NextResponse.json({ error: 'Delete failed' }, { status: 500 });
+    return NextResponse.json({ success: true })
+  } catch (err) {
+    console.error(err)
+    return NextResponse.json({ error: 'Unexpected error occurred' }, { status: 500 })
   }
 }

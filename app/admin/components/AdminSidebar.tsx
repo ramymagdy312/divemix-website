@@ -13,13 +13,13 @@ import {
 } from 'lucide-react';
 
 const navigation = [
-  { name: 'لوحة التحكم', href: '/admin', icon: LayoutDashboard },
-  { name: 'المنتجات', href: '/admin/products', icon: Package },
-  { name: 'الفئات', href: '/admin/categories', icon: Settings },
-  { name: 'الخدمات', href: '/admin/services', icon: Wrench },
-  { name: 'التطبيقات', href: '/admin/applications', icon: Target },
-  { name: 'معرض الصور', href: '/admin/gallery', icon: Image },
-  { name: 'المستخدمين', href: '/admin/users', icon: Users },
+  { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+  { name: 'Products', href: '/admin/products', icon: Package },
+  { name: 'Categories', href: '/admin/categories', icon: Settings },
+  { name: 'Services', href: '/admin/services', icon: Wrench },
+  { name: 'Applications', href: '/admin/applications', icon: Target },
+  { name: 'Gallery', href: '/admin/gallery', icon: Image },
+  { name: 'Users', href: '/admin/users', icon: Users },
 ];
 
 export default function AdminSidebar() {
