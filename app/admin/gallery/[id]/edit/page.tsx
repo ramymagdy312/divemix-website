@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../../lib/supabase';
+import SingleImageUploader from '../../../../components/admin/SingleImageUploader';
 
 export default function EditGalleryImagePage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -90,7 +91,7 @@ export default function EditGalleryImagePage({ params }: { params: { id: string 
           onClick={() => router.push('/admin/gallery')}
           className="mt-4 px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700"
         >
-          العودة للمعرض
+          Back to Gallery
         </button>
       </div>
     );
@@ -99,14 +100,14 @@ export default function EditGalleryImagePage({ params }: { params: { id: string 
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">تعديل الصورة</h1>
-        <p className="mt-2 text-gray-600">تعديل بيانات الصورة</p>
+        <h1 className="text-3xl font-bold text-gray-900">Edit Image</h1>
+        <p className="mt-2 text-gray-600">Edit image data</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6 bg-white shadow rounded-lg p-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            عنوان الصورة
+            Image Title
           </label>
           <input
             type="text"
@@ -118,21 +119,17 @@ export default function EditGalleryImagePage({ params }: { params: { id: string 
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            رابط الصورة
-          </label>
-          <input
-            type="text"
+          <SingleImageUploader
+            image={formData.url}
+            onImageChange={(url) => setFormData({ ...formData, url })}
+            label="Gallery Image"
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-            value={formData.url}
-            onChange={(e) => setFormData({ ...formData, url: e.target.value })}
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            الفئة
+            Category
           </label>
           <select
             required
@@ -140,12 +137,12 @@ export default function EditGalleryImagePage({ params }: { params: { id: string 
             value={formData.category}
             onChange={(e) => setFormData({ ...formData, category: e.target.value })}
           >
-            <option value="">اختر الفئة</option>
-            <option value="installations">التركيبات</option>
-            <option value="maintenance">الصيانة</option>
-            <option value="testing">الاختبارات</option>
-            <option value="facilities">المرافق</option>
-            <option value="training">التدريب</option>
+            <option value="">Select Category</option>
+            <option value="installations">Installations</option>
+            <option value="maintenance">Maintenance</option>
+            <option value="testing">Testing</option>
+            <option value="facilities">Facilities</option>
+            <option value="training">Training</option>
           </select>
         </div>
 
@@ -155,14 +152,14 @@ export default function EditGalleryImagePage({ params }: { params: { id: string 
             onClick={() => router.push('/admin/gallery')}
             className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
           >
-            إلغاء
+            Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
             className="px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700 transition-colors disabled:opacity-50"
           >
-            {loading ? 'جاري الحفظ...' : 'حفظ'}
+            {loading ? 'Saving...' : 'Save'}
           </button>
         </div>
       </form>

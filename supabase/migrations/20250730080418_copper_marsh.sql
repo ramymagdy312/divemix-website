@@ -133,35 +133,6 @@ CREATE POLICY "Allow authenticated users to manage applications"
   USING (true)
   WITH CHECK (true);
 
--- News table
-CREATE TABLE IF NOT EXISTS news (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  title text NOT NULL,
-  summary text NOT NULL,
-  content text NOT NULL,
-  image_url text NOT NULL,
-  published_date date NOT NULL,
-  created_at timestamptz DEFAULT now(),
-  updated_at timestamptz DEFAULT now()
-);
-
-ALTER TABLE news ENABLE ROW LEVEL SECURITY;
-
--- Public read access for news
-CREATE POLICY "Allow public read access to news"
-  ON news
-  FOR SELECT
-  TO public
-  USING (true);
-
--- Admin access for news
-CREATE POLICY "Allow authenticated users to manage news"
-  ON news
-  FOR ALL
-  TO authenticated
-  USING (true)
-  WITH CHECK (true);
-
 -- Gallery images table
 CREATE TABLE IF NOT EXISTS gallery_images (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),

@@ -30,8 +30,8 @@ export default function NewCategoryPage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">إضافة فئة جديدة</h1>
-        <p className="mt-2 text-gray-600">إضافة فئة جديدة للمنتجات</p>
+        <h1 className="text-3xl font-bold text-gray-900">Add New Category</h1>
+        <p className="mt-2 text-gray-600">Add a new category for products</p>
       </div>
 
       <CategoryForm onSubmit={handleSubmit} loading={loading} />
