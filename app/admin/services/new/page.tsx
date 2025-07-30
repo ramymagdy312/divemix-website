@@ -157,14 +157,14 @@ export default function NewServicePage() {
             onClick={() => router.push('/admin/services')}
             className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
           >
-            إلغاء
+            Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
             className="px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700 transition-colors disabled:opacity-50"
           >
-            {loading ? 'جاري الحفظ...' : 'حفظ'}
+            {loading ? 'Saving...' : 'Save'}
           </button>
         </div>
       </form>

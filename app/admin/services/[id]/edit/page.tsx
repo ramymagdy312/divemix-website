@@ -230,7 +230,7 @@ export default function EditServicePage({ params }: { params: { id: string } }) 
             disabled={loading}
             className="px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700 transition-colors disabled:opacity-50"
           >
-            {loading ? 'جاري الحفظ...' : 'حفظ'}
+            {loading ? 'Saving...' : 'Save'}
           </button>
         </div>
       </form>

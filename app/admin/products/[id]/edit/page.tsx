@@ -28,14 +28,14 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
 
       if (error) {
         console.error('Error fetching product:', error);
-        alert('حدث خطأ أثناء جلب بيانات المنتج');
+        alert('Error fetching product data');
         return;
       }
       
       setInitialData(data);
     } catch (error) {
       console.error('Error fetching product:', error);
-      alert('حدث خطأ أثناء جلب بيانات المنتج');
+      alert('Error fetching product data');
     } finally {
       setFetchLoading(false);
     }
@@ -51,15 +51,15 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
 
       if (error) {
         console.error('Error updating product:', error);
-        alert('حدث خطأ أثناء تحديث المنتج');
+        alert('Error updating product');
         return;
       }
 
-      alert('تم تحديث المنتج بنجاح!');
+      alert('Product updated successfully!');
       router.push('/admin/products');
     } catch (error) {
       console.error('Error updating product:', error);
-      alert('حدث خطأ أثناء تحديث المنتج');
+      alert('Error updating product');
     } finally {
       setLoading(false);
     }
@@ -76,12 +76,12 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
   if (!initialData) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">المنتج غير موجود</p>
+        <p className="text-gray-500">Product not found</p>
         <button
           onClick={() => router.push('/admin/products')}
           className="mt-4 px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700"
         >
-          العودة للمنتجات
+          Back to Products
         </button>
       </div>
     );
@@ -90,8 +90,8 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">تعديل المنتج</h1>
-        <p className="mt-2 text-gray-600">تعديل بيانات المنتج</p>
+        <h1 className="text-3xl font-bold text-gray-900">Edit Product</h1>
+        <p className="mt-2 text-gray-600">Edit product data</p>
       </div>
 
       <ProductForm 
