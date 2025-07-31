@@ -75,8 +75,8 @@ export default function CategoriesPage() {
     <div>
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">إدارة الفئات</h1>
-          <p className="mt-2 text-gray-600">إدارة فئات المنتجات</p>
+          <h1 className="text-3xl font-bold text-gray-900">Categories Management</h1>
+          <p className="mt-2 text-gray-600">Manage product categories</p>
         </div>
         <Link
           href="/admin/categories/new"
@@ -92,7 +92,7 @@ export default function CategoriesPage() {
           <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
           <input
             type="text"
-            placeholder="البحث في الفئات..."
+            placeholder="Search categories..."
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -144,7 +144,7 @@ export default function CategoriesPage() {
 
       {filteredCategories.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-500">لا توجد فئات</p>
+          <p className="text-gray-500">No categories found</p>
         </div>
       )}
     </div>

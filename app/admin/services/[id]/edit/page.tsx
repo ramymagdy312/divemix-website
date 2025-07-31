@@ -34,7 +34,7 @@ export default function EditServicePage({ params }: { params: { id: string } }) 
 
       if (error) {
         console.error('Error fetching service:', error);
-        alert('حدث خطأ أثناء جلب بيانات الخدمة');
+        alert('Error fetching service data');
         return;
       }
       
@@ -47,7 +47,7 @@ export default function EditServicePage({ params }: { params: { id: string } }) 
       });
     } catch (error) {
       console.error('Error fetching service:', error);
-      alert('حدث خطأ أثناء جلب بيانات الخدمة');
+      alert('Error fetching service data');
     } finally {
       setFetchLoading(false);
     }
@@ -70,7 +70,7 @@ export default function EditServicePage({ params }: { params: { id: string } }) 
 
       if (error) {
         console.error('Error updating service:', error);
-        alert('حدث خطأ أثناء تحديث الخدمة');
+        alert('Error updating service');
         return;
       }
 
@@ -78,7 +78,7 @@ export default function EditServicePage({ params }: { params: { id: string } }) 
       router.push('/admin/services');
     } catch (error) {
       console.error('Error updating service:', error);
-      alert('حدث خطأ أثناء تحديث الخدمة');
+      alert('Error updating service');
     } finally {
       setLoading(false);
     }
@@ -118,12 +118,12 @@ export default function EditServicePage({ params }: { params: { id: string } }) 
   if (!initialData) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">الخدمة غير موجودة</p>
+        <p className="text-gray-500">Service not found</p>
         <button
           onClick={() => router.push('/admin/services')}
           className="mt-4 px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700"
         >
-          العودة للخدمات
+          Back to Services
         </button>
       </div>
     );
@@ -132,14 +132,14 @@ export default function EditServicePage({ params }: { params: { id: string } }) 
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">تعديل الخدمة</h1>
-        <p className="mt-2 text-gray-600">تعديل بيانات الخدمة</p>
+        <h1 className="text-3xl font-bold text-gray-900">Edit Service</h1>
+        <p className="mt-2 text-gray-600">Edit service data</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6 bg-white shadow rounded-lg p-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            عنوان الخدمة
+            Service Title
           </label>
           <input
             type="text"
@@ -152,7 +152,7 @@ export default function EditServicePage({ params }: { params: { id: string } }) 
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            الوصف
+            Description
           </label>
           <textarea
             required

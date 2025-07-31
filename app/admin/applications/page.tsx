@@ -149,7 +149,7 @@ export default function ApplicationsPage() {
 
       {filteredApplications.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-500">لا توجد تطبيقات</p>
+          <p className="text-gray-500">No applications found</p>
         </div>
       )}
     </div>
