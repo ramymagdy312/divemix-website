@@ -33,7 +33,7 @@ export default function EditApplicationPage({ params }: { params: { id: string }
 
       if (error) {
         console.error('Error fetching application:', error);
-        alert('حدث خطأ أثناء جلب بيانات التطبيق');
+        alert('Error fetching application data');
         return;
       }
       
@@ -46,7 +46,7 @@ export default function EditApplicationPage({ params }: { params: { id: string }
       });
     } catch (error) {
       console.error('Error fetching application:', error);
-      alert('حدث خطأ أثناء جلب بيانات التطبيق');
+      alert('Error fetching application data');
     } finally {
       setFetchLoading(false);
     }
@@ -120,12 +120,12 @@ export default function EditApplicationPage({ params }: { params: { id: string }
   if (!initialData) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">التطبيق غير موجود</p>
+        <p className="text-gray-500">Application not found</p>
         <button
           onClick={() => router.push('/admin/applications')}
           className="mt-4 px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700"
         >
-          العودة للتطبيقات
+          Back to Applications
         </button>
       </div>
     );

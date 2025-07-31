@@ -40,7 +40,7 @@ export default function ServicesPage() {
   };
 
   const deleteService = async (id: string) => {
-    if (!confirm('هل أنت متأكد من حذف هذه الخدمة؟')) return;
+    if (!confirm('Are you sure you want to delete this service?')) return;
 
     try {
       const { error } = await supabase
@@ -53,7 +53,7 @@ export default function ServicesPage() {
       setServices(services.filter(s => s.id !== id));
     } catch (error) {
       console.error('Error deleting service:', error);
-      alert('حدث خطأ أثناء حذف الخدمة');
+      alert('Error deleting service');
     }
   };
 
@@ -74,15 +74,15 @@ export default function ServicesPage() {
     <div>
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">إدارة الخدمات</h1>
-          <p className="mt-2 text-gray-600">إدارة جميع خدمات الشركة</p>
+          <h1 className="text-3xl font-bold text-gray-900">Services Management</h1>
+          <p className="mt-2 text-gray-600">Manage all company services</p>
         </div>
         <Link
           href="/admin/services/new"
           className="inline-flex items-center px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700 transition-colors"
         >
           <Plus className="h-5 w-5 mr-2" />
-          إضافة خدمة جديدة
+          Add New Service
         </Link>
       </div>
 
@@ -91,7 +91,7 @@ export default function ServicesPage() {
           <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
           <input
             type="text"
-            placeholder="البحث في الخدمات..."
+            placeholder="Search services..."
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -116,7 +116,7 @@ export default function ServicesPage() {
                       {service.description}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">
-                      {service.features.length} مميزات
+                      {service.features.length} features
                     </p>
                   </div>
                 </div>
@@ -142,7 +142,7 @@ export default function ServicesPage() {
 
       {filteredServices.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-500">لا توجد خدمات</p>
+          <p className="text-gray-500">No services found</p>
         </div>
       )}
     </div>

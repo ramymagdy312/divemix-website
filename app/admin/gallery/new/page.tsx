@@ -28,7 +28,7 @@ export default function NewGalleryImagePage() {
       router.push('/admin/gallery');
     } catch (error) {
       console.error('Error creating image:', error);
-      alert('حدث خطأ أثناء إضافة الصورة');
+      alert('Error adding image');
     } finally {
       setLoading(false);
     }

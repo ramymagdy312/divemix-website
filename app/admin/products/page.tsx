@@ -50,7 +50,7 @@ export default function ProductsPage() {
   };
 
   const deleteProduct = async (id: string) => {
-    if (!confirm('هل أنت متأكد من حذف هذا المنتج؟')) return;
+    if (!confirm('Are you sure you want to delete this product?')) return;
 
     try {
       const { error } = await supabase
@@ -63,7 +63,7 @@ export default function ProductsPage() {
       setProducts(products.filter(p => p.id !== id));
     } catch (error) {
       console.error('Error deleting product:', error);
-      alert('حدث خطأ أثناء حذف المنتج');
+      alert('Error deleting product');
     }
   };
 
