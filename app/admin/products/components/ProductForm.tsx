@@ -68,8 +68,7 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
   const removeFeature = (index: number) => {
     setFormData({
       ...formData,
-      features: formData.images.filter((_: string, i: number) => i !== index),
-
+      features: formData.features.filter((_: string, i: number) => i !== index),
     });
   };
 
