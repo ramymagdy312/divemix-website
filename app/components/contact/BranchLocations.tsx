@@ -6,7 +6,7 @@ const branches = [
   {
     name: "Hurghada Branch",
     address:
-      "DiveMix gas & compressor technologies Bldg 96 Industrial Area, El Nagda St, 84111 Hurghada, RedSea, Egypt.",
+      "96 Industrial Area, El Nagda St, 84111 Hurghada, Red Sea, Egypt.",
     phone: "+20 1000 096 033 ",
     email: "info@divemix.com",
     hours: "Sun-Thu: 9:00 AM - 5:00 PM",
@@ -16,7 +16,7 @@ const branches = [
   {
     name: "Cairo Branch",
     address:
-      "DiveMix Ltd. Gas & Compressor Technologies\nSuite 1, Bldg. 13, Block 1195\nAlmosheer Ahmed Ismail St, Heliopolis,\nCairo - Egypt",
+      "Suite 1, Bldg. 13, Block 1195\nAlmosheer Ahmed Ismail St, Heliopolis,\nCairo - Egypt",
     phone: "+2010000 960 42",
     email: "info@divemix.com",
     hours: "Sun-Thu: 9:00 AM - 5:00 PM",
@@ -55,11 +55,11 @@ const BranchLocations = () => {
                   </div>
                   <div className="flex items-center">
                     <Phone className="h-5 w-5 text-cyan-600 mr-3" />
-                    <span>{branch.phone}</span>
+                    <a href={`tel:${branch.phone}`}><span>{branch.phone}</span></a>
                   </div>
                   <div className="flex items-center">
                     <Mail className="h-5 w-5 text-cyan-600 mr-3" />
-                    <span>{branch.email}</span>
+                    <a href={`mailto:${branch.email}`}><span>{branch.email}</span></a>
                   </div>
                   <div className="flex items-center">
                     <Clock className="h-5 w-5 text-cyan-600 mr-3" />
