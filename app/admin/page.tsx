@@ -164,19 +164,19 @@ export default function AdminDashboard() {
               href="/admin/products/new"
               className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
             >
-              إضافة منتج جديد
+              Add New Product
             </a>
             <a
               href="/admin/services/new"
               className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
             >
-              إضافة خدمة جديدة
+              Add New Service
             </a>
             <a
               href="/admin/gallery/new"
               className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
             >
-              إضافة صورة للمعرض
+              Add Image to Gallery
             </a>
           </div>
         </div>
