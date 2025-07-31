@@ -66,15 +66,13 @@ export default function NewServicePage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">إضافة خدمة جديدة</h1>
-        <p className="mt-2 text-gray-600">إضافة خدمة جديدة إلى قاعدة البيانات</p>
+        <h1 className="text-3xl font-bold text-gray-900">Add a new service</h1>
+        <p className="mt-2 text-gray-600">Add a new service to the database</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6 bg-white shadow rounded-lg p-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            عنوان الخدمة
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Service Title</label>
           <input
             type="text"
             required
@@ -123,16 +121,14 @@ export default function NewServicePage() {
               onClick={addFeature}
               className="inline-flex items-center px-3 py-1 text-sm bg-cyan-600 text-white rounded-md hover:bg-cyan-700"
             >
-              <Plus className="h-4 w-4 mr-1" />
-              إضافة ميزة
-            </button>
+              <Plus className="h-4 w-4 mr-1" />Add feature</button>
           </div>
           <div className="space-y-2">
             {formData.features.map((feature, index) => (
               <div key={index} className="flex items-center space-x-2">
                 <input
                   type="text"
-                  placeholder="ميزة الخدمة"
+                  placeholder="Service Feature"
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
                   value={feature}
                   onChange={(e) => updateFeature(index, e.target.value)}
