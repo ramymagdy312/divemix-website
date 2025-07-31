@@ -84,16 +84,14 @@ export default function ProductsPage() {
     <div>
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">إدارة المنتجات</h1>
-          <p className="mt-2 text-gray-600">إدارة جميع منتجات الشركة</p>
+          <h1 className="text-3xl font-bold text-gray-900">Product Management</h1>
+          <p className="mt-2 text-gray-600">Managing all company products</p>
         </div>
         <Link
           href="/admin/products/new"
           className="inline-flex items-center px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700 transition-colors"
         >
-          <Plus className="h-5 w-5 mr-2" />
-          إضافة منتج جديد
-        </Link>
+          <Plus className="h-5 w-5 mr-2" />Add a new product</Link>
       </div>
 
       <div className="mb-6">
@@ -101,7 +99,7 @@ export default function ProductsPage() {
           <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
           <input
             type="text"
-            placeholder="البحث في المنتجات..."
+            placeholder="Search products..."
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -158,7 +156,7 @@ export default function ProductsPage() {
 
       {filteredProducts.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-500">لا توجد منتجات</p>
+          <p className="text-gray-500">No products found</p>
         </div>
       )}
     </div>
