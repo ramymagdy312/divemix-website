@@ -10,19 +10,19 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
+            <h3 className="text-lg font-semibold mb-4">Contact Info</h3>
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <Phone className="h-5 w-5" />
-                <span>+1 (555) 123-4567</span>
+                <a href="tel:+201000096033"><span>+20 1000 096 033</span></a>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="h-5 w-5" />
-                <span>info@divemix.com</span>
+                <a href="mailto:info@divemix.com"><span>info@divemix.com</span></a>
               </div>
               <div className="flex items-center space-x-3">
                 <MapPin className="h-5 w-5" />
-                <span>123 Tech Drive, Innovation City</span>
+                <span>96 Industrial Area, El Nagda St, 84111 Hurghada, Red Sea, Egypt.</span>
               </div>
             </div>
           </div>

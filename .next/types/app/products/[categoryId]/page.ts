@@ -1,4 +1,4 @@
-// File: D:\Ramy\RTS\ReactJS\project-bolt\app\products\[categoryId]\page.tsx
+// File: D:\Ramy\RTS\ReactJS\divemix-website\app\products\[categoryId]\page.tsx
 import * as entry from '../../../../../app/products/[categoryId]/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
