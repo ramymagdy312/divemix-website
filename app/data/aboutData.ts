@@ -2,7 +2,7 @@ export const aboutData = {
   id: "about-page-1",
   title: "About DiveMix",
   description: "Leading the industry in compressed air and gas solutions since 1990",
-  hero_image: "https://images.unsplash.com/photo-1581093450021-4a7360e9a6b5?auto=format&fit=crop&w=2000",
+  hero_image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=2000",
   vision: "To be the global leader in innovative gas mixing solutions, setting industry standards for quality, reliability, and technological advancement.",
   mission: "To provide cutting-edge compressed air and gas solutions while maintaining the highest standards of safety, quality, and customer satisfaction.",
   company_overview: "DiveMix has been at the forefront of compressed air and gas mixing technology for over three decades. Founded in 1990, we have consistently delivered innovative solutions that meet the evolving needs of industries worldwide. Our commitment to German engineering excellence and cutting-edge technology has made us a trusted partner for businesses seeking reliable, efficient, and safe gas mixing solutions.",

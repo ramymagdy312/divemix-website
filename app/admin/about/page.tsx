@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { aboutData } from '../../data/aboutData';
 import { Edit, Save, X, Plus, Trash2 } from 'lucide-react';
+import ImageUpload from '../../components/admin/ImageUpload';
+import Image from 'next/image';
+import Breadcrumb from '../../components/admin/Breadcrumb';
 
 interface AboutPageData {
   id: string;
@@ -163,6 +166,11 @@ export default function AboutAdmin() {
 
   return (
     <div>
+      <Breadcrumb items={[
+        { name: 'Pages' },
+        { name: 'About Page' }
+      ]} />
+      
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">About Page Management</h1>
@@ -220,18 +228,30 @@ export default function AboutAdmin() {
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Hero Image URL
-              </label>
               {editing ? (
-                <input
-                  type="url"
-                  value={data.hero_image}
-                  onChange={(e) => setData({ ...data, hero_image: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                <ImageUpload
+                  currentImage={data.hero_image}
+                  onImageChange={(imageUrl) => setData({ ...data, hero_image: imageUrl })}
+                  label="Hero Image"
                 />
               ) : (
-                <p className="text-gray-900 truncate">{data.hero_image}</p>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Hero Image
+                  </label>
+                  {data.hero_image ? (
+                    <div className="relative w-full h-32 rounded-lg overflow-hidden border border-gray-300">
+                      <Image
+                        src={data.hero_image}
+                        alt="Hero image"
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <p className="text-gray-500 italic">No image uploaded</p>
+                  )}
+                </div>
               )}
             </div>
           </div>

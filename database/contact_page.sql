@@ -28,7 +28,7 @@ INSERT INTO contact_page (
 ) VALUES (
     'Contact Us',
     'Get in touch with our team of experts for all your gas mixing and compression needs',
-    'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2000',
+    'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=2000',
     'Ready to Transform Your Operations?',
     'Whether you''re looking to upgrade your current systems, need expert consultation, or want to explore our latest innovations, our team is here to help. With decades of experience and a commitment to excellence, we provide personalized solutions that meet your specific requirements.',
     '[

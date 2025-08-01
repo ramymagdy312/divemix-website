@@ -11,6 +11,9 @@ interface Stats {
   gallery: number;
   about: number;
   contact: number;
+  productsPage: number;
+  servicesPage: number;
+  applicationsPage: number;
 }
 
 export default function AdminDashboard() {
@@ -21,6 +24,9 @@ export default function AdminDashboard() {
     gallery: 0,
     about: 0,
     contact: 0,
+    productsPage: 0,
+    servicesPage: 0,
+    applicationsPage: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -48,6 +54,9 @@ export default function AdminDashboard() {
           gallery: 25,
           about: 1,
           contact: 1,
+          productsPage: 1,
+          servicesPage: 1,
+          applicationsPage: 1,
         });
         setLoading(false);
         return;
@@ -60,6 +69,9 @@ export default function AdminDashboard() {
         { count: galleryCount },
         { count: aboutCount },
         { count: contactCount },
+        { count: productsPageCount },
+        { count: servicesPageCount },
+        { count: applicationsPageCount },
       ] = await Promise.all([
         supabase.from('products').select('*', { count: 'exact', head: true }),
         supabase.from('services').select('*', { count: 'exact', head: true }),
@@ -67,6 +79,9 @@ export default function AdminDashboard() {
         supabase.from('gallery_images').select('*', { count: 'exact', head: true }),
         supabase.from('about_page').select('*', { count: 'exact', head: true }),
         supabase.from('contact_page').select('*', { count: 'exact', head: true }),
+        supabase.from('products_page').select('*', { count: 'exact', head: true }),
+        supabase.from('services_page').select('*', { count: 'exact', head: true }),
+        supabase.from('applications_page').select('*', { count: 'exact', head: true }),
       ]);
 
       setStats({
@@ -76,6 +91,9 @@ export default function AdminDashboard() {
         gallery: galleryCount || 0,
         about: aboutCount || 0,
         contact: contactCount || 0,
+        productsPage: productsPageCount || 0,
+        servicesPage: servicesPageCount || 0,
+        applicationsPage: applicationsPageCount || 0,
       });
     } catch (error) {
       console.error('Error fetching stats:', error);
@@ -87,6 +105,9 @@ export default function AdminDashboard() {
         gallery: 25,
         about: 1,
         contact: 1,
+        productsPage: 1,
+        servicesPage: 1,
+        applicationsPage: 1,
       });
     } finally {
       setLoading(false);
@@ -199,12 +220,18 @@ export default function AdminDashboard() {
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600">Total Content</span>
               <span className="text-lg font-semibold text-gray-900">
-                {stats.products + stats.services + stats.applications + stats.gallery + stats.about + stats.contact}
+                {stats.products + stats.services + stats.applications + stats.gallery + stats.about + stats.contact + stats.productsPage + stats.servicesPage + stats.applicationsPage}
               </span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600">Active Products</span>
               <span className="text-lg font-semibold text-green-600">{stats.products}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600">Pages</span>
+              <span className="text-lg font-semibold text-blue-600">
+                {stats.about + stats.contact + stats.productsPage + stats.servicesPage + stats.applicationsPage}
+              </span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600">Last Update</span>
@@ -233,6 +260,26 @@ export default function AdminDashboard() {
               className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
             >
               Add Image to Gallery
+            </a>
+            <hr className="my-2" />
+            <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Pages</div>
+            <a
+              href="/admin/products-page"
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+            >
+              Edit Products Page
+            </a>
+            <a
+              href="/admin/services-page"
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+            >
+              Edit Services Page
+            </a>
+            <a
+              href="/admin/about"
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+            >
+              Edit About Page
             </a>
           </div>
         </div>

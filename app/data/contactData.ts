@@ -2,7 +2,7 @@ export const contactData = {
   id: "contact-page-1",
   title: "Contact Us",
   description: "Get in touch with our team of experts for all your gas mixing and compression needs",
-  hero_image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2000",
+  hero_image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=2000",
   intro_title: "Ready to Transform Your Operations?",
   intro_description: "Whether you're looking to upgrade your current systems, need expert consultation, or want to explore our latest innovations, our team is here to help. With decades of experience and a commitment to excellence, we provide personalized solutions that meet your specific requirements.",
   branches: [
