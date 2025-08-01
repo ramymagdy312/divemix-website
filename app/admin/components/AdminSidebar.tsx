@@ -10,6 +10,8 @@ import {
   Target,
   Image,
   Users,
+  Info,
+  Phone,
 } from 'lucide-react';
 
 const navigation = [
@@ -19,6 +21,8 @@ const navigation = [
   { name: 'Services', href: '/admin/services', icon: Wrench },
   { name: 'Applications', href: '/admin/applications', icon: Target },
   { name: 'Gallery', href: '/admin/gallery', icon: Image },
+  { name: 'About Page', href: '/admin/about', icon: Info },
+  { name: 'Contact Page', href: '/admin/contact', icon: Phone },
   { name: 'Users', href: '/admin/users', icon: Users },
 ];
 

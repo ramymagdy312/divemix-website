@@ -190,6 +190,131 @@ export type Database = {
           updated_at?: string
         }
       }
+      about_page: {
+        Row: {
+          id: string
+          title: string
+          description: string
+          hero_image: string
+          vision: string
+          mission: string
+          values: {
+            title: string
+            description: string
+            icon: string
+          }[]
+          timeline: {
+            year: string
+            title: string
+            description: string
+          }[]
+          company_overview: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          description: string
+          hero_image: string
+          vision: string
+          mission: string
+          values: {
+            title: string
+            description: string
+            icon: string
+          }[]
+          timeline: {
+            year: string
+            title: string
+            description: string
+          }[]
+          company_overview: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string
+          hero_image?: string
+          vision?: string
+          mission?: string
+          values?: {
+            title: string
+            description: string
+            icon: string
+          }[]
+          timeline?: {
+            year: string
+            title: string
+            description: string
+          }[]
+          company_overview?: string
+          updated_at?: string
+        }
+      }
+      contact_page: {
+        Row: {
+          id: string
+          title: string
+          description: string
+          hero_image: string
+          intro_title: string
+          intro_description: string
+          branches: {
+            name: string
+            address: string
+            phone: string
+            email: string
+            coordinates: {
+              lat: number
+              lng: number
+            }
+          }[]
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          description: string
+          hero_image: string
+          intro_title: string
+          intro_description: string
+          branches: {
+            name: string
+            address: string
+            phone: string
+            email: string
+            coordinates: {
+              lat: number
+              lng: number
+            }
+          }[]
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string
+          hero_image?: string
+          intro_title?: string
+          intro_description?: string
+          branches?: {
+            name: string
+            address: string
+            phone: string
+            email: string
+            coordinates: {
+              lat: number
+              lng: number
+            }
+          }[]
+          updated_at?: string
+        }
+      }
     }
   }
 }

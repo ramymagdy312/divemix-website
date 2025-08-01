@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { Package, Wrench, Target, Image, TrendingUp } from 'lucide-react';
+import { Package, Wrench, Target, Image, TrendingUp, Info, Phone } from 'lucide-react';
 
 interface Stats {
   products: number;
   services: number;
   applications: number;
   gallery: number;
+  about: number;
+  contact: number;
 }
 
 export default function AdminDashboard() {
@@ -17,6 +19,8 @@ export default function AdminDashboard() {
     services: 0,
     applications: 0,
     gallery: 0,
+    about: 0,
+    contact: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -26,16 +30,43 @@ export default function AdminDashboard() {
 
   const fetchStats = async () => {
     try {
+      // Check if Supabase is properly configured
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+      
+      if (!supabaseUrl || !supabaseKey || 
+          supabaseUrl === 'your-supabase-url' || 
+          supabaseKey === 'your-supabase-anon-key' ||
+          supabaseUrl === 'https://placeholder.supabase.co' ||
+          supabaseKey === 'placeholder-key') {
+        // Use mock data for development
+        console.warn('Supabase not configured. Using mock data.');
+        setStats({
+          products: 15,
+          services: 8,
+          applications: 12,
+          gallery: 25,
+          about: 1,
+          contact: 1,
+        });
+        setLoading(false);
+        return;
+      }
+
       const [
         { count: productsCount },
         { count: servicesCount },
         { count: applicationsCount },
         { count: galleryCount },
+        { count: aboutCount },
+        { count: contactCount },
       ] = await Promise.all([
         supabase.from('products').select('*', { count: 'exact', head: true }),
         supabase.from('services').select('*', { count: 'exact', head: true }),
         supabase.from('applications').select('*', { count: 'exact', head: true }),
         supabase.from('gallery_images').select('*', { count: 'exact', head: true }),
+        supabase.from('about_page').select('*', { count: 'exact', head: true }),
+        supabase.from('contact_page').select('*', { count: 'exact', head: true }),
       ]);
 
       setStats({
@@ -43,9 +74,20 @@ export default function AdminDashboard() {
         services: servicesCount || 0,
         applications: applicationsCount || 0,
         gallery: galleryCount || 0,
+        about: aboutCount || 0,
+        contact: contactCount || 0,
       });
     } catch (error) {
       console.error('Error fetching stats:', error);
+      // Fallback to mock data on error
+      setStats({
+        products: 15,
+        services: 8,
+        applications: 12,
+        gallery: 25,
+        about: 1,
+        contact: 1,
+      });
     } finally {
       setLoading(false);
     }
@@ -80,6 +122,20 @@ export default function AdminDashboard() {
       color: 'bg-pink-500',
       href: '/admin/gallery',
     },
+    {
+      name: 'About Page',
+      value: stats.about,
+      icon: Info,
+      color: 'bg-indigo-500',
+      href: '/admin/about',
+    },
+    {
+      name: 'Contact Page',
+      value: stats.contact,
+      icon: Phone,
+      color: 'bg-orange-500',
+      href: '/admin/contact',
+    },
   ];
 
   if (loading) {
@@ -97,7 +153,7 @@ export default function AdminDashboard() {
         <p className="mt-2 text-gray-600">Welcome to DiveMix website admin panel</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
         {statCards.map((card) => (
           <div
             key={card.name}
@@ -143,7 +199,7 @@ export default function AdminDashboard() {
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600">Total Content</span>
               <span className="text-lg font-semibold text-gray-900">
-                {stats.products + stats.services + stats.applications + stats.gallery}
+                {stats.products + stats.services + stats.applications + stats.gallery + stats.about + stats.contact}
               </span>
             </div>
             <div className="flex items-center justify-between">

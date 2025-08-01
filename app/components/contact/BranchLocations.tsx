@@ -2,7 +2,22 @@
 
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 
-const branches = [
+interface Branch {
+  name: string;
+  address: string;
+  phone: string;
+  email: string;
+  coordinates?: {
+    lat: number;
+    lng: number;
+  };
+}
+
+interface BranchLocationsProps {
+  branches?: Branch[];
+}
+
+const defaultBranches = [
   {
     name: "Hurghada Branch",
     address:
@@ -25,27 +40,18 @@ const branches = [
   },
 ];
 
-const BranchLocations = () => {
+const BranchLocations = ({ branches }: BranchLocationsProps) => {
+  const branchData = branches || defaultBranches;
   return (
     <div className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-bold text-center mb-12">Our Branches</h2>
         <div className="grid md:grid-cols-2 gap-8">
-          {branches.map((branch) => (
+          {branchData.map((branch) => (
             <div
               key={branch.name}
               className="bg-white rounded-lg shadow-sm overflow-hidden"
             >
-              <div className="aspect-w-16 aspect-h-9">
-                <iframe
-                  src={branch.mapUrl}
-                  className="w-full h-full border-0"
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title={`${branch.name} location`}
-                ></iframe>
-              </div>
               <div className="p-6">
                 <h3 className="text-xl font-semibold mb-4">{branch.name}</h3>
                 <div className="space-y-3">
@@ -55,15 +61,15 @@ const BranchLocations = () => {
                   </div>
                   <div className="flex items-center">
                     <Phone className="h-5 w-5 text-cyan-600 mr-3" />
-                    <a href={`tel:${branch.phone}`}><span>{branch.phone}</span></a>
+                    <a href={`tel:${branch.phone}`} className="hover:text-cyan-600">
+                      <span>{branch.phone}</span>
+                    </a>
                   </div>
                   <div className="flex items-center">
                     <Mail className="h-5 w-5 text-cyan-600 mr-3" />
-                    <a href={`mailto:${branch.email}`}><span>{branch.email}</span></a>
-                  </div>
-                  <div className="flex items-center">
-                    <Clock className="h-5 w-5 text-cyan-600 mr-3" />
-                    <span>{branch.hours}</span>
+                    <a href={`mailto:${branch.email}`} className="hover:text-cyan-600">
+                      <span>{branch.email}</span>
+                    </a>
                   </div>
                 </div>
               </div>
