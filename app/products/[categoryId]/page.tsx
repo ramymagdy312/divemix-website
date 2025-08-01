@@ -1,8 +1,8 @@
 import CategoryDetailDB from "../../components/products/CategoryDetailDB";
+import { supabase } from "../../lib/supabase";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import ScrollToTop from "../../components/ScrollToTop";
-import { supabase } from "../../lib/supabase";
 
 export async function generateStaticParams() {
   try {

@@ -2,8 +2,18 @@
 
 import React from 'react';
 
-const Timeline = () => {
-  const milestones = [
+interface TimelineItem {
+  year: string;
+  title: string;
+  description: string;
+}
+
+interface TimelineProps {
+  timelineData?: TimelineItem[];
+}
+
+const Timeline = ({ timelineData }: TimelineProps) => {
+  const defaultMilestones = [
     {
       year: '2004',
       title: 'Company Establishment',
@@ -50,6 +60,8 @@ const Timeline = () => {
       description: 'Acquired a new branch in Cairo to support continued growth.'
     }
   ];
+
+  const milestones = timelineData || defaultMilestones;
 
   return (
     <div className="relative">
