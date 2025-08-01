@@ -18,6 +18,21 @@ Contains content for the Contact page including:
 - Introduction section
 - Branch locations with contact details and coordinates (stored as JSONB array)
 
+### 3. products_page
+Contains content for the Products page including:
+- Basic information (title, description, hero image)
+- Introduction section (intro title and description)
+
+### 4. services_page
+Contains content for the Services page including:
+- Basic information (title, description, hero image)
+- Introduction section (intro title and description)
+
+### 5. applications_page
+Contains content for the Applications page including:
+- Basic information (title, description, hero image)
+- Introduction section (intro title and description)
+
 ## Setup Instructions
 
 ### For Supabase:
@@ -27,6 +42,9 @@ Contains content for the Contact page including:
 3. Run the following scripts in order:
    - `about_page.sql`
    - `contact_page.sql`
+   - `products_page.sql`
+   - `services_page.sql`
+   - `applications_page.sql`
 
 ### Environment Variables
 
@@ -50,17 +68,24 @@ Once the database is set up, you can manage the content through the admin interf
 
 - About Page: `/admin/about`
 - Contact Page: `/admin/contact`
+- Products Page: `/admin/products-page`
+- Services Page: `/admin/services-page`
+- Applications Page: `/admin/applications-page`
 
 The admin interface allows you to:
 - Edit all text content
-- Manage core values and timeline items
-- Update branch information and locations
-- Change hero images and other media
+- Upload and manage hero images
+- Manage core values and timeline items (About page)
+- Update branch information and locations (Contact page)
+- Edit introduction sections for all pages
 
 ## Development Mode
 
 If Supabase is not configured, the application will automatically use mock data from:
 - `app/data/aboutData.ts`
 - `app/data/contactData.ts`
+- `app/data/productsPageData.ts`
+- `app/data/servicesPageData.ts`
+- `app/data/applicationsPageData.ts`
 
 This allows for development without requiring a database connection.

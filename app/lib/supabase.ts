@@ -315,6 +315,99 @@ export type Database = {
           updated_at?: string
         }
       }
+      products_page: {
+        Row: {
+          id: string
+          title: string
+          description: string
+          hero_image: string
+          intro_title: string
+          intro_description: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          description: string
+          hero_image: string
+          intro_title: string
+          intro_description: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string
+          hero_image?: string
+          intro_title?: string
+          intro_description?: string
+          updated_at?: string
+        }
+      }
+      services_page: {
+        Row: {
+          id: string
+          title: string
+          description: string
+          hero_image: string
+          intro_title: string
+          intro_description: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          description: string
+          hero_image: string
+          intro_title: string
+          intro_description: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string
+          hero_image?: string
+          intro_title?: string
+          intro_description?: string
+          updated_at?: string
+        }
+      }
+      applications_page: {
+        Row: {
+          id: string
+          title: string
+          description: string
+          hero_image: string
+          intro_title: string
+          intro_description: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          description: string
+          hero_image: string
+          intro_title: string
+          intro_description: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string
+          hero_image?: string
+          intro_title?: string
+          intro_description?: string
+          updated_at?: string
+        }
+      }
     }
   }
 }
