@@ -24,7 +24,21 @@ const ProductCategory: React.FC<ProductCategoryProps> = ({ category }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {category.products.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <ProductCard 
+            key={product.id} 
+            product={{
+              id: product.id,
+              name: product.name,
+              description: product.desc,
+              short_description: product.desc,
+              category_id: category.id,
+              image_url: product.images[0],
+              images: product.images,
+              features: product.features,
+              is_active: true,
+              display_order: 1
+            }} 
+          />
         ))}
       </div>
     </div>

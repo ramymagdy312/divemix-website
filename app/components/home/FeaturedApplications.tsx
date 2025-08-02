@@ -5,14 +5,17 @@ import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
-import ApplicationCard from "../../components/applications/ApplicationCard";
+import DatabaseApplicationCard from "../../components/applications/DatabaseApplicationCard";
 
 interface Application {
   id: string;
   name: string;
   description: string;
-  features: string[];
-  images: string[];
+  image_url?: string;
+  use_cases?: string[];
+  benefits?: string[];
+  is_active: boolean;
+  display_order: number;
 }
 
 const FeaturedApplications = () => {
@@ -28,12 +31,16 @@ const FeaturedApplications = () => {
       const { data, error } = await supabase
         .from('applications')
         .select('*')
+        .eq('is_active', true)
+        .order('display_order', { ascending: true })
         .limit(3);
 
       if (error) throw error;
       setApplications(data || []);
     } catch (error) {
       console.error('Error fetching applications:', error);
+      // Fallback to empty array to prevent crashes
+      setApplications([]);
     } finally {
       setLoading(false);
     }
@@ -75,15 +82,9 @@ const FeaturedApplications = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {applications.map((app, index) => (
-            <ApplicationCard 
+            <DatabaseApplicationCard 
               key={app.id} 
-              application={{
-                id: app.id,
-                name: app.name,
-                desc: app.description,
-                features: app.features,
-                images: app.images
-              }} 
+              application={app} 
               index={index} 
             />
           ))}

@@ -10,8 +10,10 @@ interface Category {
   id: string;
   name: string;
   description: string;
-  hero_image: string;
-  image: string;
+  slug: string;
+  image_url: string;
+  is_active: boolean;
+  display_order: number;
 }
 
 const FeaturedCategories = () => {
@@ -25,14 +27,18 @@ const FeaturedCategories = () => {
   const fetchCategories = async () => {
     try {
       const { data, error } = await supabase
-        .from('categories')
+        .from('product_categories')
         .select('*')
+        .eq('is_active', true)
+        .order('display_order', { ascending: true })
         .limit(3);
 
       if (error) throw error;
       setCategories(data || []);
     } catch (error) {
       console.error('Error fetching categories:', error);
+      // Fallback to empty array to prevent crashes
+      setCategories([]);
     } finally {
       setLoading(false);
     }
@@ -64,14 +70,7 @@ const FeaturedCategories = () => {
           {categories.map((category, index) => (
             <CategoryCard 
               key={category.id} 
-              category={{
-                id: category.id,
-                categoryName: category.name,
-                shortDesc: category.description,
-                hero: category.hero_image,
-                image: category.image,
-                products: []
-              }} 
+              category={category} 
               index={index} 
             />
           ))}

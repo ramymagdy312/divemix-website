@@ -10,10 +10,12 @@ import { Settings, Wrench, Droplets, FireExtinguisher } from "lucide-react";
 
 interface Service {
   id: string;
-  title: string;
+  name: string;
   description: string;
   icon: string;
   features: string[];
+  is_active: boolean;
+  display_order: number;
 }
 
 const iconMap: { [key: string]: any } = {
@@ -36,12 +38,16 @@ const FeaturedServices = () => {
       const { data, error } = await supabase
         .from('services')
         .select('*')
+        .eq('is_active', true)
+        .order('display_order', { ascending: true })
         .limit(4);
 
       if (error) throw error;
       setServices(data || []);
     } catch (error) {
       console.error('Error fetching services:', error);
+      // Fallback to empty array to prevent crashes
+      setServices([]);
     } finally {
       setLoading(false);
     }
@@ -86,7 +92,7 @@ const FeaturedServices = () => {
           {services.map((service, index) => (
             <ServiceCard
               key={service.id}
-              title={service.title}
+              title={service.name}
               description={service.description}
               Icon={iconMap[service.icon] || Settings}
               features={service.features}

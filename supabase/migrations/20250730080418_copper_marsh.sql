@@ -202,12 +202,6 @@ INSERT INTO applications (name, description, features, images) VALUES
 ('Marine and Offshore Locations', 'Marine and offshore environments demand durable and reliable compressed air and gas solutions.', '{}', '{"/img/applications/Marine-or-Offshore.jpg"}'),
 ('Recreational Diving', 'Safety is paramount in the recreational diving tourism industry.', '{}', '{"/img/applications/2.jpg"}');
 
--- Insert sample news
-INSERT INTO news (title, summary, content, image_url, published_date) VALUES
-('DiveMix Launches New Pro Series', 'Introducing our latest professional-grade gas mixing system', 'DiveMix is proud to announce the launch of our new Pro Series gas mixing systems, designed for professional diving operations worldwide.', '/img/gallery/IMG_4019.jpg', '2024-03-15'),
-('Safety Certification Achievement', 'DiveMix receives ISO certification for safety standards', 'We are pleased to announce that DiveMix has achieved ISO certification for our safety standards and quality management systems.', '/img/gallery/maintenence.jpg', '2024-03-10'),
-('New Training Program Announced', 'Comprehensive training program for diving professionals', 'DiveMix announces a new comprehensive training program designed for diving professionals and equipment operators.', '/img/gallery/Al_Ahmadeya.jpg', '2024-03-05');
-
 -- Insert sample gallery images
 INSERT INTO gallery_images (title, url, category) VALUES
 ('Industrial Compressor Installation', '/img/gallery/4big.jpg', 'installations'),

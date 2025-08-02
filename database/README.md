@@ -45,6 +45,8 @@ Contains content for the Applications page including:
    - `products_page.sql`
    - `services_page.sql`
    - `applications_page.sql`
+   - `gallery_categories.sql`
+   - `gallery_images.sql`
 
 ### Environment Variables
 
@@ -71,6 +73,7 @@ Once the database is set up, you can manage the content through the admin interf
 - Products Page: `/admin/products-page`
 - Services Page: `/admin/services-page`
 - Applications Page: `/admin/applications-page`
+- Gallery Categories: `/admin/gallery-categories`
 
 The admin interface allows you to:
 - Edit all text content
@@ -78,6 +81,9 @@ The admin interface allows you to:
 - Manage core values and timeline items (About page)
 - Update branch information and locations (Contact page)
 - Edit introduction sections for all pages
+- Create and manage gallery categories
+- Organize gallery images by categories
+- Default gallery categories: Installations, Maintenance, Testing, Facilities, Training
 
 ## Development Mode
 
@@ -87,5 +93,7 @@ If Supabase is not configured, the application will automatically use mock data 
 - `app/data/productsPageData.ts`
 - `app/data/servicesPageData.ts`
 - `app/data/applicationsPageData.ts`
+- `app/data/galleryCategoriesData.ts`
+- `app/data/galleryImages.ts`
 
 This allows for development without requiring a database connection.

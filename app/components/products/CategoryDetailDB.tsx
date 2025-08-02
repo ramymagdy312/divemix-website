@@ -5,14 +5,17 @@ import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabase";
 import ProductListDB from "./ProductListDB";
 import ProductHero from "./ProductHero";
+import CategoryDetailFallback from "./CategoryDetailFallback";
 import { ArrowLeft } from "lucide-react";
 
 interface Category {
   id: string;
   name: string;
   description: string;
-  hero_image: string;
-  image: string;
+  slug: string;
+  image_url: string;
+  is_active: boolean;
+  display_order: number;
 }
 
 interface CategoryDetailDBProps {
@@ -23,19 +26,29 @@ const CategoryDetailDB: React.FC<CategoryDetailDBProps> = ({ categoryId }) => {
   const router = useRouter();
   const [category, setCategory] = useState<Category | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchCategory = useCallback(async () => {
     try {
+      setError(null);
+      console.log('Fetching category with ID/slug:', categoryId);
+      
       const { data, error } = await supabase
-        .from('categories')
+        .from('product_categories')
         .select('*')
-        .eq('id', categoryId)
+        .eq(`slug`, `${categoryId}`)
+        .eq('is_active', true)
         .single();
+
+      console.log('Category query result:', { data, error });
 
       if (error) throw error;
       setCategory(data);
-    } catch (error) {
+      console.log('Category set successfully:', data);
+    } catch (error: any) {
       console.error('Error fetching category:', error);
+      setError(error.message);
+      setCategory(null);
     } finally {
       setLoading(false);
     }
@@ -53,22 +66,15 @@ const CategoryDetailDB: React.FC<CategoryDetailDBProps> = ({ categoryId }) => {
     );
   }
 
-  if (!category) {
-    return <div>Category not found</div>;
+  // If there's an error or no category found, fall back to the fallback component
+  if (error || !category) {
+    console.log('Falling back to CategoryDetailFallback due to:', error || 'Category not found');
+    return <CategoryDetailFallback categoryId={categoryId} />;
   }
 
   return (
     <div>
-      <ProductHero 
-        category={{
-          id: category.id,
-          categoryName: category.name,
-          shortDesc: category.description,
-          hero: category.hero_image,
-          image: category.image,
-          products: []
-        }} 
-      />
+      <ProductHero category={category} />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center space-x-4 mb-8">

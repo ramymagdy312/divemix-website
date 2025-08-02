@@ -12,8 +12,11 @@ export default function NewApplicationPage() {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    images: [] as string[],
-    features: [''],
+    image_url: '',
+    use_cases: [''],
+    benefits: [''],
+    is_active: true,
+    display_order: 1,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -23,8 +26,8 @@ export default function NewApplicationPage() {
     try {
       const cleanedData = {
         ...formData,
-        images: formData.images.filter((img: string) => img.trim() !== ''),
-        features: formData.features.filter((feature: string) => feature.trim() !== ''),
+        use_cases: formData.use_cases.filter((useCase: string) => useCase.trim() !== ''),
+        benefits: formData.benefits.filter((benefit: string) => benefit.trim() !== ''),
       };
 
       const { error } = await supabase
@@ -44,26 +47,49 @@ export default function NewApplicationPage() {
 
 
 
-  const addFeature = () => {
+  const addUseCase = () => {
     setFormData({
       ...formData,
-      features: [...formData.features, ''],
+      use_cases: [...formData.use_cases, ''],
     });
   };
 
-  const removeFeature = (index: number) => {
+  const removeUseCase = (index: number) => {
     setFormData({
       ...formData,
-      features: formData.features.filter((_, i) => i !== index),
+      use_cases: formData.use_cases.filter((_, i) => i !== index),
     });
   };
 
-  const updateFeature = (index: number, value: string) => {
-    const newFeatures = [...formData.features];
-    newFeatures[index] = value;
+  const updateUseCase = (index: number, value: string) => {
+    const newUseCases = [...formData.use_cases];
+    newUseCases[index] = value;
     setFormData({
       ...formData,
-      features: newFeatures,
+      use_cases: newUseCases,
+    });
+  };
+
+  const addBenefit = () => {
+    setFormData({
+      ...formData,
+      benefits: [...formData.benefits, ''],
+    });
+  };
+
+  const removeBenefit = (index: number) => {
+    setFormData({
+      ...formData,
+      benefits: formData.benefits.filter((_, i) => i !== index),
+    });
+  };
+
+  const updateBenefit = (index: number, value: string) => {
+    const newBenefits = [...formData.benefits];
+    newBenefits[index] = value;
+    setFormData({
+      ...formData,
+      benefits: newBenefits,
     });
   };
 
@@ -103,42 +129,42 @@ export default function NewApplicationPage() {
 
         <div>
           <ImageUploader
-            images={formData.images}
-            onImagesChange={(images) => setFormData({ ...formData, images })}
-            multiple={true}
-            maxImages={10}
-            label="Application Images"
+            images={formData.image_url ? [formData.image_url] : []}
+            onImagesChange={(images) => setFormData({ ...formData, image_url: images[0] || '' })}
+            multiple={false}
+            maxImages={1}
+            label="Application Image"
           />
         </div>
 
         <div>
           <div className="flex justify-between items-center mb-2">
             <label className="block text-sm font-medium text-gray-700">
-              Features
+              Use Cases
             </label>
             <button
               type="button"
-              onClick={addFeature}
+              onClick={addUseCase}
               className="inline-flex items-center px-3 py-1 text-sm bg-cyan-600 text-white rounded-md hover:bg-cyan-700"
             >
               <Plus className="h-4 w-4 mr-1" />
-              Add Feature
+              Add Use Case
             </button>
           </div>
           <div className="space-y-2">
-            {formData.features.map((feature, index) => (
+            {formData.use_cases.map((useCase, index) => (
               <div key={index} className="flex items-center space-x-2">
                 <input
                   type="text"
-                  placeholder="Application Feature"
+                  placeholder="Use case description"
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-                  value={feature}
-                  onChange={(e) => updateFeature(index, e.target.value)}
+                  value={useCase}
+                  onChange={(e) => updateUseCase(index, e.target.value)}
                 />
-                {formData.features.length > 1 && (
+                {formData.use_cases.length > 1 && (
                   <button
                     type="button"
-                    onClick={() => removeFeature(index)}
+                    onClick={() => removeUseCase(index)}
                     className="p-2 text-red-600 hover:text-red-800"
                   >
                     <X className="h-4 w-4" />
@@ -146,6 +172,72 @@ export default function NewApplicationPage() {
                 )}
               </div>
             ))}
+          </div>
+        </div>
+
+        <div>
+          <div className="flex justify-between items-center mb-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Benefits
+            </label>
+            <button
+              type="button"
+              onClick={addBenefit}
+              className="inline-flex items-center px-3 py-1 text-sm bg-cyan-600 text-white rounded-md hover:bg-cyan-700"
+            >
+              <Plus className="h-4 w-4 mr-1" />
+              Add Benefit
+            </button>
+          </div>
+          <div className="space-y-2">
+            {formData.benefits.map((benefit, index) => (
+              <div key={index} className="flex items-center space-x-2">
+                <input
+                  type="text"
+                  placeholder="Benefit description"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
+                  value={benefit}
+                  onChange={(e) => updateBenefit(index, e.target.value)}
+                />
+                {formData.benefits.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeBenefit(index)}
+                    className="p-2 text-red-600 hover:text-red-800"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Display Order
+            </label>
+            <input
+              type="number"
+              min="1"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
+              value={formData.display_order}
+              onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 1 })}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Status
+            </label>
+            <select
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
+              value={formData.is_active ? 'active' : 'inactive'}
+              onChange={(e) => setFormData({ ...formData, is_active: e.target.value === 'active' })}
+            >
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
           </div>
         </div>
 

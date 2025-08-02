@@ -1,4 +1,4 @@
-import CategoryListDB from "../components/products/CategoryListDB";
+import CategoryListFallback from "../components/products/CategoryListFallback";
 import ProductsPageDB from "../components/products/ProductsPageDB";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -10,7 +10,7 @@ export default function Products() {
       <Navbar />
       <main className="flex-grow page-content">
         <ProductsPageDB>
-          <CategoryListDB />
+          <CategoryListFallback />
         </ProductsPageDB>
       </main>
       <Footer />

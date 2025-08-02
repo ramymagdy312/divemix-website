@@ -13,13 +13,26 @@ export default function CategoryForm({ initialData, onSubmit, loading }: Categor
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
     description: initialData?.description || '',
-    hero_image: initialData?.hero_image || '',
-    image: initialData?.image || '',
+    slug: initialData?.slug || '',
+    image_url: initialData?.image_url || '',
+    is_active: initialData?.is_active !== undefined ? initialData.is_active : true,
+    display_order: initialData?.display_order || 1,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    
+    // Generate slug from name if not provided
+    const slug = formData.slug || formData.name.toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+    
+    const submitData = {
+      ...formData,
+      slug
+    };
+    
+    onSubmit(submitData);
   };
 
   return (
@@ -51,21 +64,54 @@ export default function CategoryForm({ initialData, onSubmit, loading }: Categor
       </div>
 
       <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Slug (URL-friendly name)
+        </label>
+        <input
+          type="text"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
+          value={formData.slug}
+          onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+          placeholder="Auto-generated from name if empty"
+        />
+        <p className="text-sm text-gray-500 mt-1">
+          Leave empty to auto-generate from category name
+        </p>
+      </div>
+
+      <div>
         <SingleImageUploader
-          image={formData.hero_image}
-          onImageChange={(hero_image) => setFormData({ ...formData, hero_image })}
-          label="Hero Image"
+          image={formData.image_url}
+          onImageChange={(image_url) => setFormData({ ...formData, image_url })}
+          label="Category Image"
           required
         />
       </div>
 
       <div>
-        <SingleImageUploader
-          image={formData.image}
-          onImageChange={(image) => setFormData({ ...formData, image })}
-          label="Category Image"
-          required
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Display Order
+        </label>
+        <input
+          type="number"
+          min="1"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
+          value={formData.display_order}
+          onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 1 })}
         />
+      </div>
+
+      <div className="flex items-center">
+        <input
+          type="checkbox"
+          id="is_active"
+          className="h-4 w-4 text-cyan-600 focus:ring-cyan-500 border-gray-300 rounded"
+          checked={formData.is_active}
+          onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+        />
+        <label htmlFor="is_active" className="ml-2 block text-sm text-gray-900">
+          Category is active
+        </label>
       </div>
 
       <div className="flex justify-end space-x-4">

@@ -21,7 +21,15 @@ const CategoryDetail: React.FC<CategoryDetailProps> = ({ categoryId }) => {
 
   return (
     <div>
-      <ProductHero category={category} />
+      <ProductHero category={{
+        id: category.id,
+        name: category.categoryName,
+        description: category.shortDesc,
+        slug: category.slug || category.id,
+        image_url: category.image,
+        is_active: true,
+        display_order: 1
+      }} />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center space-x-4 mb-8">

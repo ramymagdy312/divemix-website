@@ -9,6 +9,7 @@ interface Stats {
   services: number;
   applications: number;
   gallery: number;
+  galleryCategories: number;
   about: number;
   contact: number;
   productsPage: number;
@@ -22,6 +23,7 @@ export default function AdminDashboard() {
     services: 0,
     applications: 0,
     gallery: 0,
+    galleryCategories: 0,
     about: 0,
     contact: 0,
     productsPage: 0,
@@ -51,7 +53,8 @@ export default function AdminDashboard() {
           products: 15,
           services: 8,
           applications: 12,
-          gallery: 25,
+          gallery: 16, // Updated to match actual gallery images count
+          galleryCategories: 6, // All, Installations, Maintenance, Testing, Facilities, Training
           about: 1,
           contact: 1,
           productsPage: 1,
@@ -67,6 +70,7 @@ export default function AdminDashboard() {
         { count: servicesCount },
         { count: applicationsCount },
         { count: galleryCount },
+        { count: galleryCategoriesCount },
         { count: aboutCount },
         { count: contactCount },
         { count: productsPageCount },
@@ -77,6 +81,7 @@ export default function AdminDashboard() {
         supabase.from('services').select('*', { count: 'exact', head: true }),
         supabase.from('applications').select('*', { count: 'exact', head: true }),
         supabase.from('gallery_images').select('*', { count: 'exact', head: true }),
+        supabase.from('gallery_categories').select('*', { count: 'exact', head: true }),
         supabase.from('about_page').select('*', { count: 'exact', head: true }),
         supabase.from('contact_page').select('*', { count: 'exact', head: true }),
         supabase.from('products_page').select('*', { count: 'exact', head: true }),
@@ -89,6 +94,7 @@ export default function AdminDashboard() {
         services: servicesCount || 0,
         applications: applicationsCount || 0,
         gallery: galleryCount || 0,
+        galleryCategories: galleryCategoriesCount || 0,
         about: aboutCount || 0,
         contact: contactCount || 0,
         productsPage: productsPageCount || 0,
@@ -102,7 +108,8 @@ export default function AdminDashboard() {
         products: 15,
         services: 8,
         applications: 12,
-        gallery: 25,
+        gallery: 16, // Updated to match actual gallery images count
+        galleryCategories: 6, // All, Installations, Maintenance, Testing, Facilities, Training
         about: 1,
         contact: 1,
         productsPage: 1,
@@ -220,12 +227,20 @@ export default function AdminDashboard() {
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600">Total Content</span>
               <span className="text-lg font-semibold text-gray-900">
-                {stats.products + stats.services + stats.applications + stats.gallery + stats.about + stats.contact + stats.productsPage + stats.servicesPage + stats.applicationsPage}
+                {stats.products + stats.services + stats.applications + stats.gallery + stats.galleryCategories + stats.about + stats.contact + stats.productsPage + stats.servicesPage + stats.applicationsPage}
               </span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600">Active Products</span>
               <span className="text-lg font-semibold text-green-600">{stats.products}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600">Gallery Images</span>
+              <span className="text-lg font-semibold text-purple-600">{stats.gallery}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600">Gallery Categories</span>
+              <span className="text-lg font-semibold text-indigo-600">{stats.galleryCategories}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600">Pages</span>
@@ -260,6 +275,12 @@ export default function AdminDashboard() {
               className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
             >
               Add Image to Gallery
+            </a>
+            <a
+              href="/admin/gallery-categories"
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+            >
+              Manage Gallery Categories
             </a>
             <hr className="my-2" />
             <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Pages</div>

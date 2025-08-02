@@ -9,10 +9,12 @@ export default function NewServicePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    title: '',
+    name: '',
     description: '',
     icon: 'Settings',
     features: [''],
+    is_active: true,
+    display_order: 1,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -72,19 +74,19 @@ export default function NewServicePage() {
 
       <form onSubmit={handleSubmit} className="space-y-6 bg-white shadow rounded-lg p-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Service Title</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Service Name</label>
           <input
             type="text"
             required
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-            value={formData.title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            الوصف
+            Description
           </label>
           <textarea
             required
@@ -97,13 +99,17 @@ export default function NewServicePage() {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            الأيقونة
+            Icon
           </label>
           <select
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
             value={formData.icon}
             onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
           >
+            <option value="🔧">🔧 Installation</option>
+            <option value="⚙️">⚙️ Maintenance</option>
+            <option value="🔍">🔍 Testing</option>
+            <option value="🛢️">🛢️ Cylinder Services</option>
             <option value="Settings">Settings</option>
             <option value="Wrench">Wrench</option>
             <option value="Droplets">Droplets</option>
@@ -114,14 +120,15 @@ export default function NewServicePage() {
         <div>
           <div className="flex justify-between items-center mb-2">
             <label className="block text-sm font-medium text-gray-700">
-              المميزات
+              Features
             </label>
             <button
               type="button"
               onClick={addFeature}
               className="inline-flex items-center px-3 py-1 text-sm bg-cyan-600 text-white rounded-md hover:bg-cyan-700"
             >
-              <Plus className="h-4 w-4 mr-1" />Add feature</button>
+              <Plus className="h-4 w-4 mr-1" />Add Feature
+            </button>
           </div>
           <div className="space-y-2">
             {formData.features.map((feature, index) => (
@@ -144,6 +151,34 @@ export default function NewServicePage() {
                 )}
               </div>
             ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Display Order
+            </label>
+            <input
+              type="number"
+              min="1"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
+              value={formData.display_order}
+              onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 1 })}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Status
+            </label>
+            <select
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
+              value={formData.is_active ? 'active' : 'inactive'}
+              onChange={(e) => setFormData({ ...formData, is_active: e.target.value === 'active' })}
+            >
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
           </div>
         </div>
 

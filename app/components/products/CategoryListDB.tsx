@@ -11,8 +11,10 @@ interface Category {
   id: string;
   name: string;
   description: string;
-  hero_image: string;
-  image: string;
+  slug: string;
+  image_url: string;
+  is_active: boolean;
+  display_order: number;
 }
 
 const CategoryListDB = () => {
@@ -31,14 +33,17 @@ const CategoryListDB = () => {
   const fetchCategories = async () => {
     try {
       const { data, error } = await supabase
-        .from('categories')
+        .from('product_categories')
         .select('*')
-        .order('created_at', { ascending: false });
+        .eq('is_active', true)
+        .order('display_order', { ascending: true });
 
       if (error) throw error;
       setCategories(data || []);
     } catch (error) {
-      console.error('Error fetching categories:', error);
+      console.error('Error fetching product categories:', error);
+      // Fallback to mock data if database fails
+      setCategories([]);
     } finally {
       setLoading(false);
     }
@@ -66,14 +71,7 @@ const CategoryListDB = () => {
             {filteredItems.map((category, index) => (
               <CategoryCard
                 key={category.id}
-                category={{
-                  id: category.id,
-                  categoryName: category.name,
-                  shortDesc: category.description,
-                  hero: category.hero_image,
-                  image: category.image,
-                  products: []
-                }}
+                category={category}
                 index={index}
               />
             ))}
