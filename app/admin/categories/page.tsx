@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase';
 import { Plus, Edit, Trash2, Search, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import toast from 'react-hot-toast';
 
 interface Category {
   id: string;
@@ -136,7 +137,7 @@ export default function CategoriesPage() {
 
   const deleteCategory = async (id: string) => {
     if (usingFallback) {
-      alert('Cannot delete categories in demo mode. Set up database to enable full functionality.');
+      toast.error('Cannot delete categories in demo mode. Set up database to enable full functionality.');
       return;
     }
 
@@ -151,10 +152,10 @@ export default function CategoriesPage() {
       if (error) throw error;
       
       setCategories(categories.filter(c => c.id !== id));
-      alert('Category deleted successfully!');
+      toast.success('Category deleted successfully!');
     } catch (error: any) {
       console.error('Error deleting category:', error);
-      alert(`Error deleting category: ${error.message}`);
+      toast.error(`Error deleting category: ${error.message}`);
     }
   };
 
@@ -214,7 +215,7 @@ export default function CategoriesPage() {
           onClick={(e) => {
             if (usingFallback) {
               e.preventDefault();
-              alert('Cannot add categories in demo mode. Set up database to enable full functionality.');
+              toast.error('Cannot add categories in demo mode. Set up database to enable full functionality.');
             }
           }}
         >
@@ -281,7 +282,7 @@ export default function CategoriesPage() {
                     onClick={(e) => {
                       if (usingFallback) {
                         e.preventDefault();
-                        alert('Cannot edit categories in demo mode. Set up database to enable full functionality.');
+                        toast.error('Cannot edit categories in demo mode. Set up database to enable full functionality.');
                       }
                     }}
                   >

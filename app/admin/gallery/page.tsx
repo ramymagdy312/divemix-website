@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase';
 import { Plus, Edit, Trash2, Search, Image as ImageIcon } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import toast from 'react-hot-toast';
 
 interface GalleryImage {
   id: string;
@@ -53,7 +54,7 @@ export default function GalleryPage() {
       setImages(images.filter(img => img.id !== id));
     } catch (error) {
       console.error('Error deleting image:', error);
-      alert('Error deleting image');
+      toast.error('Error deleting image');
     }
   };
 

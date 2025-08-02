@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '../../../../lib/supabase';
 import { galleryCategoriesData, GalleryCategory } from '../../../../data/galleryCategoriesData';
 import SingleImageUploader from '../../../../components/admin/SingleImageUploader';
+import toast from 'react-hot-toast';
 
 export default function EditGalleryImagePage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -71,7 +72,7 @@ export default function EditGalleryImagePage({ params }: { params: { id: string 
 
       if (error) {
         console.error('Error fetching image:', error);
-        alert('Error fetching image data');
+        toast.error('Error fetching image data');
         return;
       }
       
@@ -84,7 +85,7 @@ export default function EditGalleryImagePage({ params }: { params: { id: string 
       });
     } catch (error) {
       console.error('Error fetching image:', error);
-      alert('Error fetching image data');
+      toast.error('Error fetching image data');
     } finally {
       setFetchLoading(false);
     }
@@ -102,15 +103,15 @@ export default function EditGalleryImagePage({ params }: { params: { id: string 
 
       if (error) {
         console.error('Error updating image:', error);
-        alert('Error updating image');
+        toast.error('Error updating image');
         return;
       }
 
-      alert('Image updated successfully!');
+      toast.success('Image updated successfully!');
       router.push('/admin/gallery');
     } catch (error) {
       console.error('Error updating image:', error);
-      alert('Error updating image');
+      toast.error('Error updating image');
     } finally {
       setLoading(false);
     }

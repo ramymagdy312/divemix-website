@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabase';
 import { Plus, X } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 export default function NewServicePage() {
   const router = useRouter();
@@ -33,10 +34,11 @@ export default function NewServicePage() {
 
       if (error) throw error;
 
+      toast.success('Service created successfully!');
       router.push('/admin/services');
     } catch (error) {
       console.error('Error creating service:', error);
-      alert('حدث خطأ أثناء إنشاء الخدمة');
+      toast.error('حدث خطأ أثناء إنشاء الخدمة');
     } finally {
       setLoading(false);
     }

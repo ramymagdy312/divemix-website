@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import { Upload, X, Image as ImageIcon } from 'lucide-react';
 import Image from 'next/image';
+import toast from 'react-hot-toast';
 
 interface ImageUploadProps {
   currentImage?: string;
@@ -23,12 +24,12 @@ export default function ImageUpload({
 
   const handleFileSelect = async (file: File) => {
     if (!file.type.startsWith('image/')) {
-      alert('Please select an image file');
+      toast.error('Please select an image file');
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      alert('Image must be under 5MB');
+      toast.error('Image must be under 5MB');
       return;
     }
 
@@ -48,14 +49,14 @@ export default function ImageUpload({
       if (result.success) {
         onImageChange(result.url);
         if (result.development) {
-          alert('Development mode: Using placeholder image. Configure Supabase for real uploads.');
+          toast.error('Development mode: Using placeholder image. Configure Supabase for real uploads.');
         }
       } else {
         alert('Upload failed: ' + result.error);
       }
     } catch (error) {
       console.error('Upload error:', error);
-      alert('Upload failed');
+      toast.error('Upload failed');
     } finally {
       setUploading(false);
     }

@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase';
 import { Plus, Edit, Trash2, Search, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import toast from 'react-hot-toast';
 
 interface Product {
   id: string;
@@ -143,7 +144,7 @@ export default function ProductsPage() {
 
   const deleteProduct = async (id: string) => {
     if (usingFallback) {
-      alert('Cannot delete products in demo mode. Set up database to enable full functionality.');
+      toast.error('Cannot delete products in demo mode. Set up database to enable full functionality.');
       return;
     }
 
@@ -157,10 +158,11 @@ export default function ProductsPage() {
 
       if (error) throw error;
       
+      toast.success('Product deleted successfully!');
       setProducts(products.filter(p => p.id !== id));
     } catch (error: any) {
       console.error('Error deleting product:', error);
-      alert(`Error deleting product: ${error.message}`);
+      toast.error(`Error deleting product: ${error.message}`);
     }
   };
 
@@ -211,13 +213,7 @@ export default function ProductsPage() {
           </p>
         </div>
         <div className="flex space-x-3">
-          <Link
-            href="/check-products-database"
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-          >
-            <AlertCircle className="h-5 w-5 mr-2" />
-            Database Setup
-          </Link>
+          
           <Link
             href="/admin/products/new"
             className={`inline-flex items-center px-4 py-2 rounded-md transition-colors ${
@@ -228,7 +224,7 @@ export default function ProductsPage() {
             onClick={(e) => {
               if (usingFallback) {
                 e.preventDefault();
-                alert('Set up database first to add real products');
+                toast.error('Set up database first to add real products');
               }
             }}
           >
@@ -308,7 +304,7 @@ export default function ProductsPage() {
                     onClick={(e) => {
                       if (usingFallback) {
                         e.preventDefault();
-                        alert('Set up database first to edit products');
+                        toast.error('Set up database first to edit products');
                       }
                     }}
                   >
@@ -345,39 +341,6 @@ export default function ProductsPage() {
           )}
         </div>
       )}
-
-      {/* Help Section */}
-      <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-blue-800 mb-4">🚀 Getting Started</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-700">
-          <div>
-            <h4 className="font-medium mb-2">To Add Real Products:</h4>
-            <ol className="space-y-1">
-              <li>1. Set up database tables</li>
-              <li>2. Configure product categories</li>
-              <li>3. Add your products</li>
-              <li>4. Manage inventory</li>
-            </ol>
-          </div>
-          <div>
-            <h4 className="font-medium mb-2">Current Features:</h4>
-            <ul className="space-y-1">
-              <li>• View sample products</li>
-              <li>• Search functionality</li>
-              <li>• Product categorization</li>
-              <li>• Image management</li>
-            </ul>
-          </div>
-        </div>
-        <div className="mt-4">
-          <Link
-            href="/check-products-database"
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-          >
-            Set Up Database Now →
-          </Link>
-        </div>
-      </div>
     </div>
   );
 }

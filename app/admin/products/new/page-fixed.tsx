@@ -6,6 +6,7 @@ import { supabase } from '../../../lib/supabase';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import ImageUploader from '../../../components/admin/ImageUploader';
+import toast from 'react-hot-toast';
 
 interface Category {
   id: string;
@@ -90,7 +91,7 @@ export default function NewProductPageFixed() {
     e.preventDefault();
     
     if (usingFallback) {
-      alert('Cannot add products in demo mode. Set up database to enable full functionality.');
+      toast.error('Cannot add products in demo mode. Set up database to enable full functionality.');
       return;
     }
 
@@ -112,7 +113,7 @@ export default function NewProductPageFixed() {
       router.push('/admin/products');
     } catch (error: any) {
       console.error('Error creating product:', error);
-      alert(`Error creating product: ${error.message}`);
+      toast.error(`Error creating product: ${error.message}`);
     } finally {
       setLoading(false);
     }

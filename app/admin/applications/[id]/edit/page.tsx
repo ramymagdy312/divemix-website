@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '../../../../lib/supabase';
 import { Plus, X } from 'lucide-react';
 import ImageUploader from '../../../../components/admin/ImageUploader';
+import toast from 'react-hot-toast';
 
 export default function EditApplicationPage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -36,7 +37,7 @@ export default function EditApplicationPage({ params }: { params: { id: string }
 
       if (error) {
         console.error('Error fetching application:', error);
-        alert('Error fetching application data');
+        toast.error('Error fetching application data');
         return;
       }
       
@@ -52,7 +53,7 @@ export default function EditApplicationPage({ params }: { params: { id: string }
       });
     } catch (error) {
       console.error('Error fetching application:', error);
-      alert('Error fetching application data');
+      toast.error('Error fetching application data');
     } finally {
       setFetchLoading(false);
     }
@@ -76,15 +77,15 @@ export default function EditApplicationPage({ params }: { params: { id: string }
 
       if (error) {
         console.error('Error updating application:', error);
-        alert('Error updating application');
+        toast.error('Error updating application');
         return;
       }
 
-      alert('Application updated successfully!');
+      toast.success('Application updated successfully!');
       router.push('/admin/applications');
     } catch (error) {
       console.error('Error updating application:', error);
-      alert('Error updating application');
+      toast.error('Error updating application');
     } finally {
       setLoading(false);
     }

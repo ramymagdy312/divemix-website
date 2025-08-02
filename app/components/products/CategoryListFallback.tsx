@@ -18,62 +18,62 @@ interface Category {
 }
 
 // Fallback data when database is not available
-const fallbackCategories: Category[] = [
-  {
-    id: '1',
-    name: 'Diving Equipment',
-    description: 'Professional diving gear and equipment for all levels of divers',
-    slug: 'diving-equipment',
-    image_url: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800',
-    is_active: true,
-    display_order: 1
-  },
-  {
-    id: '2',
-    name: 'Safety Gear',
-    description: 'Essential safety equipment for underwater activities and diving',
-    slug: 'safety-gear',
-    image_url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?auto=format&fit=crop&w=800',
-    is_active: true,
-    display_order: 2
-  },
-  {
-    id: '3',
-    name: 'Underwater Cameras',
-    description: 'Capture your underwater adventures with professional cameras',
-    slug: 'underwater-cameras',
-    image_url: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&w=800',
-    is_active: true,
-    display_order: 3
-  },
-  {
-    id: '4',
-    name: 'Accessories',
-    description: 'Essential accessories for diving and underwater activities',
-    slug: 'accessories',
-    image_url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?auto=format&fit=crop&w=800',
-    is_active: true,
-    display_order: 4
-  },
-  {
-    id: '5',
-    name: 'Wetsuits & Gear',
-    description: 'High-quality wetsuits and thermal protection gear',
-    slug: 'wetsuits-gear',
-    image_url: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?auto=format&fit=crop&w=800',
-    is_active: true,
-    display_order: 5
-  },
-  {
-    id: '6',
-    name: 'Maintenance Tools',
-    description: 'Tools and equipment for maintaining your diving gear',
-    slug: 'maintenance-tools',
-    image_url: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=800',
-    is_active: true,
-    display_order: 6
-  }
-];
+// const fallbackCategories: Category[] = [
+//   {
+//     id: '1',
+//     name: 'Diving Equipment',
+//     description: 'Professional diving gear and equipment for all levels of divers',
+//     slug: 'diving-equipment',
+//     image_url: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800',
+//     is_active: true,
+//     display_order: 1
+//   },
+//   {
+//     id: '2',
+//     name: 'Safety Gear',
+//     description: 'Essential safety equipment for underwater activities and diving',
+//     slug: 'safety-gear',
+//     image_url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?auto=format&fit=crop&w=800',
+//     is_active: true,
+//     display_order: 2
+//   },
+//   {
+//     id: '3',
+//     name: 'Underwater Cameras',
+//     description: 'Capture your underwater adventures with professional cameras',
+//     slug: 'underwater-cameras',
+//     image_url: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&w=800',
+//     is_active: true,
+//     display_order: 3
+//   },
+//   {
+//     id: '4',
+//     name: 'Accessories',
+//     description: 'Essential accessories for diving and underwater activities',
+//     slug: 'accessories',
+//     image_url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?auto=format&fit=crop&w=800',
+//     is_active: true,
+//     display_order: 4
+//   },
+//   {
+//     id: '5',
+//     name: 'Wetsuits & Gear',
+//     description: 'High-quality wetsuits and thermal protection gear',
+//     slug: 'wetsuits-gear',
+//     image_url: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?auto=format&fit=crop&w=800',
+//     is_active: true,
+//     display_order: 5
+//   },
+//   {
+//     id: '6',
+//     name: 'Maintenance Tools',
+//     description: 'Tools and equipment for maintaining your diving gear',
+//     slug: 'maintenance-tools',
+//     image_url: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=800',
+//     is_active: true,
+//     display_order: 6
+//   }
+// ];
 
 const CategoryListFallback = () => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -101,7 +101,7 @@ const CategoryListFallback = () => {
           supabaseUrl === 'https://placeholder.supabase.co' ||
           supabaseKey === 'placeholder-key') {
         console.warn('Supabase not configured. Using fallback data.');
-        setCategories(fallbackCategories);
+        // setCategories(fallbackCategories);
         setUsingFallback(true);
         setLoading(false);
         return;
@@ -116,7 +116,7 @@ const CategoryListFallback = () => {
       if (error) {
         console.error('Error fetching product categories:', error);
         console.warn('Using fallback data due to database error.');
-        setCategories(fallbackCategories);
+        // setCategories(fallbackCategories);
         setUsingFallback(true);
       } else {
         setCategories(data || []);
@@ -125,7 +125,7 @@ const CategoryListFallback = () => {
     } catch (error) {
       console.error('Error:', error);
       console.warn('Using fallback data due to connection error.');
-      setCategories(fallbackCategories);
+      // setCategories(fallbackCategories);
       setUsingFallback(true);
     } finally {
       setLoading(false);

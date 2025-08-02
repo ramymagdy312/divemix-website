@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import toast from 'react-hot-toast';
 import ImageUploader from '../components/admin/ImageUploader';
 
 export default function TestProductForm() {
@@ -24,7 +25,7 @@ export default function TestProductForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Form submitted with data:', formData);
-    alert(`Form submitted with ${formData.images.length} images`);
+    toast.success(`Form submitted with ${formData.images.length} images`);
   };
 
   return (

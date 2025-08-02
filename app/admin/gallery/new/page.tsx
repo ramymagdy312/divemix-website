@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabase';
 import { galleryCategoriesData, GalleryCategory } from '../../../data/galleryCategoriesData';
 import SingleImageUploader from '../../../components/admin/SingleImageUploader';
+import toast from 'react-hot-toast';
 
 export default function NewGalleryImagePage() {
   const router = useRouter();
@@ -71,7 +72,7 @@ export default function NewGalleryImagePage() {
       router.push('/admin/gallery');
     } catch (error) {
       console.error('Error creating image:', error);
-      alert('Error adding image');
+      toast.error('Error adding image');
     } finally {
       setLoading(false);
     }
