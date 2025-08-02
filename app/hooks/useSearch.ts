@@ -1,7 +1,5 @@
 "use client";
 
-"use client";
-
 import { useState, useMemo } from 'react';
 
 export interface SearchableItem {

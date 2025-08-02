@@ -8,6 +8,7 @@ export interface Product {
 
 export interface ProductCategory {
   id: string;
+  slug?: string; // Add slug for URL routing
   categoryName: string;
   shortDesc: string;
   hero:string;

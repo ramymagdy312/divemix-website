@@ -7,10 +7,12 @@ import Link from 'next/link';
 
 interface Service {
   id: string;
-  title: string;
+  name: string;
   description: string;
   icon: string;
   features: string[];
+  is_active: boolean;
+  display_order: number;
   created_at: string;
 }
 
@@ -28,12 +30,13 @@ export default function ServicesPage() {
       const { data, error } = await supabase
         .from('services')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('display_order', { ascending: true });
 
       if (error) throw error;
       setServices(data || []);
     } catch (error) {
       console.error('Error fetching services:', error);
+      setServices([]);
     } finally {
       setLoading(false);
     }
@@ -58,7 +61,7 @@ export default function ServicesPage() {
   };
 
   const filteredServices = services.filter(service =>
-    service.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     service.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -110,13 +113,16 @@ export default function ServicesPage() {
                   </div>
                   <div>
                     <h3 className="text-lg font-medium text-gray-900">
-                      {service.title}
+                      {service.name}
                     </h3>
                     <p className="text-sm text-gray-600 mt-1 max-w-md truncate">
                       {service.description}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">
                       {service.features.length} features
+                      <span className={`ml-2 px-2 py-1 text-xs rounded ${service.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                        {service.is_active ? 'Active' : 'Inactive'}
+                      </span>
                     </p>
                   </div>
                 </div>

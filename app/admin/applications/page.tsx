@@ -10,8 +10,11 @@ interface Application {
   id: string;
   name: string;
   description: string;
-  features: string[];
-  images: string[];
+  image_url?: string;
+  use_cases?: string[];
+  benefits?: string[];
+  is_active: boolean;
+  display_order: number;
   created_at: string;
 }
 
@@ -29,12 +32,13 @@ export default function ApplicationsPage() {
       const { data, error } = await supabase
         .from('applications')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('display_order', { ascending: true });
 
       if (error) throw error;
       setApplications(data || []);
     } catch (error) {
       console.error('Error fetching applications:', error);
+      setApplications([]);
     } finally {
       setLoading(false);
     }
@@ -106,9 +110,9 @@ export default function ApplicationsPage() {
             <li key={app.id}>
               <div className="px-4 py-4 flex items-center justify-between">
                 <div className="flex items-center">
-                  {app.images.length > 0 && (
+                  {app.image_url && (
                     <Image
-                      src={app.images[0]}
+                      src={app.image_url}
                       alt={app.name}
                       width={64}
                       height={64}
@@ -123,7 +127,10 @@ export default function ApplicationsPage() {
                       {app.description}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">
-                      {app.features.length} features • {app.images.length} images
+                      {(app.use_cases || []).length} use cases • {(app.benefits || []).length} benefits
+                      <span className={`ml-2 px-2 py-1 text-xs rounded ${app.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                        {app.is_active ? 'Active' : 'Inactive'}
+                      </span>
                     </p>
                   </div>
                 </div>

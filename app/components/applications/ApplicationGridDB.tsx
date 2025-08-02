@@ -9,8 +9,13 @@ interface Application {
   id: string;
   name: string;
   description: string;
-  features: string[];
-  images: string[];
+  short_description: string;
+  image_url: string;
+  industry: string;
+  use_cases: string[];
+  benefits: string[];
+  is_active: boolean;
+  display_order: number;
 }
 
 const ApplicationGridDB: React.FC = () => {
@@ -26,12 +31,15 @@ const ApplicationGridDB: React.FC = () => {
       const { data, error } = await supabase
         .from('applications')
         .select('*')
-        .order('created_at', { ascending: false });
+        .eq('is_active', true)
+        .order('display_order', { ascending: true });
 
       if (error) throw error;
       setApplications(data || []);
     } catch (error) {
       console.error('Error fetching applications:', error);
+      // Fallback to empty array if database fails
+      setApplications([]);
     } finally {
       setLoading(false);
     }
@@ -55,8 +63,8 @@ const ApplicationGridDB: React.FC = () => {
               id: application.id,
               name: application.name,
               desc: application.description,
-              features: application.features,
-              images: application.images
+              features: application.use_cases || [],
+              images: [application.image_url]
             }}
             index={index}
           />

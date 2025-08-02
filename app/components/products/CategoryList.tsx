@@ -26,7 +26,19 @@ const CategoryList = () => {
             {filteredItems.map((category, index) => (
               <CategoryCard
                 key={category.id}
-                category={category}
+                category={{
+                  id: category.id,
+                  name: category.categoryName,
+                  description: category.shortDesc,
+                  slug: category.slug || category.id,
+                  image_url: category.image,
+                  is_active: true,
+                  display_order: index + 1,
+                  categoryName: category.categoryName,
+                  shortDesc: category.shortDesc,
+                  image: category.image,
+                  hero: category.hero
+                }}
                 index={index}
               />
             ))}

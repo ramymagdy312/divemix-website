@@ -171,6 +171,7 @@ export type Database = {
           title: string
           url: string
           category: string
+          category_id: string | null
           created_at: string
           updated_at: string
         }
@@ -179,6 +180,7 @@ export type Database = {
           title: string
           url: string
           category: string
+          category_id?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -187,6 +189,38 @@ export type Database = {
           title?: string
           url?: string
           category?: string
+          category_id?: string | null
+          updated_at?: string
+        }
+      }
+      gallery_categories: {
+        Row: {
+          id: string
+          name: string
+          description: string | null
+          slug: string
+          display_order: number
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          description?: string | null
+          slug: string
+          display_order?: number
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          description?: string | null
+          slug?: string
+          display_order?: number
+          is_active?: boolean
           updated_at?: string
         }
       }

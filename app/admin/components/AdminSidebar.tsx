@@ -23,6 +23,7 @@ const navigation = [
   { name: 'Services', href: '/admin/services', icon: Wrench },
   { name: 'Applications', href: '/admin/applications', icon: Target },
   { name: 'Gallery', href: '/admin/gallery', icon: Image },
+  { name: 'Gallery Categories', href: '/admin/gallery-categories', icon: Settings },
   { name: 'Users', href: '/admin/users', icon: Users },
 ];
 

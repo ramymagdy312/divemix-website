@@ -8,17 +8,24 @@ import { Settings, Wrench, Droplets, FireExtinguisher } from "lucide-react";
 
 interface Service {
   id: string;
-  title: string;
+  name: string;
   description: string;
+  short_description: string;
   icon: string;
   features: string[];
+  is_active: boolean;
+  display_order: number;
 }
 
 const iconMap: { [key: string]: any } = {
-  Settings,
-  Wrench,
-  Droplets,
-  FireExtinguisher,
+  '🔧': Settings,
+  '🛠️': Wrench,
+  '💨': Droplets,
+  '🔥': FireExtinguisher,
+  'Settings': Settings,
+  'Wrench': Wrench,
+  'Droplets': Droplets,
+  'FireExtinguisher': FireExtinguisher,
 };
 
 const ServiceGridDB: React.FC = () => {
@@ -34,12 +41,15 @@ const ServiceGridDB: React.FC = () => {
       const { data, error } = await supabase
         .from('services')
         .select('*')
-        .order('created_at', { ascending: false });
+        .eq('is_active', true)
+        .order('display_order', { ascending: true });
 
       if (error) throw error;
       setServices(data || []);
     } catch (error) {
       console.error('Error fetching services:', error);
+      // Fallback to empty array if database fails
+      setServices([]);
     } finally {
       setLoading(false);
     }
@@ -59,7 +69,7 @@ const ServiceGridDB: React.FC = () => {
         {services.map((service, index) => (
           <ServiceCard
             key={service.id}
-            title={service.title}
+            title={service.name}
             description={service.description}
             Icon={iconMap[service.icon] || Settings}
             features={service.features}

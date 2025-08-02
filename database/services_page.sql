@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS services_page (
     hero_image TEXT NOT NULL,
     intro_title TEXT NOT NULL,
     intro_description TEXT NOT NULL,
+    is_active BOOLEAN DEFAULT true,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

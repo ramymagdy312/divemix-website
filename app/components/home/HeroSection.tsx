@@ -10,7 +10,7 @@ const HeroSection = () => {
     <section className="relative min-h-screen flex items-center">
       <div className="absolute inset-0">
         <Image
-          src="img/gallery/maintenence.jpg"
+          src="img/hero/home.jpg"
           alt="Industrial equipment"
           fill
           className="object-cover"
