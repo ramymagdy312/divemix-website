@@ -161,7 +161,7 @@ export default function BasicGallery() {
       document.addEventListener('keydown', handleKeyDown);
       return () => document.removeEventListener('keydown', handleKeyDown);
     }
-  }, [selectedImage]);
+  }, [selectedImage]); // eslint-disable-line react-hooks/exhaustive-deps
 
   console.log('BasicGallery rendering with', filteredImages.length, 'filtered images');
   

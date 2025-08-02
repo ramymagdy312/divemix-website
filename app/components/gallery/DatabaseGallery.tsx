@@ -138,7 +138,7 @@ export default function DatabaseGallery() {
       document.addEventListener('keydown', handleKeyDown);
       return () => document.removeEventListener('keydown', handleKeyDown);
     }
-  }, [selectedImage]);
+  }, [selectedImage]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (loading) {
     return (

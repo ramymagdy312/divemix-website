@@ -150,9 +150,9 @@ WHERE tablename IN ('applications', 'services', 'product_categories');
         <div className="text-sm text-yellow-600">
           <strong>Common symptoms:</strong>
           <ul className="mt-1 space-y-1">
-            <li>• "new row violates row-level security policy" error</li>
-            <li>• Forms submit but data doesn't save</li>
-            <li>• "permission denied" errors in console</li>
+            <li>• &quot;new row violates row-level security policy&quot; error</li>
+            <li>• Forms submit but data doesn&apos;t save</li>
+            <li>• &quot;permission denied&quot; errors in console</li>
             <li>• Empty tables even after successful submissions</li>
           </ul>
         </div>
@@ -200,7 +200,7 @@ WHERE tablename IN ('applications', 'services', 'product_categories');
               <li>1. Go to Supabase Dashboard</li>
               <li>2. Database → Tables</li>
               <li>3. Click table name</li>
-              <li>4. Toggle "Enable RLS" OFF</li>
+              <li>4. Toggle &quot;Enable RLS&quot; OFF</li>
               <li>5. Test forms again</li>
             </ol>
             <p className="text-xs mt-2 opacity-75">⚠️ Only for development!</p>

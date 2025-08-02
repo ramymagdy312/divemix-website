@@ -1,0 +1,61 @@
+(()=>{var e={};e.id=4834,e.ids=[4834],e.modules={72934:e=>{"use strict";e.exports=require("next/dist/client/components/action-async-storage.external.js")},54580:e=>{"use strict";e.exports=require("next/dist/client/components/request-async-storage.external.js")},45869:e=>{"use strict";e.exports=require("next/dist/client/components/static-generation-async-storage.external.js")},20399:e=>{"use strict";e.exports=require("next/dist/compiled/next-server/app-page.runtime.prod.js")},78893:e=>{"use strict";e.exports=require("buffer")},84770:e=>{"use strict";e.exports=require("crypto")},17702:e=>{"use strict";e.exports=require("events")},32615:e=>{"use strict";e.exports=require("http")},35240:e=>{"use strict";e.exports=require("https")},98216:e=>{"use strict";e.exports=require("net")},68621:e=>{"use strict";e.exports=require("punycode")},76162:e=>{"use strict";e.exports=require("stream")},82452:e=>{"use strict";e.exports=require("tls")},17360:e=>{"use strict";e.exports=require("url")},71568:e=>{"use strict";e.exports=require("zlib")},58359:()=>{},93739:()=>{},89804:(e,s,t)=>{"use strict";t.r(s),t.d(s,{GlobalError:()=>n.a,__next_app__:()=>p,originalPathname:()=>m,pages:()=>d,routeModule:()=>u,tree:()=>c}),t(39488),t(11506),t(35866);var i=t(23191),a=t(88716),r=t(37922),n=t.n(r),l=t(95231),o={};for(let e in l)0>["default","tree","pages","GlobalError","originalPathname","__next_app__","routeModule"].indexOf(e)&&(o[e]=()=>l[e]);t.d(s,o);let c=["",{children:["update-applications-schema",{children:["__PAGE__",{},{page:[()=>Promise.resolve().then(t.bind(t,39488)),"D:\\Ramy\\RTS\\ReactJS\\divemix-website\\app\\update-applications-schema\\page.tsx"]}]},{}]},{layout:[()=>Promise.resolve().then(t.bind(t,11506)),"D:\\Ramy\\RTS\\ReactJS\\divemix-website\\app\\layout.tsx"],"not-found":[()=>Promise.resolve().then(t.t.bind(t,35866,23)),"next/dist/client/components/not-found-error"]}],d=["D:\\Ramy\\RTS\\ReactJS\\divemix-website\\app\\update-applications-schema\\page.tsx"],m="/update-applications-schema/page",p={require:t,loadChunk:()=>Promise.resolve()},u=new i.AppPageRouteModule({definition:{kind:a.x.APP_PAGE,page:"/update-applications-schema/page",pathname:"/update-applications-schema",bundlePath:"",filename:"",appPaths:[]},userland:{loaderTree:c}})},72593:()=>{},32488:(e,s,t)=>{Promise.resolve().then(t.bind(t,13676))},29823:(e,s,t)=>{Promise.resolve().then(t.t.bind(t,12994,23)),Promise.resolve().then(t.t.bind(t,96114,23)),Promise.resolve().then(t.t.bind(t,9727,23)),Promise.resolve().then(t.t.bind(t,79671,23)),Promise.resolve().then(t.t.bind(t,41868,23)),Promise.resolve().then(t.t.bind(t,84759,23))},99060:(e,s,t)=>{"use strict";t.d(s,{O:()=>n});var i=t(52997);let a="https://ilxfqrxybtcftioizoan.supabase.co",r="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlseGZxcnh5YnRjZnRpb2l6b2FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM4NTg5MjMsImV4cCI6MjA2OTQzNDkyM30.Jhjy7136xlqHcVjeCGPDvh4Ofpio3a09Y2fFu2Sqqh0";a||console.warn("Supabase URL not configured properly. Using fallback configuration."),r||console.warn("Supabase Anon Key not configured properly. Using fallback configuration.");let n=(0,i.eI)(a||"https://placeholder.supabase.co",r||"placeholder-key")},13676:(e,s,t)=>{"use strict";t.r(s),t.d(s,{default:()=>n});var i=t(10326),a=t(17577),r=t(99060);function n(){let[e,s]=(0,a.useState)(""),[t,n]=(0,a.useState)(!1),l=async()=>{n(!0),s("\uD83D\uDD04 Updating Applications schema to support multiple images...\n\n");try{s(e=>e+"1. Checking current schema...\n");let{data:e,error:t}=await r.O.from("applications").select("*").limit(1);if(t){s(e=>e+`   ❌ Error checking schema: ${t.message}
+`);return}let i=e?.[0];if(i){let e=Object.keys(i);s(s=>s+`   ✅ Current fields: ${e.join(", ")}
+`),e.includes("images")?s(e=>e+"   ✅ Schema already supports multiple images\n"):e.includes("image_url")&&s(e=>e+"   ⚠️  Schema uses single image_url, needs update\n")}else s(e=>e+"   ℹ️  Table is empty, cannot check current schema\n");s(e=>e+"\n2. Schema update options:\n"),s(e=>e+"   Option A: Add images[] column alongside image_url\n"),s(e=>e+"   Option B: Rename image_url to images and change type\n"),s(e=>e+"   Option C: Migrate existing image_url data to images[]\n\n"),s(e=>e+"3. Required SQL commands (run in Supabase SQL Editor):\n\n");let a=`-- Option A: Add images column (recommended)
+ALTER TABLE applications ADD COLUMN IF NOT EXISTS images TEXT[];
+
+-- Option B: If you want to replace image_url completely
+-- ALTER TABLE applications DROP COLUMN IF EXISTS image_url;
+-- ALTER TABLE applications ADD COLUMN images TEXT[];
+
+-- Option C: Migrate existing data (if you have data in image_url)
+-- UPDATE applications 
+-- SET images = ARRAY[image_url] 
+-- WHERE image_url IS NOT NULL AND image_url != '';
+
+-- Check the updated schema
+SELECT column_name, data_type, is_nullable 
+FROM information_schema.columns 
+WHERE table_name = 'applications' 
+ORDER BY ordinal_position;`;s(e=>e+a+"\n\n"),s(e=>e+"4. Testing schema update...\n");try{let{data:e,error:t}=await r.O.from("applications").insert([{name:"Schema Test Application",description:"Testing images array support",images:["https://example.com/test1.jpg","https://example.com/test2.jpg"],use_cases:["Test use case"],benefits:["Test benefit"],is_active:!0,display_order:999}]).select().single();t?t.message.includes('column "images" does not exist')?(s(e=>e+"   ⚠️  images column does not exist - needs to be added\n"),s(e=>e+"   \uD83D\uDCA1 Run the SQL commands above to add the column\n")):s(e=>e+`   ❌ Insert test failed: ${t.message}
+`):(s(e=>e+"   ✅ images array support is working!\n"),await r.O.from("applications").delete().eq("id",e.id),s(e=>e+"   \uD83E\uDDF9 Test data cleaned up\n"))}catch(e){s(s=>s+`   ❌ Schema test failed: ${e.message}
+`)}s(e=>e+"\n5. Next steps:\n"),s(e=>e+"   • Run the SQL commands in Supabase SQL Editor\n"),s(e=>e+"   • Update the application forms to use ImageUploader\n"),s(e=>e+"   • Test the updated forms\n"),s(e=>e+"   • Migrate existing image_url data if needed\n\n"),s(e=>e+"\uD83C\uDF89 Schema analysis complete!\n")}catch(e){s(s=>s+`
+❌ Schema update failed: ${e.message}
+`)}finally{n(!1)}};return(0,i.jsxs)("div",{className:"p-8",children:[i.jsx("h1",{className:"text-3xl font-bold mb-6",children:"\uD83D\uDD04 Update Applications Schema for Multiple Images"}),(0,i.jsxs)("div",{className:"mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4",children:[i.jsx("h2",{className:"text-lg font-semibold text-blue-800 mb-2",children:"\uD83D\uDCF8 Multiple Images Support"}),i.jsx("p",{className:"text-blue-700 mb-2",children:"Updating the applications table to support multiple images instead of a single image_url."}),(0,i.jsxs)("div",{className:"text-sm text-blue-600",children:[i.jsx("strong",{children:"Changes needed:"}),(0,i.jsxs)("ul",{className:"mt-1 space-y-1",children:[i.jsx("li",{children:"• Add images[] column to store multiple image URLs"}),i.jsx("li",{children:"• Update forms to use ImageUploader component"}),i.jsx("li",{children:"• Migrate existing image_url data (if any)"}),i.jsx("li",{children:"• Test the updated functionality"})]})]})]}),(0,i.jsxs)("div",{className:"grid grid-cols-1 md:grid-cols-2 gap-4 mb-6",children:[(0,i.jsxs)("button",{onClick:l,disabled:t,className:"bg-blue-600 text-white px-6 py-4 rounded-lg hover:bg-blue-700 disabled:opacity-50 text-left",children:[i.jsx("div",{className:"font-semibold mb-1",children:"\uD83D\uDD0D Analyze Current Schema"}),i.jsx("div",{className:"text-sm opacity-90",children:"Check current structure and plan updates"})]}),(0,i.jsxs)("button",{onClick:()=>{s(`
+-- 🔄 Complete Applications Schema Migration Script
+-- Run these commands in your Supabase SQL Editor
+
+-- Step 1: Add images column if it doesn't exist
+ALTER TABLE applications ADD COLUMN IF NOT EXISTS images TEXT[];
+
+-- Step 2: Migrate existing image_url data to images array (optional)
+UPDATE applications 
+SET images = CASE 
+  WHEN image_url IS NOT NULL AND image_url != '' THEN ARRAY[image_url]
+  ELSE ARRAY[]::TEXT[]
+END
+WHERE images IS NULL;
+
+-- Step 3: Check the migration results
+SELECT 
+  id, 
+  name, 
+  image_url, 
+  images,
+  CASE 
+    WHEN images IS NOT NULL AND array_length(images, 1) > 0 THEN 'Has images'
+    WHEN image_url IS NOT NULL AND image_url != '' THEN 'Has image_url only'
+    ELSE 'No images'
+  END as image_status
+FROM applications
+ORDER BY id;
+
+-- Step 4: (Optional) Remove image_url column after migration
+-- Only run this after confirming the migration worked correctly
+-- ALTER TABLE applications DROP COLUMN image_url;
+
+-- Step 5: Verify final schema
+SELECT column_name, data_type, is_nullable 
+FROM information_schema.columns 
+WHERE table_name = 'applications' 
+ORDER BY ordinal_position;
+`)},className:"bg-green-600 text-white px-6 py-4 rounded-lg hover:bg-green-700 text-left",children:[i.jsx("div",{className:"font-semibold mb-1",children:"\uD83D\uDCDD Show Migration Script"}),i.jsx("div",{className:"text-sm opacity-90",children:"Get complete SQL migration commands"})]})]}),e&&(0,i.jsxs)("div",{className:"bg-gray-900 text-green-400 p-6 rounded-lg font-mono text-sm",children:[(0,i.jsxs)("div",{className:"flex justify-between items-center mb-4",children:[i.jsx("h2",{className:"text-lg text-white",children:"\uD83D\uDCCB Schema Analysis Results:"}),i.jsx("button",{onClick:()=>navigator.clipboard.writeText(e),className:"bg-gray-700 text-white px-3 py-1 rounded text-xs hover:bg-gray-600",children:"\uD83D\uDCCB Copy"})]}),i.jsx("pre",{className:"whitespace-pre-wrap max-h-96 overflow-y-auto",children:e})]}),(0,i.jsxs)("div",{className:"mt-8 grid grid-cols-1 md:grid-cols-3 gap-6",children:[(0,i.jsxs)("div",{className:"bg-yellow-50 border border-yellow-200 rounded-lg p-4",children:[i.jsx("h3",{className:"font-semibold text-yellow-800 mb-2",children:"⚠️ Before Migration"}),(0,i.jsxs)("div",{className:"text-sm text-yellow-700 space-y-2",children:[i.jsx("p",{children:i.jsx("strong",{children:"Backup your data:"})}),(0,i.jsxs)("ul",{className:"space-y-1",children:[i.jsx("li",{children:"• Export applications table"}),i.jsx("li",{children:"• Test on development first"}),i.jsx("li",{children:"• Verify existing image URLs"}),i.jsx("li",{children:"• Plan rollback strategy"})]})]})]}),(0,i.jsxs)("div",{className:"bg-blue-50 border border-blue-200 rounded-lg p-4",children:[i.jsx("h3",{className:"font-semibold text-blue-800 mb-2",children:"\uD83D\uDD04 Migration Steps"}),i.jsx("div",{className:"text-sm text-blue-700 space-y-2",children:(0,i.jsxs)("ol",{className:"space-y-1",children:[i.jsx("li",{children:"1. Run schema analysis"}),i.jsx("li",{children:"2. Execute SQL commands"}),i.jsx("li",{children:"3. Update form components"}),i.jsx("li",{children:"4. Test image upload"}),i.jsx("li",{children:"5. Migrate existing data"})]})})]}),(0,i.jsxs)("div",{className:"bg-green-50 border border-green-200 rounded-lg p-4",children:[i.jsx("h3",{className:"font-semibold text-green-800 mb-2",children:"✅ After Migration"}),(0,i.jsxs)("div",{className:"text-sm text-green-700 space-y-2",children:[i.jsx("p",{children:i.jsx("strong",{children:"You'll have:"})}),(0,i.jsxs)("ul",{className:"space-y-1",children:[i.jsx("li",{children:"• Multiple image upload"}),i.jsx("li",{children:"• Drag & drop interface"}),i.jsx("li",{children:"• Image preview grid"}),i.jsx("li",{children:"• Automatic file management"})]})]})]})]})]})}},11506:(e,s,t)=>{"use strict";t.r(s),t.d(s,{default:()=>r,metadata:()=>a});var i=t(19510);t(67272);let a={title:"DiveMix - Gas & Compressor Technologies",description:"Leading the industry in compressed air and gas solutions since 1990",icons:{icon:"/img/faveicon.ico"}};function r({children:e}){return i.jsx("html",{lang:"en",children:i.jsx("body",{children:e})})}},39488:(e,s,t)=>{"use strict";t.r(s),t.d(s,{default:()=>i});let i=(0,t(68570).createProxy)(String.raw`D:\Ramy\RTS\ReactJS\divemix-website\app\update-applications-schema\page.tsx#default`)},67272:()=>{}};var s=require("../../webpack-runtime.js");s.C(e);var t=e=>s(s.s=e),i=s.X(0,[9276,4471,2997],()=>t(89804));module.exports=i})();

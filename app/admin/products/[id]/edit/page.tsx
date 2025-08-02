@@ -60,7 +60,7 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
 
   useEffect(() => {
     fetchProduct();
-  }, [params.id]);
+  }, [params.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchProduct = async () => {
     try {
