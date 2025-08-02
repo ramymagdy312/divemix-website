@@ -187,7 +187,7 @@ export default function TestImageUpload() {
             <p>For real image uploads:</p>
             <ul className="space-y-1">
               <li>• Configure Supabase Storage</li>
-              <li>• Create 'images' bucket</li>
+              <li>• Create &apos;images&apos; bucket</li>
               <li>• Set proper permissions</li>
               <li>• Update environment variables</li>
             </ul>

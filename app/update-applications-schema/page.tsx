@@ -249,7 +249,7 @@ ORDER BY ordinal_position;
         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
           <h3 className="font-semibold text-green-800 mb-2">✅ After Migration</h3>
           <div className="text-sm text-green-700 space-y-2">
-            <p><strong>You'll have:</strong></p>
+            <p><strong>You&apos;ll have:</strong></p>
             <ul className="space-y-1">
               <li>• Multiple image upload</li>
               <li>• Drag & drop interface</li>

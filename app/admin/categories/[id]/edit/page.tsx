@@ -85,7 +85,7 @@ export default function EditCategoryPage({ params }: { params: { id: string } })
 
   useEffect(() => {
     fetchCategory();
-  }, [params.id]);
+  }, [params.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchCategory = async () => {
     try {

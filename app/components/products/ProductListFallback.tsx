@@ -164,7 +164,7 @@ const ProductListFallback: React.FC<ProductListFallbackProps> = ({ categoryId, c
 
   useEffect(() => {
     fetchProducts();
-  }, [categoryId]);
+  }, [categoryId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchProducts = async () => {
     try {

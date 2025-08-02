@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import Image from 'next/image';
 import ImageUploader from '../components/admin/ImageUploader';
 
 export default function TestProductForm() {
@@ -87,6 +88,29 @@ export default function TestProductForm() {
               </ul>
             </div>
           </div>
+
+          {/* Image Preview */}
+          {formData.images.length > 0 && (
+            <div className="bg-white border rounded-lg p-4">
+              <h3 className="font-medium text-gray-900 mb-3">Image Preview:</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {formData.images.map((img, index) => (
+                  <div key={index} className="relative">
+                    <Image
+                      src={img}
+                      alt={`Preview ${index + 1}`}
+                      width={96}
+                      height={96}
+                      className="w-full h-24 object-cover rounded border"
+                    />
+                    <div className="absolute top-1 left-1 bg-black bg-opacity-50 text-white text-xs px-1 rounded">
+                      {index + 1}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <button
             type="submit"

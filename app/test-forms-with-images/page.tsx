@@ -68,7 +68,7 @@ export default function TestFormsWithImages() {
           Test the updated application forms to ensure image upload functionality works correctly.
         </p>
         <div className="text-sm text-blue-600">
-          <strong>What's been updated:</strong>
+          <strong>What&apos;s been updated:</strong>
           <ul className="mt-1 space-y-1">
             <li>• Forms now use ImageUploader component instead of URL input</li>
             <li>• Support for multiple image uploads (up to 10 images)</li>
@@ -83,7 +83,7 @@ export default function TestFormsWithImages() {
       <div className="mb-8 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
         <h3 className="font-semibold text-yellow-800 mb-2">⚠️ Prerequisites</h3>
         <div className="text-sm text-yellow-700 space-y-2">
-          <p><strong>Before testing, make sure you've completed:</strong></p>
+          <p><strong>Before testing, make sure you&apos;ve completed:</strong></p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
             <div>
               <h4 className="font-medium mb-1">1. Database Schema Update:</h4>
@@ -222,7 +222,7 @@ export default function TestFormsWithImages() {
         
         <div className="space-y-4 text-sm text-red-700">
           <div>
-            <strong>Issue:</strong> "Column 'images' does not exist" error
+            <strong>Issue:</strong> &quot;Column &apos;images&apos; does not exist&quot; error
             <br />
             <strong>Solution:</strong> Run the SQL command to add the images column:
             <code className="block mt-1 bg-red-100 px-2 py-1 rounded text-xs">
@@ -258,7 +258,7 @@ export default function TestFormsWithImages() {
             Excellent! The image upload functionality is working correctly in your application forms.
           </p>
           <div className="text-sm text-green-600">
-            <strong>What's working:</strong>
+            <strong>What&apos;s working:</strong>
             <ul className="mt-2 space-y-1">
               <li>✅ Image upload component is functional</li>
               <li>✅ Multiple images can be uploaded and managed</li>

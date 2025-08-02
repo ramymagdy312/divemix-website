@@ -166,10 +166,10 @@ export default function TestAdminForms() {
         <div className="bg-yellow-50 border border-yellow-200 rounded p-4">
           <h3 className="font-semibold text-yellow-800 mb-2">🧪 Testing Instructions:</h3>
           <ol className="text-sm text-yellow-700 space-y-1">
-            <li>1. Click "Open Page" to test each admin page</li>
+            <li>1. Click &quot;Open Page&quot; to test each admin page</li>
             <li>2. For List pages: Check if data loads without errors</li>
             <li>3. For Form pages: Try filling and submitting the form</li>
-            <li>4. Mark as "Works" ✅ if no errors, "Error" ❌ if problems found</li>
+            <li>4. Mark as &quot;Works&quot; ✅ if no errors, &quot;Error&quot; ❌ if problems found</li>
             <li>5. If errors persist, check browser console for details</li>
           </ol>
         </div>
