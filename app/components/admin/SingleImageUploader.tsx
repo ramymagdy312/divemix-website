@@ -2,6 +2,7 @@
 import React, { useState, useRef } from 'react';
 import { Upload, X, Image as ImageIcon, Loader2 } from 'lucide-react';
 import Image from 'next/image';
+import toast from 'react-hot-toast';
 
 interface SingleImageUploaderProps {
   image: string;
@@ -26,12 +27,12 @@ const SingleImageUploader: React.FC<SingleImageUploaderProps> = ({
     const file = files[0];
     
     if (!file.type.startsWith('image/')) {
-      alert('Please select a valid image file');
+      toast.error('Please select a valid image file');
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) { // 5MB limit
-      alert('Image size must be less than 5MB');
+      toast.error('Image size must be less than 5MB');
       return;
     }
 
@@ -56,7 +57,7 @@ const SingleImageUploader: React.FC<SingleImageUploaderProps> = ({
       setUploading(false);
     } catch (error) {
       console.error('Error uploading image:', error);
-      alert('Error occurred while uploading image');
+      toast.error('Error occurred while uploading image');
       setUploading(false);
     }
   };

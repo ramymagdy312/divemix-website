@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { applicationsPageData } from '../../data/applicationsPageData';
 import { Edit, Save, X } from 'lucide-react';
+import toast from 'react-hot-toast';
 import ImageUpload from '../../components/admin/ImageUpload';
 import Image from 'next/image';
 import Breadcrumb from '../../components/admin/Breadcrumb';
@@ -92,14 +93,14 @@ export default function ApplicationsPageAdmin() {
 
       if (error) {
         console.error('Error saving applications page data:', error);
-        alert('Error saving data');
+        toast.error('Error saving data');
       } else {
         setEditing(false);
-        alert('Applications page updated successfully!');
+        toast.success('Applications page updated successfully!');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Error saving data');
+      toast.error('Error saving data');
     } finally {
       setSaving(false);
     }

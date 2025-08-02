@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { Plus, X, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
 import ImageUploader from '../../../components/admin/ImageUploader';
 
 interface Category {
@@ -103,7 +104,7 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
     e.preventDefault();
     
     if (usingFallback) {
-      alert('Cannot save products in demo mode. Set up database to enable full functionality.');
+      toast.error('Cannot save products in demo mode. Set up database to enable full functionality.');
       return;
     }
     

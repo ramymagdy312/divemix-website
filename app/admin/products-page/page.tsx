@@ -7,6 +7,7 @@ import { Edit, Save, X } from 'lucide-react';
 import ImageUpload from '../../components/admin/ImageUpload';
 import Image from 'next/image';
 import Breadcrumb from '../../components/admin/Breadcrumb';
+import toast from 'react-hot-toast';
 
 interface ProductsPageData {
   id: string;
@@ -92,14 +93,14 @@ export default function ProductsPageAdmin() {
 
       if (error) {
         console.error('Error saving products page data:', error);
-        alert('Error saving data');
+        toast.error('Error saving data');
       } else {
         setEditing(false);
-        alert('Products page updated successfully!');
+        toast.success('Products page updated successfully!');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Error saving data');
+      toast.error('Error saving data');
     } finally {
       setSaving(false);
     }

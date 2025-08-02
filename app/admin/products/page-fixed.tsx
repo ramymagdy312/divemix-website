@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase';
 import { Plus, Edit, Trash2, Search, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import toast from 'react-hot-toast';
 
 interface Product {
   id: string;
@@ -143,7 +144,7 @@ export default function ProductsPageFixed() {
 
   const deleteProduct = async (id: string) => {
     if (usingFallback) {
-      alert('Cannot delete products in demo mode. Set up database to enable full functionality.');
+      toast.error('Cannot delete products in demo mode. Set up database to enable full functionality.');
       return;
     }
 
@@ -160,7 +161,7 @@ export default function ProductsPageFixed() {
       setProducts(products.filter(p => p.id !== id));
     } catch (error: any) {
       console.error('Error deleting product:', error);
-      alert(`Error deleting product: ${error.message}`);
+      toast.error(`Error deleting product: ${error.message}`);
     }
   };
 
@@ -228,7 +229,7 @@ export default function ProductsPageFixed() {
             onClick={(e) => {
               if (usingFallback) {
                 e.preventDefault();
-                alert('Set up database first to add real products');
+                toast.error('Set up database first to add real products');
               }
             }}
           >
@@ -299,7 +300,7 @@ export default function ProductsPageFixed() {
                     onClick={(e) => {
                       if (usingFallback) {
                         e.preventDefault();
-                        alert('Set up database first to edit products');
+                        toast.error('Set up database first to edit products');
                       }
                     }}
                   >

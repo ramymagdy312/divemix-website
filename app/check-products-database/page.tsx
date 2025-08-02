@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { CheckCircle, XCircle, AlertCircle, Database, Copy, ExternalLink, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
 
 interface TableStatus {
   name: string;
@@ -62,7 +63,7 @@ export default function CheckProductsDatabase() {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    alert('SQL copied to clipboard!');
+    toast.success('SQL copied to clipboard!');
   };
 
   const createTablesSQL = `-- 🚀 Quick Setup: Products Database Tables

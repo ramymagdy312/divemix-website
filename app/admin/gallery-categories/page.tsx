@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase';
 import { galleryCategoriesData, GalleryCategory } from '../../data/galleryCategoriesData';
 import { Edit, Save, X, Plus, Trash2, Eye, EyeOff } from 'lucide-react';
 import Breadcrumb from '../../components/admin/Breadcrumb';
+import toast from 'react-hot-toast';
 
 export default function GalleryCategoriesAdmin() {
   const [categories, setCategories] = useState<GalleryCategory[]>(galleryCategoriesData);
@@ -98,15 +99,15 @@ export default function GalleryCategoriesAdmin() {
 
       if (error) {
         console.error('Error updating category:', error);
-        alert('Error updating category');
+        toast.error('Error updating category');
       } else {
         setEditingId(null);
         fetchCategories();
-        alert('Category updated successfully!');
+        toast.success('Category updated successfully!');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Error updating category');
+      toast.error('Error updating category');
     } finally {
       setSaving(false);
     }
@@ -155,16 +156,16 @@ export default function GalleryCategoriesAdmin() {
 
       if (error) {
         console.error('Error adding category:', error);
-        alert('Error adding category');
+        toast.error('Error adding category');
       } else {
         setNewCategory({ name: '', description: '', slug: '', display_order: 0, is_active: true });
         setShowAddForm(false);
         fetchCategories();
-        alert('Category added successfully!');
+        toast.success('Category added successfully!');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Error adding category');
+      toast.error('Error adding category');
     } finally {
       setSaving(false);
     }
@@ -196,14 +197,14 @@ export default function GalleryCategoriesAdmin() {
 
       if (error) {
         console.error('Error deleting category:', error);
-        alert('Error deleting category');
+        toast.error('Error deleting category');
       } else {
         fetchCategories();
-        alert('Category deleted successfully!');
+        toast.success('Category deleted successfully!');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Error deleting category');
+      toast.error('Error deleting category');
     }
   };
 

@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import toast from 'react-hot-toast';
 
 interface Application {
   id: string;
@@ -58,7 +59,7 @@ export default function ApplicationsPage() {
       setApplications(applications.filter(a => a.id !== id));
     } catch (error) {
       console.error('Error deleting application:', error);
-      alert('Error deleting application');
+      toast.error('Error deleting application');
     }
   };
 

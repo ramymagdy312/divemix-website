@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '../../../../lib/supabase';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
 import ProductForm from '../../components/ProductForm';
 
 interface Product {
@@ -116,7 +117,7 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
 
   const handleSubmit = async (productData: any) => {
     if (usingFallback) {
-      alert('Cannot update products in demo mode. Set up database to enable full functionality.');
+      toast.error('Cannot update products in demo mode. Set up database to enable full functionality.');
       return;
     }
 
@@ -129,15 +130,15 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
 
       if (error) {
         console.error('Error updating product:', error);
-        alert(`Error updating product: ${error.message}`);
+        toast.error(`Error updating product: ${error.message}`);
         return;
       }
 
-      alert('Product updated successfully!');
+      toast.success('Product updated successfully!');
       router.push('/admin/products');
     } catch (error: any) {
       console.error('Error updating product:', error);
-      alert(`Error updating product: ${error.message}`);
+      toast.error(`Error updating product: ${error.message}`);
     } finally {
       setLoading(false);
     }

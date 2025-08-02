@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { supabase } from "../../lib/supabase";
 import ProductDetail from "./ProductDetail";
-import ProductListFallback from "./ProductListFallback";
 import SearchBar from "./SearchBar";
 import { useSearch } from "../../hooks/useSearch";
 import AnimatedElement from "../common/AnimatedElement";
@@ -89,13 +88,6 @@ const ProductListDB: React.FC<ProductListDBProps> = ({ categoryId }) => {
       </div>
     );
   }
-
-  // If there's an error or no products found, fall back to the fallback component
-  if (error || products.length === 0) {
-    console.log('Falling back to ProductListFallback due to:', error || 'No products found');
-    return <ProductListFallback categoryId={categoryId} categorySlug={categoryId} />;
-  }
-
   return (
     <AnimatedElement animation="fadeIn">
       <div>

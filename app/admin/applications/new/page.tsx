@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabase';
 import { Plus, X } from 'lucide-react';
 import ImageUploader from '../../../components/admin/ImageUploader';
+import toast from 'react-hot-toast';
 
 export default function NewApplicationPage() {
   const router = useRouter();
@@ -39,7 +40,7 @@ export default function NewApplicationPage() {
       router.push('/admin/applications');
     } catch (error) {
       console.error('Error creating application:', error);
-      alert('Error creating application');
+      toast.error('Error creating application');
     } finally {
       setLoading(false);
     }

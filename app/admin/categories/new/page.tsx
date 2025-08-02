@@ -6,6 +6,7 @@ import { supabase } from '../../../lib/supabase';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import CategoryForm from '../components/CategoryForm';
+import toast from 'react-hot-toast';
 
 export default function NewCategoryPage() {
   const router = useRouter();
@@ -22,7 +23,7 @@ export default function NewCategoryPage() {
         supabaseKey === 'your-supabase-anon-key' ||
         supabaseUrl === 'https://placeholder.supabase.co' ||
         supabaseKey === 'placeholder-key') {
-      alert('Cannot add categories in demo mode. Set up database to enable full functionality.');
+      toast.error('Cannot add categories in demo mode. Set up database to enable full functionality.');
       return;
     }
 
@@ -34,11 +35,11 @@ export default function NewCategoryPage() {
 
       if (error) throw error;
 
-      alert('Category created successfully!');
+      toast.success('Category created successfully!');
       router.push('/admin/categories');
     } catch (error: any) {
       console.error('Error creating category:', error);
-      alert(`Error creating category: ${error.message}`);
+      toast.error(`Error creating category: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -46,22 +47,6 @@ export default function NewCategoryPage() {
 
   return (
     <div>
-      {/* Demo Mode Banner */}
-      <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-        <div className="flex items-center">
-          <AlertCircle className="h-5 w-5 text-yellow-400 mr-3" />
-          <div className="flex-1">
-            <h3 className="text-sm font-medium text-yellow-800">Demo Mode Active</h3>
-            <p className="text-sm text-yellow-700 mt-1">
-              Database not configured. Set up database to add real categories.
-              <Link href="/check-products-database" className="underline ml-2">
-                Set up database →
-              </Link>
-            </p>
-          </div>
-        </div>
-      </div>
-
       <div className="mb-8">
         <div className="flex items-center mb-4">
           <Link

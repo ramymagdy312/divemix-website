@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '../../../../lib/supabase';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
 import CategoryForm from '../../components/CategoryForm';
 
 interface Category {
@@ -141,7 +142,7 @@ export default function EditCategoryPage({ params }: { params: { id: string } })
 
   const handleSubmit = async (categoryData: any) => {
     if (usingFallback) {
-      alert('Cannot update categories in demo mode. Set up database to enable full functionality.');
+      toast.error('Cannot update categories in demo mode. Set up database to enable full functionality.');
       return;
     }
 
@@ -154,15 +155,15 @@ export default function EditCategoryPage({ params }: { params: { id: string } })
 
       if (error) {
         console.error('Error updating category:', error);
-        alert(`Error updating category: ${error.message}`);
+        toast.error(`Error updating category: ${error.message}`);
         return;
       }
 
-      alert('Category updated successfully!');
+      toast.success('Category updated successfully!');
       router.push('/admin/categories');
     } catch (error: any) {
       console.error('Error updating category:', error);
-      alert(`Error updating category: ${error.message}`);
+      toast.error(`Error updating category: ${error.message}`);
     } finally {
       setLoading(false);
     }

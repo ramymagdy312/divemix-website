@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { Plus, X, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
 
 interface Category {
   id: string;
@@ -103,7 +104,7 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
     e.preventDefault();
     
     if (usingFallback) {
-      alert('Cannot save products in demo mode. Set up database to enable full functionality.');
+      toast.error('Cannot save products in demo mode. Set up database to enable full functionality.');
       return;
     }
     
@@ -409,7 +410,7 @@ const SimpleImageUploader: React.FC<SimpleImageUploaderProps> = ({
     if (!newImageUrl.trim()) return;
     
     if (images.length >= maxImages) {
-      alert(`Maximum ${maxImages} images allowed`);
+      toast.error(`Maximum ${maxImages} images allowed`);
       return;
     }
 
@@ -419,7 +420,7 @@ const SimpleImageUploader: React.FC<SimpleImageUploaderProps> = ({
       onImagesChange([...images, newImageUrl.trim()]);
       setNewImageUrl('');
     } catch {
-      alert('Please enter a valid image URL');
+      toast.error('Please enter a valid image URL');
     }
   };
 

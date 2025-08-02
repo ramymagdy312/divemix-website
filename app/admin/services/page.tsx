@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
 
 interface Service {
   id: string;
@@ -56,7 +57,7 @@ export default function ServicesPage() {
       setServices(services.filter(s => s.id !== id));
     } catch (error) {
       console.error('Error deleting service:', error);
-      alert('Error deleting service');
+      toast.error('Error deleting service');
     }
   };
 

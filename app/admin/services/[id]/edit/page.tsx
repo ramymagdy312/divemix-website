@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../../lib/supabase';
 import { Plus, X } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 
 
@@ -36,7 +37,7 @@ export default function EditServicePage({ params }: { params: { id: string } }) 
 
       if (error) {
         console.error('Error fetching service:', error);
-        alert('Error fetching service data');
+        toast.error('Error fetching service data');
         return;
       }
       
@@ -51,7 +52,7 @@ export default function EditServicePage({ params }: { params: { id: string } }) 
       });
     } catch (error) {
       console.error('Error fetching service:', error);
-      alert('Error fetching service data');
+      toast.error('Error fetching service data');
     } finally {
       setFetchLoading(false);
     }
@@ -74,15 +75,15 @@ export default function EditServicePage({ params }: { params: { id: string } }) 
 
       if (error) {
         console.error('Error updating service:', error);
-        alert('Error updating service');
+        toast.error('Error updating service');
         return;
       }
 
-      alert('Service updated successfully!');
+      toast.success('Service updated successfully!');
       router.push('/admin/services');
     } catch (error) {
       console.error('Error updating service:', error);
-      alert('Error updating service');
+      toast.error('Error updating service');
     } finally {
       setLoading(false);
     }
