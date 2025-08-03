@@ -2,22 +2,34 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { galleryCategoriesData, GalleryCategory } from '../../data/galleryCategoriesData';
-import { galleryImagesNew as galleryImages, GalleryImage } from '../../data/galleryImagesNew';
+
 import Image from 'next/image';
 import AnimatedElement from '../common/AnimatedElement';
 
-export default function GalleryWithCategories() {
-  const [categories, setCategories] = useState<GalleryCategory[]>(galleryCategoriesData);
-  const [images, setImages] = useState<GalleryImage[]>(galleryImages);
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [filteredImages, setFilteredImages] = useState<GalleryImage[]>(galleryImages);
-  const [loading, setLoading] = useState(true);
+interface GalleryImage {
+  id: string;
+  url: string;
+  title: string;
+  description?: string;
+  category: string;
+  category_id: string;
+}
 
-  // Debug: Log initial data
-  console.log('Initial galleryImages:', galleryImages);
-  console.log('Number of images:', galleryImages.length);
-  console.log('First image URL:', galleryImages[0]?.url);
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  is_active: boolean;
+  display_order: number;
+}
+
+export default function GalleryWithCategories() {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [images, setImages] = useState<GalleryImage[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [filteredImages, setFilteredImages] = useState<GalleryImage[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchData();
@@ -30,24 +42,6 @@ export default function GalleryWithCategories() {
 
   const fetchData = async () => {
     try {
-      // Check if Supabase is properly configured
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      
-      if (!supabaseUrl || !supabaseKey || 
-          supabaseUrl === 'your-supabase-url' || 
-          supabaseKey === 'your-supabase-anon-key' ||
-          supabaseUrl === 'https://placeholder.supabase.co' ||
-          supabaseKey === 'placeholder-key') {
-        // Use mock data for development
-        console.warn('Supabase not configured. Using mock data.');
-        console.log('Loading gallery images:', galleryImages);
-        setCategories(galleryCategoriesData.filter(cat => cat.is_active));
-        setImages(galleryImages);
-        setLoading(false);
-        return;
-      }
-
       // Fetch categories and images in parallel
       const [categoriesResult, imagesResult] = await Promise.all([
         supabase
@@ -66,21 +60,21 @@ export default function GalleryWithCategories() {
 
       if (categoriesResult.error) {
         console.error('Error fetching categories:', categoriesResult.error);
-        setCategories(galleryCategoriesData.filter(cat => cat.is_active));
+        setCategories([]);
       } else {
         setCategories(categoriesResult.data || []);
       }
 
       if (imagesResult.error) {
         console.error('Error fetching images:', imagesResult.error);
-        setImages(galleryImages);
+        setImages([]);
       } else {
         setImages(imagesResult.data || []);
       }
     } catch (error) {
       console.error('Error:', error);
-      setCategories(galleryCategoriesData.filter(cat => cat.is_active));
-      setImages(galleryImages);
+      setCategories([]);
+      setImages([]);
     } finally {
       setLoading(false);
     }

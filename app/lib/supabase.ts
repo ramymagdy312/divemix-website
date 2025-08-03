@@ -24,9 +24,13 @@ export type Database = {
           id: string
           name: string
           description: string
+          short_description: string
           category_id: string
+          image_url: string
           images: string[]
           features: string[]
+          is_active: boolean
+          display_order: number
           created_at: string
           updated_at: string
         }
@@ -34,9 +38,13 @@ export type Database = {
           id?: string
           name: string
           description: string
+          short_description?: string
           category_id: string
+          image_url?: string
           images?: string[]
           features?: string[]
+          is_active?: boolean
+          display_order?: number
           created_at?: string
           updated_at?: string
         }
@@ -44,9 +52,47 @@ export type Database = {
           id?: string
           name?: string
           description?: string
+          short_description?: string
           category_id?: string
+          image_url?: string
           images?: string[]
           features?: string[]
+          is_active?: boolean
+          display_order?: number
+          updated_at?: string
+        }
+      }
+      product_categories: {
+        Row: {
+          id: string
+          name: string
+          description: string
+          slug: string
+          image_url: string
+          is_active: boolean
+          display_order: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          description?: string
+          slug: string
+          image_url?: string
+          is_active?: boolean
+          display_order?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          description?: string
+          slug?: string
+          image_url?: string
+          is_active?: boolean
+          display_order?: number
           updated_at?: string
         }
       }

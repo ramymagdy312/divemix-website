@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { contactData } from '../../data/contactData';
+
 import ContactHero from './ContactHero';
 import ContactIntro from './ContactIntro';
 import FloatingContactForm from './FloatingContactForm';
@@ -29,7 +29,7 @@ interface ContactPageData {
 }
 
 export default function ContactPageDB() {
-  const [data, setData] = useState<ContactPageData>(contactData);
+  const [data, setData] = useState<ContactPageData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -38,22 +38,6 @@ export default function ContactPageDB() {
 
   const fetchContactData = async () => {
     try {
-      // Check if Supabase is properly configured
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      
-      if (!supabaseUrl || !supabaseKey || 
-          supabaseUrl === 'your-supabase-url' || 
-          supabaseKey === 'your-supabase-anon-key' ||
-          supabaseUrl === 'https://placeholder.supabase.co' ||
-          supabaseKey === 'placeholder-key') {
-        // Use mock data for development
-        console.warn('Supabase not configured. Using mock data.');
-        setData(contactData);
-        setLoading(false);
-        return;
-      }
-
       const { data: contactPageData, error } = await supabase
         .from('contact_page')
         .select('*')
@@ -61,13 +45,13 @@ export default function ContactPageDB() {
 
       if (error) {
         console.error('Error fetching contact data:', error);
-        setData(contactData);
+        setData(null);
       } else {
         setData(contactPageData);
       }
     } catch (error) {
       console.error('Error:', error);
-      setData(contactData);
+      setData(null);
     } finally {
       setLoading(false);
     }
@@ -77,6 +61,14 @@ export default function ContactPageDB() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-cyan-600"></div>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-gray-500">No data available</div>
       </div>
     );
   }

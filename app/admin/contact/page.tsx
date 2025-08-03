@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { contactData } from '../../data/contactData';
+
 import { Edit, Save, X, Plus, Trash2, MapPin } from 'lucide-react';
 import ImageUpload from '../../components/admin/ImageUpload';
 import Image from 'next/image';
@@ -29,7 +29,7 @@ interface ContactPageData {
 }
 
 export default function ContactAdmin() {
-  const [data, setData] = useState<ContactPageData>(contactData);
+  const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -40,22 +40,6 @@ export default function ContactAdmin() {
 
   const fetchContactData = async () => {
     try {
-      // Check if Supabase is properly configured
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      
-      if (!supabaseUrl || !supabaseKey || 
-          supabaseUrl === 'your-supabase-url' || 
-          supabaseKey === 'your-supabase-anon-key' ||
-          supabaseUrl === 'https://placeholder.supabase.co' ||
-          supabaseKey === 'placeholder-key') {
-        // Use mock data for development
-        console.warn('Supabase not configured. Using mock data.');
-        setData(contactData);
-        setLoading(false);
-        return;
-      }
-
       const { data: contactPageData, error } = await supabase
         .from('contact_page')
         .select('*')
@@ -63,13 +47,13 @@ export default function ContactAdmin() {
 
       if (error) {
         console.error('Error fetching contact data:', error);
-        setData(contactData);
+        setData(null);
       } else {
         setData(contactPageData);
       }
     } catch (error) {
       console.error('Error:', error);
-      setData(contactData);
+      setData(null);
     } finally {
       setLoading(false);
     }
@@ -78,26 +62,10 @@ export default function ContactAdmin() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      // Check if Supabase is properly configured
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      
-      if (!supabaseUrl || !supabaseKey || 
-          supabaseUrl === 'your-supabase-url' || 
-          supabaseKey === 'your-supabase-anon-key' ||
-          supabaseUrl === 'https://placeholder.supabase.co' ||
-          supabaseKey === 'placeholder-key') {
-        // Mock save for development
-        console.warn('Supabase not configured. Mock save successful.');
-        setEditing(false);
-        setSaving(false);
-        return;
-      }
-
       const { error } = await supabase
         .from('contact_page')
         .upsert({
-          ...data,
+          ...(data || {}),
           updated_at: new Date().toISOString()
         });
 
@@ -117,9 +85,9 @@ export default function ContactAdmin() {
   };
 
   const addBranch = () => {
-    setData({
-      ...data,
-      branches: [...data.branches, {
+    if (!data) return;
+    setData({ ...data!,
+      branches: [...data?.branches, {
         name: '',
         address: '',
         phone: '',
@@ -130,14 +98,15 @@ export default function ContactAdmin() {
   };
 
   const removeBranch = (index: number) => {
-    setData({
-      ...data,
-      branches: data.branches.filter((_, i) => i !== index)
+    if (!data) return;
+    setData({ ...data!,
+      branches: (data?.branches || []).filter((_: any, i: number) => i !== index)
     });
   };
 
   const updateBranch = (index: number, field: string, value: string | number) => {
-    const newBranches = [...data.branches];
+    if (!data) return;
+    const newBranches = [...(data?.branches || [])];
     if (field === 'lat' || field === 'lng') {
       newBranches[index] = {
         ...newBranches[index],
@@ -149,7 +118,7 @@ export default function ContactAdmin() {
     } else {
       newBranches[index] = { ...newBranches[index], [field]: value };
     }
-    setData({ ...data, branches: newBranches });
+    setData({ ...data!, branches: newBranches });
   };
 
   if (loading) {
@@ -215,19 +184,19 @@ export default function ContactAdmin() {
               {editing ? (
                 <input
                   type="text"
-                  value={data.title}
-                  onChange={(e) => setData({ ...data, title: e.target.value })}
+                  value={data?.title}
+                  onChange={(e) => setData({ ...data!, title: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                 />
               ) : (
-                <p className="text-gray-900">{data.title}</p>
+                <p className="text-gray-900">{data?.title}</p>
               )}
             </div>
             <div>
               {editing ? (
                 <ImageUpload
-                  currentImage={data.hero_image}
-                  onImageChange={(imageUrl) => setData({ ...data, hero_image: imageUrl })}
+                  currentImage={data?.hero_image}
+                  onImageChange={(imageUrl) => setData({ ...data!, hero_image: imageUrl })}
                   label="Hero Image"
                 />
               ) : (
@@ -235,10 +204,10 @@ export default function ContactAdmin() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Hero Image
                   </label>
-                  {data.hero_image ? (
+                  {data?.hero_image ? (
                     <div className="relative w-full h-32 rounded-lg overflow-hidden border border-gray-300">
                       <Image
-                        src={data.hero_image}
+                        src={data?.hero_image}
                         alt="Hero image"
                         fill
                         className="object-cover"
@@ -257,13 +226,13 @@ export default function ContactAdmin() {
             </label>
             {editing ? (
               <textarea
-                value={data.description}
-                onChange={(e) => setData({ ...data, description: e.target.value })}
+                value={data?.description}
+                onChange={(e) => setData({ ...data!, description: e.target.value })}
                 rows={3}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
               />
             ) : (
-              <p className="text-gray-900">{data.description}</p>
+              <p className="text-gray-900">{data?.description}</p>
             )}
           </div>
         </div>
@@ -279,12 +248,12 @@ export default function ContactAdmin() {
               {editing ? (
                 <input
                   type="text"
-                  value={data.intro_title}
-                  onChange={(e) => setData({ ...data, intro_title: e.target.value })}
+                  value={data?.intro_title}
+                  onChange={(e) => setData({ ...data!, intro_title: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                 />
               ) : (
-                <p className="text-gray-900">{data.intro_title}</p>
+                <p className="text-gray-900">{data?.intro_title}</p>
               )}
             </div>
             <div>
@@ -293,13 +262,13 @@ export default function ContactAdmin() {
               </label>
               {editing ? (
                 <textarea
-                  value={data.intro_description}
-                  onChange={(e) => setData({ ...data, intro_description: e.target.value })}
+                  value={data?.intro_description}
+                  onChange={(e) => setData({ ...data!, intro_description: e.target.value })}
                   rows={4}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                 />
               ) : (
-                <p className="text-gray-900">{data.intro_description}</p>
+                <p className="text-gray-900">{data?.intro_description}</p>
               )}
             </div>
           </div>
@@ -320,7 +289,7 @@ export default function ContactAdmin() {
             )}
           </div>
           <div className="space-y-6">
-            {data.branches.map((branch, index) => (
+            {data?.branches.map((branch: any, index: number) => (
               <div key={index} className="border border-gray-200 rounded-lg p-4">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex items-center space-x-2">

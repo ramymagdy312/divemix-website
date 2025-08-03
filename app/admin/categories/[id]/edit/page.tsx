@@ -91,24 +91,6 @@ export default function EditCategoryPage({ params }: { params: { id: string } })
   const fetchCategory = async () => {
     try {
       // Check if Supabase is configured
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      
-      if (!supabaseUrl || !supabaseKey || 
-          supabaseUrl === 'your-supabase-url' || 
-          supabaseKey === 'your-supabase-anon-key' ||
-          supabaseUrl === 'https://placeholder.supabase.co' ||
-          supabaseKey === 'placeholder-key') {
-        console.warn('Supabase not configured. Using fallback data.');
-        const fallbackCategory = fallbackCategories[params.id];
-        if (fallbackCategory) {
-          setInitialData(fallbackCategory);
-          setUsingFallback(true);
-        }
-        setFetchLoading(false);
-        return;
-      }
-
       const { data, error } = await supabase
         .from('product_categories')
         .select('*')
@@ -142,7 +124,6 @@ export default function EditCategoryPage({ params }: { params: { id: string } })
 
   const handleSubmit = async (categoryData: any) => {
     if (usingFallback) {
-      toast.error('Cannot update categories in demo mode. Set up database to enable full functionality.');
       return;
     }
 

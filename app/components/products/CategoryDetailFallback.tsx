@@ -1,11 +1,22 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { productCategories } from "../../data/productCategories";
+import { supabase } from "../../lib/supabase";
+
 import ProductList from "./ProductList";
 import ProductHero from "./ProductHero";
 import { ArrowLeft } from "lucide-react";
+
+interface Category {
+  id: string;
+  name: string;
+  description: string;
+  slug: string;
+  image_url: string;
+  is_active: boolean;
+  display_order: number;
+}
 
 interface CategoryDetailFallbackProps {
   categoryId: string;
@@ -13,7 +24,60 @@ interface CategoryDetailFallbackProps {
 
 const CategoryDetailFallback: React.FC<CategoryDetailFallbackProps> = ({ categoryId }) => {
   const router = useRouter();
-  const category = productCategories.find((cat) => cat.id === categoryId);
+  const [category, setCategory] = useState<Category | null>(null);
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchCategoryAndProducts();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categoryId]);
+
+  const fetchCategoryAndProducts = async () => {
+    try {
+      const [categoryResult, productsResult] = await Promise.all([
+        supabase
+          .from('product_categories')
+          .select('*')
+          .eq('id', categoryId)
+          .single(),
+        supabase
+          .from('products')
+          .select('*')
+          .eq('category_id', categoryId)
+          .eq('is_active', true)
+          .order('display_order', { ascending: true })
+      ]);
+
+      if (categoryResult.error) {
+        console.error('Error fetching category:', categoryResult.error);
+        setCategory(null);
+      } else {
+        setCategory(categoryResult.data);
+      }
+
+      if (productsResult.error) {
+        console.error('Error fetching products:', productsResult.error);
+        setProducts([]);
+      } else {
+        setProducts(productsResult.data || []);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setCategory(null);
+      setProducts([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-cyan-600"></div>
+      </div>
+    );
+  }
 
   if (!category) {
     return (
@@ -34,15 +98,7 @@ const CategoryDetailFallback: React.FC<CategoryDetailFallbackProps> = ({ categor
 
   return (
     <div>
-      <ProductHero category={{
-        id: category.id,
-        name: category.categoryName,
-        description: category.shortDesc,
-        slug: category.slug || category.id,
-        image_url: category.image,
-        is_active: true,
-        display_order: 1
-      }} />
+      <ProductHero category={category} />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center space-x-4 mb-8">
@@ -73,7 +129,7 @@ const CategoryDetailFallback: React.FC<CategoryDetailFallbackProps> = ({ categor
           </div>
         </div>
 
-        <ProductList products={category.products} />
+        <ProductList products={products} />
       </div>
     </div>
   );

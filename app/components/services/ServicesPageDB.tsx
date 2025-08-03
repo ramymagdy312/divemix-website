@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { servicesPageData } from '../../data/servicesPageData';
 import PageHeader from '../common/PageHeader';
 import AnimatedElement from '../common/AnimatedElement';
 
@@ -20,7 +19,7 @@ interface ServicesPageDBProps {
 }
 
 export default function ServicesPageDB({ children }: ServicesPageDBProps) {
-  const [data, setData] = useState<ServicesPageData>(servicesPageData);
+  const [data, setData] = useState<ServicesPageData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,22 +28,6 @@ export default function ServicesPageDB({ children }: ServicesPageDBProps) {
 
   const fetchServicesPageData = async () => {
     try {
-      // Check if Supabase is properly configured
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      
-      if (!supabaseUrl || !supabaseKey || 
-          supabaseUrl === 'your-supabase-url' || 
-          supabaseKey === 'your-supabase-anon-key' ||
-          supabaseUrl === 'https://placeholder.supabase.co' ||
-          supabaseKey === 'placeholder-key') {
-        // Use mock data for development
-        console.warn('Supabase not configured. Using mock data.');
-        setData(servicesPageData);
-        setLoading(false);
-        return;
-      }
-
       const { data: pageData, error } = await supabase
         .from('services_page')
         .select('*')
@@ -52,13 +35,13 @@ export default function ServicesPageDB({ children }: ServicesPageDBProps) {
 
       if (error) {
         console.error('Error fetching services page data:', error);
-        setData(servicesPageData);
+        setData(null);
       } else {
         setData(pageData);
       }
     } catch (error) {
       console.error('Error:', error);
-      setData(servicesPageData);
+      setData(null);
     } finally {
       setLoading(false);
     }
@@ -68,6 +51,17 @@ export default function ServicesPageDB({ children }: ServicesPageDBProps) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-cyan-600"></div>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">No Data Available</h2>
+          <p className="text-gray-600">Please configure the services page data in the admin panel.</p>
+        </div>
       </div>
     );
   }

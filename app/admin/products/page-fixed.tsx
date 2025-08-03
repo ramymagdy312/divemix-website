@@ -98,21 +98,6 @@ export default function ProductsPageFixed() {
   const fetchProducts = async () => {
     try {
       // Check if Supabase is configured
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      
-      if (!supabaseUrl || !supabaseKey || 
-          supabaseUrl === 'your-supabase-url' || 
-          supabaseKey === 'your-supabase-anon-key' ||
-          supabaseUrl === 'https://placeholder.supabase.co' ||
-          supabaseKey === 'placeholder-key') {
-        console.warn('Supabase not configured. Using fallback data.');
-        setProducts(fallbackProducts);
-        setUsingFallback(true);
-        setLoading(false);
-        return;
-      }
-
       const { data, error } = await supabase
         .from('products')
         .select(`
@@ -144,7 +129,6 @@ export default function ProductsPageFixed() {
 
   const deleteProduct = async (id: string) => {
     if (usingFallback) {
-      toast.error('Cannot delete products in demo mode. Set up database to enable full functionality.');
       return;
     }
 

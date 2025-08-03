@@ -1,7 +1,28 @@
 import React from "react";
-import type { ProductCategory as ProductCategoryType } from "../../data/productCategories";
+
 import ProductCard from "./ProductCard";
 import Image from 'next/image';
+
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  short_description: string;
+  category_id: string;
+  image_url: string;
+  images: string[];
+  features: string[];
+  is_active: boolean;
+  display_order: number;
+}
+
+interface ProductCategoryType {
+  id: string;
+  name: string;
+  description: string;
+  image_url: string;
+  products: Product[];
+}
 
 interface ProductCategoryProps {
   category: ProductCategoryType;
@@ -12,13 +33,15 @@ const ProductCategory: React.FC<ProductCategoryProps> = ({ category }) => {
     <div className="mb-12">
       <div className="flex items-center space-x-4 mb-6">
         <Image
-          src={category.image}
-          alt={category.categoryName}
+          src={category.image_url}
+          alt={category.name}
+          width={64}
+          height={64}
           className="w-16 h-16 object-cover rounded-lg"
         />
         <div>
-          <h2 className="text-2xl font-bold">{category.categoryName}</h2>
-          <p className="text-gray-600">{category.shortDesc}</p>
+          <h2 className="text-2xl font-bold">{category.name}</h2>
+          <p className="text-gray-600">{category.description}</p>
         </div>
       </div>
 
@@ -26,18 +49,7 @@ const ProductCategory: React.FC<ProductCategoryProps> = ({ category }) => {
         {category.products.map((product) => (
           <ProductCard 
             key={product.id} 
-            product={{
-              id: product.id,
-              name: product.name,
-              description: product.desc,
-              short_description: product.desc,
-              category_id: category.id,
-              image_url: product.images[0],
-              images: product.images,
-              features: product.features,
-              is_active: true,
-              display_order: 1
-            }} 
+            product={product}
           />
         ))}
       </div>

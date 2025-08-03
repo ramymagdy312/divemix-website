@@ -1,6 +1,14 @@
 import React from "react";
-import type { Application } from "../../data/applications";
+
 import ImageGallery from "../common/ImageGallery";
+
+interface Application {
+  id: string;
+  name: string;
+  desc: string;
+  images: string[];
+  features: string[];
+}
 
 interface ApplicationDetailProps {
   application: Application;

@@ -63,20 +63,6 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
   const fetchCategories = async () => {
     try {
       // Check if Supabase is configured
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      
-      if (!supabaseUrl || !supabaseKey || 
-          supabaseUrl === 'your-supabase-url' || 
-          supabaseKey === 'your-supabase-anon-key' ||
-          supabaseUrl === 'https://placeholder.supabase.co' ||
-          supabaseKey === 'placeholder-key') {
-        console.warn('Supabase not configured. Using fallback categories.');
-        setCategories(fallbackCategories);
-        setUsingFallback(true);
-        return;
-      }
-
       const { data, error } = await supabase
         .from('product_categories')
         .select('id, name, slug')
@@ -104,7 +90,6 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
     e.preventDefault();
     
     if (usingFallback) {
-      toast.error('Cannot save products in demo mode. Set up database to enable full functionality.');
       return;
     }
     
@@ -230,8 +215,6 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
             </p>
           )}
         </div>
-
-
 
         {/* Full Description */}
         <div>

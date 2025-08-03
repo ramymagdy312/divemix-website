@@ -15,18 +15,6 @@ export default function NewCategoryPage() {
 
   const handleSubmit = async (categoryData: any) => {
     // Check if Supabase is configured
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    
-    if (!supabaseUrl || !supabaseKey || 
-        supabaseUrl === 'your-supabase-url' || 
-        supabaseKey === 'your-supabase-anon-key' ||
-        supabaseUrl === 'https://placeholder.supabase.co' ||
-        supabaseKey === 'placeholder-key') {
-      toast.error('Cannot add categories in demo mode. Set up database to enable full functionality.');
-      return;
-    }
-
     setLoading(true);
     try {
       const { error } = await supabase

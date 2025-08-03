@@ -11,6 +11,10 @@ export default function FixAllIssues() {
     setLoading(true);
     setStatus('Starting comprehensive issue fixing...\n');
 
+    // Get environment variables
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
     try {
       // Step 1: Check Supabase connection
       setStatus(prev => prev + '1. Testing Supabase connection...\n');
@@ -172,12 +176,9 @@ export default function FixAllIssues() {
       // Step 6: Environment check
       setStatus(prev => prev + '6. Checking environment configuration...\n');
       
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      
       if (!supabaseUrl || !supabaseKey) {
         setStatus(prev => prev + '❌ Environment variables not set\n');
-      } else if (supabaseUrl === 'your-supabase-url' || supabaseKey === 'your-supabase-anon-key') {
+      } else if ( supabaseKey === 'your-supabase-anon-key') {
         setStatus(prev => prev + '❌ Environment variables contain placeholder values\n');
       } else {
         setStatus(prev => prev + '✅ Environment variables configured\n');

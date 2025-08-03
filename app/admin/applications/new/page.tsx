@@ -46,8 +46,6 @@ export default function NewApplicationPage() {
     }
   };
 
-
-
   const addUseCase = () => {
     setFormData({
       ...formData,

@@ -6,8 +6,6 @@ import { supabase } from '../../../../lib/supabase';
 import { Plus, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-
-
 export default function EditServicePage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);

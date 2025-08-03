@@ -96,21 +96,6 @@ export default function CategoriesPage() {
   const fetchCategories = async () => {
     try {
       // Check if Supabase is configured
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      
-      if (!supabaseUrl || !supabaseKey || 
-          supabaseUrl === 'your-supabase-url' || 
-          supabaseKey === 'your-supabase-anon-key' ||
-          supabaseUrl === 'https://placeholder.supabase.co' ||
-          supabaseKey === 'placeholder-key') {
-        console.warn('Supabase not configured. Using fallback categories.');
-        setCategories(fallbackCategories);
-        setUsingFallback(true);
-        setLoading(false);
-        return;
-      }
-
       const { data, error } = await supabase
         .from('product_categories')
         .select('*')
@@ -137,7 +122,6 @@ export default function CategoriesPage() {
 
   const deleteCategory = async (id: string) => {
     if (usingFallback) {
-      toast.error('Cannot delete categories in demo mode. Set up database to enable full functionality.');
       return;
     }
 
@@ -215,8 +199,7 @@ export default function CategoriesPage() {
           onClick={(e) => {
             if (usingFallback) {
               e.preventDefault();
-              toast.error('Cannot add categories in demo mode. Set up database to enable full functionality.');
-            }
+              }
           }}
         >
           <Plus className="h-5 w-5 mr-2" />
@@ -282,8 +265,7 @@ export default function CategoriesPage() {
                     onClick={(e) => {
                       if (usingFallback) {
                         e.preventDefault();
-                        toast.error('Cannot edit categories in demo mode. Set up database to enable full functionality.');
-                      }
+                        }
                     }}
                   >
                     <Edit className="h-5 w-5" />

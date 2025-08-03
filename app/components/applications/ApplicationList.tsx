@@ -1,6 +1,14 @@
 import React from "react";
-import type { Application } from "../../data/applications";
+
 import ApplicationDetail from "./ApplicationDetail";
+
+interface Application {
+  id: string;
+  name: string;
+  desc: string;
+  images: string[];
+  features: string[];
+}
 
 interface ApplicationListProps {
   applications: Application[];

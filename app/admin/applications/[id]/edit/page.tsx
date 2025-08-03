@@ -91,8 +91,6 @@ export default function EditApplicationPage({ params }: { params: { id: string }
     }
   };
 
-
-
   const addUseCase = () => {
     setFormData({
       ...formData,

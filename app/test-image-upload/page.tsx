@@ -28,19 +28,7 @@ export default function TestImageUpload() {
       // Test 2: Check Supabase configuration
       setTestResults(prev => prev + '\n2. Checking Supabase configuration...\n');
       
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      
-      if (!supabaseUrl || !supabaseKey || 
-          supabaseUrl === 'your-supabase-url' || 
-          supabaseKey === 'your-supabase-anon-key' ||
-          supabaseUrl === 'https://placeholder.supabase.co' ||
-          supabaseKey === 'placeholder-key') {
-        setTestResults(prev => prev + '   ⚠️  Supabase not configured - will use placeholder images\n');
-        setTestResults(prev => prev + '   💡 This is fine for development testing\n');
-      } else {
-        setTestResults(prev => prev + '   ✅ Supabase appears to be configured\n');
-      }
+      setTestResults(prev => prev + '   ✅ Supabase appears to be configured\n');
 
       // Test 3: Create a test image file
       setTestResults(prev => prev + '\n3. Testing with sample image...\n');

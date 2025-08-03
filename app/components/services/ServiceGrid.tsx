@@ -1,24 +1,93 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { supabase } from "../../lib/supabase";
 import ServiceCard from "./ServiceCard";
-import { services } from "../../data/services";
 import AnimatedElement from "../common/AnimatedElement";
+import { 
+  Wrench, 
+  Shield, 
+  Users, 
+  Clock, 
+  Award, 
+  Settings,
+  LucideIcon 
+} from "lucide-react";
+
+interface Service {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  features: string[];
+  is_active: boolean;
+  display_order: number;
+}
+
+// Map icon names to actual icon components
+const iconMap: Record<string, LucideIcon> = {
+  wrench: Wrench,
+  shield: Shield,
+  users: Users,
+  clock: Clock,
+  award: Award,
+  settings: Settings,
+};
 
 const ServiceGrid: React.FC = () => {
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchServices();
+  }, []);
+
+  const fetchServices = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('services')
+        .select('*')
+        .eq('is_active', true)
+        .order('display_order', { ascending: true });
+
+      if (error) {
+        console.error('Error fetching services:', error);
+        setServices([]);
+      } else {
+        setServices(data || []);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setServices([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-cyan-600"></div>
+      </div>
+    );
+  }
+
   return (
     <AnimatedElement animation="fadeIn">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {services.map((service, index) => (
-          <ServiceCard
-            key={service.id}
-            title={service.title}
-            description={service.description}
-            Icon={service.icon}
-            features={service.features}
-            index={index}
-          />
-        ))}
+        {services.map((service, index) => {
+          const IconComponent = iconMap[service.icon] || Settings;
+          return (
+            <ServiceCard
+              key={service.id}
+              title={service.title}
+              description={service.description}
+              Icon={IconComponent}
+              features={service.features}
+              index={index}
+            />
+          );
+        })}
       </div>
     </AnimatedElement>
   );

@@ -1,6 +1,19 @@
 import React from "react";
-import type { Product } from "../../data/productCategories";
+
 import ImageGallery from "../common/ImageGallery";
+
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  short_description: string;
+  category_id: string;
+  image_url: string;
+  images: string[];
+  features: string[];
+  is_active: boolean;
+  display_order: number;
+}
 
 interface ProductDetailProps {
   product: Product;
@@ -19,7 +32,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product }) => {
         <div className="flex-1">
           <h3 className="text-2xl font-bold mb-4">{product.name}</h3>
           <p className="text-gray-600 text-lg leading-relaxed mb-6">
-            {product.desc}
+            {product.description}
           </p>
           {product.features.length > 0 && (
             <div>

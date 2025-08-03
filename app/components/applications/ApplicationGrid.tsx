@@ -2,8 +2,16 @@
 
 import React from "react";
 import ApplicationCard from "./ApplicationCard";
-import type { Application } from "../../data/applications";
+
 import AnimatedElement from "../common/AnimatedElement";
+
+interface Application {
+  id: string;
+  name: string;
+  desc: string;
+  images: string[];
+  features: string[];
+}
 
 interface ApplicationGridProps {
   applications: Application[];
