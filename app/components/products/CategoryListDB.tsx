@@ -42,7 +42,7 @@ const CategoryListDB = () => {
       setCategories(data || []);
     } catch (error) {
       console.error('Error fetching product categories:', error);
-      // Fallback to mock data if database fails
+
       setCategories([]);
     } finally {
       setLoading(false);

@@ -92,21 +92,6 @@ const CategoryListFallback = () => {
   const fetchCategories = async () => {
     try {
       // Check if Supabase is configured
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      
-      if (!supabaseUrl || !supabaseKey || 
-          supabaseUrl === 'your-supabase-url' || 
-          supabaseKey === 'your-supabase-anon-key' ||
-          supabaseUrl === 'https://placeholder.supabase.co' ||
-          supabaseKey === 'placeholder-key') {
-        console.warn('Supabase not configured. Using fallback data.');
-        // setCategories(fallbackCategories);
-        setUsingFallback(true);
-        setLoading(false);
-        return;
-      }
-
       const { data, error } = await supabase
         .from('product_categories')
         .select('*')

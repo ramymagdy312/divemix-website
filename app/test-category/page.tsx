@@ -14,7 +14,6 @@ export default function TestCategory() {
     try {
       // Step 1: Get category
       setResult(prev => prev + `Step 1: Looking for category with ID/slug: ${categoryId}\n`);
-      
       const { data: categoryData, error: categoryError } = await supabase
         .from('product_categories')
         .select('id, slug, name')
@@ -37,7 +36,6 @@ export default function TestCategory() {
 
       // Step 2: Get products
       setResult(prev => prev + `Step 2: Looking for products with category_id: ${categoryData.id}\n`);
-      
       const { data: productsData, error: productsError } = await supabase
         .from('products')
         .select('*')

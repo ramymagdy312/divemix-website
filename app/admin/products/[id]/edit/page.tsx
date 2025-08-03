@@ -66,24 +66,6 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
   const fetchProduct = async () => {
     try {
       // Check if Supabase is configured
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      
-      if (!supabaseUrl || !supabaseKey || 
-          supabaseUrl === 'your-supabase-url' || 
-          supabaseKey === 'your-supabase-anon-key' ||
-          supabaseUrl === 'https://placeholder.supabase.co' ||
-          supabaseKey === 'placeholder-key') {
-        console.warn('Supabase not configured. Using fallback data.');
-        const fallbackProduct = fallbackProducts[params.id];
-        if (fallbackProduct) {
-          setInitialData(fallbackProduct);
-          setUsingFallback(true);
-        }
-        setFetchLoading(false);
-        return;
-      }
-
       const { data, error } = await supabase
         .from('products')
         .select('*')
@@ -117,7 +99,6 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
 
   const handleSubmit = async (productData: any) => {
     if (usingFallback) {
-      toast.error('Cannot update products in demo mode. Set up database to enable full functionality.');
       return;
     }
 

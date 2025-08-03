@@ -12,7 +12,6 @@ interface User {
   last_sign_in_at: string | null;
 }
 
-
 export default function UsersPage() {
   const [users, setUsers] = useState<SupabaseUser[]>([]);
   const [loading, setLoading] = useState(true);

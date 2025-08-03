@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { galleryCategoriesData, GalleryCategory } from '../../data/galleryCategoriesData';
+
 import { Edit, Save, X, Plus, Trash2, Eye, EyeOff } from 'lucide-react';
 import Breadcrumb from '../../components/admin/Breadcrumb';
 import toast from 'react-hot-toast';
 
 export default function GalleryCategoriesAdmin() {
-  const [categories, setCategories] = useState<GalleryCategory[]>(galleryCategoriesData);
+  const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -27,22 +27,6 @@ export default function GalleryCategoriesAdmin() {
 
   const fetchCategories = async () => {
     try {
-      // Check if Supabase is properly configured
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      
-      if (!supabaseUrl || !supabaseKey || 
-          supabaseUrl === 'your-supabase-url' || 
-          supabaseKey === 'your-supabase-anon-key' ||
-          supabaseUrl === 'https://placeholder.supabase.co' ||
-          supabaseKey === 'placeholder-key') {
-        // Use mock data for development
-        console.warn('Supabase not configured. Using mock data.');
-        setCategories(galleryCategoriesData);
-        setLoading(false);
-        return;
-      }
-
       const { data, error } = await supabase
         .from('gallery_categories')
         .select('*')
@@ -50,13 +34,13 @@ export default function GalleryCategoriesAdmin() {
 
       if (error) {
         console.error('Error fetching categories:', error);
-        setCategories(galleryCategoriesData);
+        setData([]);
       } else {
-        setCategories(data || []);
+        setData(data || []);
       }
     } catch (error) {
       console.error('Error:', error);
-      setCategories(galleryCategoriesData);
+      setData([]);
     } finally {
       setLoading(false);
     }
@@ -66,25 +50,9 @@ export default function GalleryCategoriesAdmin() {
     return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
   };
 
-  const handleSave = async (category: GalleryCategory) => {
+  const handleSave = async (category: any) => {
     setSaving(true);
     try {
-      // Check if Supabase is properly configured
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      
-      if (!supabaseUrl || !supabaseKey || 
-          supabaseUrl === 'your-supabase-url' || 
-          supabaseKey === 'your-supabase-anon-key' ||
-          supabaseUrl === 'https://placeholder.supabase.co' ||
-          supabaseKey === 'placeholder-key') {
-        // Mock save for development
-        console.warn('Supabase not configured. Mock save successful.');
-        setEditingId(null);
-        setSaving(false);
-        return;
-      }
-
       const { error } = await supabase
         .from('gallery_categories')
         .update({
@@ -118,31 +86,6 @@ export default function GalleryCategoriesAdmin() {
     try {
       // Auto-generate slug if not provided
       const slug = newCategory.slug || generateSlug(newCategory.name);
-      
-      // Check if Supabase is properly configured
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      
-      if (!supabaseUrl || !supabaseKey || 
-          supabaseUrl === 'your-supabase-url' || 
-          supabaseKey === 'your-supabase-anon-key' ||
-          supabaseUrl === 'https://placeholder.supabase.co' ||
-          supabaseKey === 'placeholder-key') {
-        // Mock add for development
-        console.warn('Supabase not configured. Mock add successful.');
-        const mockCategory: GalleryCategory = {
-          id: `cat-${Date.now()}`,
-          ...newCategory,
-          slug,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        };
-        setCategories([...categories, mockCategory]);
-        setNewCategory({ name: '', description: '', slug: '', display_order: 0, is_active: true });
-        setShowAddForm(false);
-        setSaving(false);
-        return;
-      }
 
       const { error } = await supabase
         .from('gallery_categories')
@@ -175,21 +118,6 @@ export default function GalleryCategoriesAdmin() {
     if (!confirm('Are you sure you want to delete this category?')) return;
 
     try {
-      // Check if Supabase is properly configured
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      
-      if (!supabaseUrl || !supabaseKey || 
-          supabaseUrl === 'your-supabase-url' || 
-          supabaseKey === 'your-supabase-anon-key' ||
-          supabaseUrl === 'https://placeholder.supabase.co' ||
-          supabaseKey === 'placeholder-key') {
-        // Mock delete for development
-        console.warn('Supabase not configured. Mock delete successful.');
-        setCategories(categories.filter(cat => cat.id !== id));
-        return;
-      }
-
       const { error } = await supabase
         .from('gallery_categories')
         .delete()
@@ -208,8 +136,8 @@ export default function GalleryCategoriesAdmin() {
     }
   };
 
-  const handleCategoryChange = (id: string, field: keyof GalleryCategory, value: any) => {
-    setCategories(categories.map(cat => 
+  const handleCategoryChange = (id: string, field: string, value: any) => {
+    setData((data || []).map((cat: any) => 
       cat.id === id ? { ...cat, [field]: value } : cat
     ));
   };
@@ -352,7 +280,7 @@ export default function GalleryCategoriesAdmin() {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {categories.map((category) => (
+            {(data || []).map((category: any) => (
               <tr key={category.id}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   {editingId === category.id ? (

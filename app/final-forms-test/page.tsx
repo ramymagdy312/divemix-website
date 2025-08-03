@@ -253,7 +253,6 @@ export default function FinalFormsTest() {
         is_active: true,
         display_order: 998
       };
-
       const { data: insertData, error: insertError } = await supabase
         .from('applications')
         .insert([testData])
@@ -269,7 +268,6 @@ export default function FinalFormsTest() {
         use_cases: ['Updated use case'],
         benefits: ['Updated benefit']
       };
-
       const { data: updateResult, error: updateError } = await supabase
         .from('applications')
         .update(updateData)
@@ -306,7 +304,6 @@ export default function FinalFormsTest() {
         is_active: true,
         display_order: 998
       };
-
       const { data: insertData, error: insertError } = await supabase
         .from('services')
         .insert([testData])
@@ -321,7 +318,6 @@ export default function FinalFormsTest() {
         description: 'Updated description',
         features: ['Updated feature']
       };
-
       const { data: updateResult, error: updateError } = await supabase
         .from('services')
         .update(updateData)
@@ -354,7 +350,6 @@ export default function FinalFormsTest() {
         .from('applications')
         .select('id')
         .limit(1);
-
       const { data: services, error: servicesError } = await supabase
         .from('services')
         .select('id')

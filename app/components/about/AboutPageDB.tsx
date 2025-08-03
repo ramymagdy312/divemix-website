@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Shield, Award, Users, Focus, Star, Heart } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
-import { aboutData } from '../../data/aboutData';
+
 import PageHeader from '../common/PageHeader';
 import Timeline from './Timeline';
 import CompanyOverview from './CompanyOverview';
@@ -39,7 +39,7 @@ const iconMap = {
 };
 
 export default function AboutPageDB() {
-  const [data, setData] = useState<AboutPageData>(aboutData);
+  const [data, setData] = useState<AboutPageData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -48,22 +48,6 @@ export default function AboutPageDB() {
 
   const fetchAboutData = async () => {
     try {
-      // Check if Supabase is properly configured
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      
-      if (!supabaseUrl || !supabaseKey || 
-          supabaseUrl === 'your-supabase-url' || 
-          supabaseKey === 'your-supabase-anon-key' ||
-          supabaseUrl === 'https://placeholder.supabase.co' ||
-          supabaseKey === 'placeholder-key') {
-        // Use mock data for development
-        console.warn('Supabase not configured. Using mock data.');
-        setData(aboutData);
-        setLoading(false);
-        return;
-      }
-
       const { data: aboutPageData, error } = await supabase
         .from('about_page')
         .select('*')
@@ -71,13 +55,13 @@ export default function AboutPageDB() {
 
       if (error) {
         console.error('Error fetching about data:', error);
-        setData(aboutData);
+        setData(null);
       } else {
         setData(aboutPageData);
       }
     } catch (error) {
       console.error('Error:', error);
-      setData(aboutData);
+      setData(null);
     } finally {
       setLoading(false);
     }
@@ -87,6 +71,14 @@ export default function AboutPageDB() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-cyan-600"></div>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-gray-500">No data available</div>
       </div>
     );
   }

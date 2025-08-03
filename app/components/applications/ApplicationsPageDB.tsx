@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { applicationsPageData } from '../../data/applicationsPageData';
+
 import PageHeader from '../common/PageHeader';
 import AnimatedElement from '../common/AnimatedElement';
 
@@ -20,7 +20,7 @@ interface ApplicationsPageDBProps {
 }
 
 export default function ApplicationsPageDB({ children }: ApplicationsPageDBProps) {
-  const [data, setData] = useState<ApplicationsPageData>(applicationsPageData);
+  const [data, setData] = useState<ApplicationsPageData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,22 +29,6 @@ export default function ApplicationsPageDB({ children }: ApplicationsPageDBProps
 
   const fetchApplicationsPageData = async () => {
     try {
-      // Check if Supabase is properly configured
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      
-      if (!supabaseUrl || !supabaseKey || 
-          supabaseUrl === 'your-supabase-url' || 
-          supabaseKey === 'your-supabase-anon-key' ||
-          supabaseUrl === 'https://placeholder.supabase.co' ||
-          supabaseKey === 'placeholder-key') {
-        // Use mock data for development
-        console.warn('Supabase not configured. Using mock data.');
-        setData(applicationsPageData);
-        setLoading(false);
-        return;
-      }
-
       const { data: pageData, error } = await supabase
         .from('applications_page')
         .select('*')
@@ -52,13 +36,13 @@ export default function ApplicationsPageDB({ children }: ApplicationsPageDBProps
 
       if (error) {
         console.error('Error fetching applications page data:', error);
-        setData(applicationsPageData);
+        setData(null);
       } else {
         setData(pageData);
       }
     } catch (error) {
       console.error('Error:', error);
-      setData(applicationsPageData);
+      setData(null);
     } finally {
       setLoading(false);
     }
@@ -68,6 +52,14 @@ export default function ApplicationsPageDB({ children }: ApplicationsPageDBProps
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-cyan-600"></div>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-gray-500">No data available</div>
       </div>
     );
   }

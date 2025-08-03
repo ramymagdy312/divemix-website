@@ -1,9 +1,17 @@
 "use client";
 
 import React from "react";
-import type { Application } from "../../data/applications";
+
 import AnimatedElement from "../common/AnimatedElement";
 import Image from 'next/image';
+
+interface Application {
+  id: string;
+  name: string;
+  desc: string;
+  images: string[];
+  features: string[];
+}
 
 interface ApplicationCardProps {
   application: Application;

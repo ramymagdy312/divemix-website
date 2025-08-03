@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { productsPageData } from '../../data/productsPageData';
+
 import PageHeader from '../common/PageHeader';
 import AnimatedElement from '../common/AnimatedElement';
 
@@ -20,7 +20,7 @@ interface ProductsPageDBProps {
 }
 
 export default function ProductsPageDB({ children }: ProductsPageDBProps) {
-  const [data, setData] = useState<ProductsPageData>(productsPageData);
+  const [data, setData] = useState<ProductsPageData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,36 +29,25 @@ export default function ProductsPageDB({ children }: ProductsPageDBProps) {
 
   const fetchProductsPageData = async () => {
     try {
-      // Check if Supabase is properly configured
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      
-      if (!supabaseUrl || !supabaseKey || 
-          supabaseUrl === 'your-supabase-url' || 
-          supabaseKey === 'your-supabase-anon-key' ||
-          supabaseUrl === 'https://placeholder.supabase.co' ||
-          supabaseKey === 'placeholder-key') {
-        // Use mock data for development
-        console.warn('Supabase not configured. Using mock data.');
-        setData(productsPageData);
-        setLoading(false);
-        return;
-      }
-
+      console.log('ProductsPageDB: Fetching products page data...');
       const { data: pageData, error } = await supabase
         .from('products_page')
         .select('*')
         .single();
 
+      console.log('ProductsPageDB: Data received:', pageData);
+      console.log('ProductsPageDB: Error:', error);
+
       if (error) {
         console.error('Error fetching products page data:', error);
-        setData(productsPageData);
+        setData(null);
       } else {
+        console.log('ProductsPageDB: Setting data:', pageData);
         setData(pageData);
       }
     } catch (error) {
       console.error('Error:', error);
-      setData(productsPageData);
+      setData(null);
     } finally {
       setLoading(false);
     }
@@ -68,6 +57,14 @@ export default function ProductsPageDB({ children }: ProductsPageDBProps) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-cyan-600"></div>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-gray-500">No data available</div>
       </div>
     );
   }

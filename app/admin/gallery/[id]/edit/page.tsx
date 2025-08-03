@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../../lib/supabase';
-import { galleryCategoriesData, GalleryCategory } from '../../../../data/galleryCategoriesData';
+
 import SingleImageUploader from '../../../../components/admin/SingleImageUploader';
 import toast from 'react-hot-toast';
 
@@ -12,7 +12,7 @@ export default function EditGalleryImagePage({ params }: { params: { id: string 
   const [loading, setLoading] = useState(false);
   const [initialData, setInitialData] = useState(null);
   const [fetchLoading, setFetchLoading] = useState(true);
-  const [categories, setCategories] = useState<GalleryCategory[]>(galleryCategoriesData);
+  const [data, setData] = useState<any>(null);
   const [formData, setFormData] = useState({
     title: '',
     url: '',
@@ -28,21 +28,6 @@ export default function EditGalleryImagePage({ params }: { params: { id: string 
 
   const fetchCategories = async () => {
     try {
-      // Check if Supabase is properly configured
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      
-      if (!supabaseUrl || !supabaseKey || 
-          supabaseUrl === 'your-supabase-url' || 
-          supabaseKey === 'your-supabase-anon-key' ||
-          supabaseUrl === 'https://placeholder.supabase.co' ||
-          supabaseKey === 'placeholder-key') {
-        // Use mock data for development
-        console.warn('Supabase not configured. Using mock data.');
-        setCategories(galleryCategoriesData.filter(cat => cat.is_active && cat.slug !== 'all'));
-        return;
-      }
-
       const { data, error } = await supabase
         .from('gallery_categories')
         .select('*')
@@ -52,13 +37,13 @@ export default function EditGalleryImagePage({ params }: { params: { id: string 
 
       if (error) {
         console.error('Error fetching categories:', error);
-        setCategories(galleryCategoriesData.filter(cat => cat.is_active && cat.slug !== 'all'));
+        setData([]);
       } else {
-        setCategories(data || []);
+        setData(data || []);
       }
     } catch (error) {
       console.error('Error:', error);
-      setCategories(galleryCategoriesData.filter(cat => cat.is_active && cat.slug !== 'all'));
+      setData([]);
     }
   };
 
@@ -178,7 +163,7 @@ export default function EditGalleryImagePage({ params }: { params: { id: string 
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
             value={formData.category_id}
             onChange={(e) => {
-              const selectedCategory = categories.find(cat => cat.id === e.target.value);
+              const selectedCategory = (data || []).find((cat: any) => cat.id === e.target.value);
               setFormData({ 
                 ...formData, 
                 category_id: e.target.value,
@@ -187,7 +172,7 @@ export default function EditGalleryImagePage({ params }: { params: { id: string 
             }}
           >
             <option value="">Select Category</option>
-            {categories.map((category) => (
+            {(data || []).map((category: any) => (
               <option key={category.id} value={category.id}>
                 {category.name}
               </option>

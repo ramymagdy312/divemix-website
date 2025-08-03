@@ -50,20 +50,6 @@ export default function NewProductPageFixed() {
   const fetchCategories = async () => {
     try {
       // Check if Supabase is configured
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      
-      if (!supabaseUrl || !supabaseKey || 
-          supabaseUrl === 'your-supabase-url' || 
-          supabaseKey === 'your-supabase-anon-key' ||
-          supabaseUrl === 'https://placeholder.supabase.co' ||
-          supabaseKey === 'placeholder-key') {
-        console.warn('Supabase not configured. Using fallback categories.');
-        setCategories(fallbackCategories);
-        setUsingFallback(true);
-        return;
-      }
-
       const { data, error } = await supabase
         .from('product_categories')
         .select('id, name, slug')
@@ -91,7 +77,6 @@ export default function NewProductPageFixed() {
     e.preventDefault();
     
     if (usingFallback) {
-      toast.error('Cannot add products in demo mode. Set up database to enable full functionality.');
       return;
     }
 

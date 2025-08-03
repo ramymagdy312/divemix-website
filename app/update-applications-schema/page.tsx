@@ -14,7 +14,6 @@ export default function UpdateApplicationsSchema() {
     try {
       // Step 1: Check current schema
       setResults(prev => prev + '1. Checking current schema...\n');
-      
       const { data: currentData, error: checkError } = await supabase
         .from('applications')
         .select('*')
@@ -81,8 +80,7 @@ ORDER BY ordinal_position;`;
           is_active: true,
           display_order: 999
         };
-
-        const { data: insertResult, error: insertError } = await supabase
+      const { data: insertResult, error: insertError } = await supabase
           .from('applications')
           .insert([testData])
           .select()

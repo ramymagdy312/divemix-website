@@ -16,30 +16,6 @@ export default function AdminLayout({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if Supabase is properly configured
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    
-    if (!supabaseUrl || !supabaseKey || 
-        supabaseUrl === 'your-supabase-url' || 
-        supabaseKey === 'your-supabase-anon-key' ||
-        supabaseUrl === 'https://placeholder.supabase.co' ||
-        supabaseKey === 'placeholder-key') {
-      // Supabase not configured, create a mock user for development
-      console.warn('Supabase not configured. Using development mode.');
-      setUser({
-        id: 'dev-user',
-        email: 'admin@divemix.com',
-        created_at: new Date().toISOString(),
-        app_metadata: {},
-        user_metadata: {},
-        aud: 'authenticated',
-        role: 'authenticated'
-      } as User);
-      setLoading(false);
-      return;
-    }
-
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);

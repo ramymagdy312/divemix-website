@@ -1,11 +1,24 @@
 "use client";
 
 import React from "react";
-import type { Product } from "../../data/productCategories";
+
 import ProductDetail from "./ProductDetail";
 import SearchBar from "./SearchBar";
 import { useSearch } from "../../hooks/useSearch";
 import AnimatedElement from "../common/AnimatedElement";
+
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  short_description: string;
+  category_id: string;
+  image_url: string;
+  images: string[];
+  features: string[];
+  is_active: boolean;
+  display_order: number;
+}
 
 interface ProductListProps {
   products: Product[];
@@ -14,7 +27,7 @@ interface ProductListProps {
 const ProductList: React.FC<ProductListProps> = ({ products }) => {
   const { searchTerm, setSearchTerm, filteredItems } = useSearch(products, [
     "name",
-    "desc",
+    "description",
   ]);
 
   return (

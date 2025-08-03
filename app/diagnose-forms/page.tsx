@@ -89,8 +89,7 @@ export default function DiagnoseForms() {
           is_active: true,
           display_order: 999
         };
-
-        const { data: insertedApp, error: insertError } = await supabase
+      const { data: insertedApp, error: insertError } = await supabase
           .from('applications')
           .insert([testApp])
           .select()
@@ -120,8 +119,7 @@ export default function DiagnoseForms() {
           is_active: true,
           display_order: 999
         };
-
-        const { data: insertedService, error: insertError } = await supabase
+      const { data: insertedService, error: insertError } = await supabase
           .from('services')
           .insert([testService])
           .select()

@@ -112,9 +112,14 @@ const ProductListDB: React.FC<ProductListDBProps> = ({ categoryId }) => {
                   product={{
                     id: product.id,
                     name: product.name,
-                    desc: product.description,
+                    description: product.description,
+                    short_description: product.short_description || product.description,
+                    category_id: product.category_id || '',
+                    image_url: product.image_url || '',
                     features: product.features || [],
-                    images: productImages
+                    images: productImages,
+                    is_active: product.is_active,
+                    display_order: product.display_order
                   }} 
                 />
               );

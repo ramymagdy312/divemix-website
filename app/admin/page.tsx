@@ -38,33 +38,6 @@ export default function AdminDashboard() {
 
   const fetchStats = async () => {
     try {
-      // Check if Supabase is properly configured
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      
-      if (!supabaseUrl || !supabaseKey || 
-          supabaseUrl === 'your-supabase-url' || 
-          supabaseKey === 'your-supabase-anon-key' ||
-          supabaseUrl === 'https://placeholder.supabase.co' ||
-          supabaseKey === 'placeholder-key') {
-        // Use mock data for development
-        console.warn('Supabase not configured. Using mock data.');
-        setStats({
-          products: 15,
-          services: 8,
-          applications: 12,
-          gallery: 16, // Updated to match actual gallery images count
-          galleryCategories: 6, // All, Installations, Maintenance, Testing, Facilities, Training
-          about: 1,
-          contact: 1,
-          productsPage: 1,
-          servicesPage: 1,
-          applicationsPage: 1,
-        });
-        setLoading(false);
-        return;
-      }
-
       const [
         { count: productsCount },
         { count: servicesCount },
@@ -103,7 +76,7 @@ export default function AdminDashboard() {
       });
     } catch (error) {
       console.error('Error fetching stats:', error);
-      // Fallback to mock data on error
+
       setStats({
         products: 15,
         services: 8,

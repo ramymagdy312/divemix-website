@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { productsPageData } from '../../data/productsPageData';
+
 import { Edit, Save, X } from 'lucide-react';
 import ImageUpload from '../../components/admin/ImageUpload';
 import Image from 'next/image';
@@ -19,7 +19,7 @@ interface ProductsPageData {
 }
 
 export default function ProductsPageAdmin() {
-  const [data, setData] = useState<ProductsPageData>(productsPageData);
+  const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -30,36 +30,20 @@ export default function ProductsPageAdmin() {
 
   const fetchProductsPageData = async () => {
     try {
-      // Check if Supabase is properly configured
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      
-      if (!supabaseUrl || !supabaseKey || 
-          supabaseUrl === 'your-supabase-url' || 
-          supabaseKey === 'your-supabase-anon-key' ||
-          supabaseUrl === 'https://placeholder.supabase.co' ||
-          supabaseKey === 'placeholder-key') {
-        // Use mock data for development
-        console.warn('Supabase not configured. Using mock data.');
-        setData(productsPageData);
-        setLoading(false);
-        return;
-      }
-
       const { data: pageData, error } = await supabase
         .from('products_page')
         .select('*')
-        .single();
+        .limit(1);
 
       if (error) {
         console.error('Error fetching products page data:', error);
-        setData(productsPageData);
+        setData(null);
       } else {
-        setData(pageData);
+        setData(null);
       }
     } catch (error) {
       console.error('Error:', error);
-      setData(productsPageData);
+      setData(null);
     } finally {
       setLoading(false);
     }
@@ -68,26 +52,10 @@ export default function ProductsPageAdmin() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      // Check if Supabase is properly configured
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      
-      if (!supabaseUrl || !supabaseKey || 
-          supabaseUrl === 'your-supabase-url' || 
-          supabaseKey === 'your-supabase-anon-key' ||
-          supabaseUrl === 'https://placeholder.supabase.co' ||
-          supabaseKey === 'placeholder-key') {
-        // Mock save for development
-        console.warn('Supabase not configured. Mock save successful.');
-        setEditing(false);
-        setSaving(false);
-        return;
-      }
-
       const { error } = await supabase
         .from('products_page')
         .upsert({
-          ...data,
+          ...(data || {}),
           updated_at: new Date().toISOString()
         });
 
@@ -169,19 +137,19 @@ export default function ProductsPageAdmin() {
               {editing ? (
                 <input
                   type="text"
-                  value={data.title}
-                  onChange={(e) => setData({ ...data, title: e.target.value })}
+                  value={data?.title}
+                  onChange={(e) => setData({ ...data!, title: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                 />
               ) : (
-                <p className="text-gray-900">{data.title}</p>
+                <p className="text-gray-900">{data?.title}</p>
               )}
             </div>
             <div>
               {editing ? (
                 <ImageUpload
-                  currentImage={data.hero_image}
-                  onImageChange={(imageUrl) => setData({ ...data, hero_image: imageUrl })}
+                  currentImage={data?.hero_image}
+                  onImageChange={(imageUrl) => setData({ ...data!, hero_image: imageUrl })}
                   label="Hero Image"
                 />
               ) : (
@@ -189,10 +157,10 @@ export default function ProductsPageAdmin() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Hero Image
                   </label>
-                  {data.hero_image ? (
+                  {data?.hero_image ? (
                     <div className="relative w-full h-32 rounded-lg overflow-hidden border border-gray-300">
                       <Image
-                        src={data.hero_image}
+                        src={data?.hero_image}
                         alt="Hero image"
                         fill
                         className="object-cover"
@@ -211,13 +179,13 @@ export default function ProductsPageAdmin() {
             </label>
             {editing ? (
               <textarea
-                value={data.description}
-                onChange={(e) => setData({ ...data, description: e.target.value })}
+                value={data?.description}
+                onChange={(e) => setData({ ...data!, description: e.target.value })}
                 rows={3}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
               />
             ) : (
-              <p className="text-gray-900">{data.description}</p>
+              <p className="text-gray-900">{data?.description}</p>
             )}
           </div>
         </div>
@@ -233,12 +201,12 @@ export default function ProductsPageAdmin() {
               {editing ? (
                 <input
                   type="text"
-                  value={data.intro_title}
-                  onChange={(e) => setData({ ...data, intro_title: e.target.value })}
+                  value={data?.intro_title}
+                  onChange={(e) => setData({ ...data!, intro_title: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                 />
               ) : (
-                <p className="text-gray-900">{data.intro_title}</p>
+                <p className="text-gray-900">{data?.intro_title}</p>
               )}
             </div>
             <div>
@@ -247,13 +215,13 @@ export default function ProductsPageAdmin() {
               </label>
               {editing ? (
                 <textarea
-                  value={data.intro_description}
-                  onChange={(e) => setData({ ...data, intro_description: e.target.value })}
+                  value={data?.intro_description}
+                  onChange={(e) => setData({ ...data!, intro_description: e.target.value })}
                   rows={4}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                 />
               ) : (
-                <p className="text-gray-900">{data.intro_description}</p>
+                <p className="text-gray-900">{data?.intro_description}</p>
               )}
             </div>
           </div>
