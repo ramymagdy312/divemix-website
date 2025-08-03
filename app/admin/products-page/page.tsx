@@ -33,7 +33,7 @@ export default function ProductsPageAdmin() {
       const { data: pageData, error } = await supabase
         .from('products_page')
         .select('*')
-        .limit(1);
+        .single();
 
       if (error) {
         console.error('Error fetching products page data:', error);
