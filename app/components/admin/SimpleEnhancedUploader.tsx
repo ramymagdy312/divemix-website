@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Upload, X, Image as ImageIcon, Loader2, Folder, Plus, Trash2, Minus } from 'lucide-react';
+import { Upload, X, Image as ImageIcon, Loader2, Folder, Plus, Trash2, Minus, FolderOpen } from 'lucide-react';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
+import TreeFolderManager from './TreeFolderManager';
 
 interface ImageUploaderProps {
   images: string[];
@@ -23,12 +24,18 @@ const SimpleEnhancedUploader: React.FC<ImageUploaderProps> = ({
   const [uploading, setUploading] = useState(false);
   const [showServerImages, setShowServerImages] = useState(false);
   const [serverImages, setServerImages] = useState<string[]>([]);
+  const [selectedFolder, setSelectedFolder] = useState('root');
+  const [showFolderManager, setShowFolderManager] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load server images
-  const loadServerImages = async () => {
+  const loadServerImages = async (folder: string = selectedFolder) => {
     try {
-      const response = await fetch('/api/upload/list');
+      const url = folder === 'root' 
+        ? '/api/upload/list' 
+        : `/api/upload/list?folder=${folder}`;
+        
+      const response = await fetch(url);
       if (response.ok) {
         const data = await response.json();
         const imageUrls = data.images?.map((img: any) => img.url) || [];
@@ -42,6 +49,15 @@ const SimpleEnhancedUploader: React.FC<ImageUploaderProps> = ({
   useEffect(() => {
     loadServerImages();
   }, []);
+
+  useEffect(() => {
+    loadServerImages(selectedFolder);
+  }, [selectedFolder]);
+
+  const handleFolderSelect = (folder: string) => {
+    setSelectedFolder(folder);
+    setShowFolderManager(false);
+  };
 
   const handleFileSelect = async (files: FileList | null) => {
     if (!files) return;
@@ -62,6 +78,7 @@ const SimpleEnhancedUploader: React.FC<ImageUploaderProps> = ({
       const uploadPromises = validFiles.map(async (file) => {
         const formData = new FormData();
         formData.append('file', file);
+        formData.append('folder', selectedFolder);
 
         const response = await fetch('/api/upload', {
           method: 'POST',
@@ -84,7 +101,7 @@ const SimpleEnhancedUploader: React.FC<ImageUploaderProps> = ({
         onImagesChange(uploadedImages);
       }
 
-      toast.success(`Successfully uploaded ${uploadedImages.length} image(s)`);
+      toast.success(`Successfully uploaded ${uploadedImages.length} image(s) to ${selectedFolder === 'root' ? 'root folder' : selectedFolder}`);
       loadServerImages(); // Refresh server images
     } catch (error) {
       console.error('Error uploading images:', error);
@@ -168,6 +185,28 @@ const SimpleEnhancedUploader: React.FC<ImageUploaderProps> = ({
         </p>
       </div>
 
+      {/* Current Folder Info */}
+      <div className="mb-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <FolderOpen className="h-4 w-4 mr-2 text-blue-600" />
+            <span className="text-sm font-medium text-blue-900">
+              Current Folder: {selectedFolder === 'root' ? '📂 Root Folder' : `📁 ${selectedFolder}`}
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowFolderManager(true)}
+            className="text-sm text-blue-600 hover:text-blue-800 underline"
+          >
+            Change Folder
+          </button>
+        </div>
+        <p className="text-xs text-blue-600 mt-1">
+          {serverImages.length} image(s) in this folder
+        </p>
+      </div>
+
       {/* Action Buttons */}
       <div className="flex gap-3 mb-4">
         <button
@@ -176,7 +215,7 @@ const SimpleEnhancedUploader: React.FC<ImageUploaderProps> = ({
           className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
         >
           <Folder className="h-4 w-4 mr-2" />
-          📁 Choose from Server ({serverImages.length} available)
+          📁 Choose from Folder ({serverImages.length} available)
         </button>
         
         <button
@@ -185,7 +224,7 @@ const SimpleEnhancedUploader: React.FC<ImageUploaderProps> = ({
           className="flex items-center px-4 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition-colors"
         >
           <Upload className="h-4 w-4 mr-2" />
-          ⬆️ Upload New Images
+          ⬆️ Upload to {selectedFolder === 'root' ? 'Root' : selectedFolder}
         </button>
       </div>
 
@@ -265,6 +304,40 @@ const SimpleEnhancedUploader: React.FC<ImageUploaderProps> = ({
         </div>
       )}
 
+      {/* Folder Manager Modal */}
+      {showFolderManager && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-hidden">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-blue-50 to-purple-50">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  📁 Folder Manager
+                </h3>
+                <p className="text-sm text-gray-600 mt-1">
+                  Organize your images by selecting or creating folders
+                </p>
+              </div>
+              <button
+                onClick={() => setShowFolderManager(false)}
+                className="text-gray-400 hover:text-gray-600 p-2 hover:bg-white rounded-full transition-colors"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 overflow-y-auto max-h-96">
+              <TreeFolderManager
+                selectedFolder={selectedFolder}
+                onFolderSelect={handleFolderSelect}
+                onFoldersChange={() => loadServerImages(selectedFolder)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Server Images Modal */}
       {showServerImages && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -273,11 +346,20 @@ const SimpleEnhancedUploader: React.FC<ImageUploaderProps> = ({
             <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-green-50 to-cyan-50">
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">
-                  📁 Server Images Library
+                  📁 Images in {selectedFolder === 'root' ? 'Root Folder' : selectedFolder}
                 </h3>
                 <p className="text-sm text-gray-600 mt-1">
                   Select from {serverImages.length} available images
                 </p>
+                <button
+                  onClick={() => {
+                    setShowServerImages(false);
+                    setShowFolderManager(true);
+                  }}
+                  className="text-sm text-blue-600 hover:text-blue-800 underline mt-1"
+                >
+                  📂 Change Folder
+                </button>
               </div>
               <button
                 onClick={() => setShowServerImages(false)}
@@ -294,7 +376,7 @@ const SimpleEnhancedUploader: React.FC<ImageUploaderProps> = ({
                   <ImageIcon className="h-12 w-12 text-gray-300 mx-auto mb-4" />
                   <p className="text-gray-500">No images found on server</p>
                   <button
-                    onClick={loadServerImages}
+                    onClick={() => loadServerImages()}
                     className="mt-4 px-4 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition-colors"
                   >
                     Refresh
@@ -411,7 +493,7 @@ const SimpleEnhancedUploader: React.FC<ImageUploaderProps> = ({
                 )}
                 
                 <button
-                  onClick={loadServerImages}
+                  onClick={() => loadServerImages()}
                   className="px-4 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition-colors"
                 >
                   Refresh

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import EnhancedSingleImageUploader from '../../../components/admin/EnhancedSingleImageUploader';
+import FolderExplorerSingle from '../../../components/admin/FolderExplorerSingle';
 
 interface CategoryFormProps {
   initialData?: any;
@@ -80,10 +80,11 @@ export default function CategoryForm({ initialData, onSubmit, loading }: Categor
       </div>
 
       <div>
-        <EnhancedSingleImageUploader
+        <FolderExplorerSingle
           image={formData.image_url}
           onImageChange={(image_url) => setFormData({ ...formData, image_url })}
           label="Category Image"
+          
         />
       </div>
 

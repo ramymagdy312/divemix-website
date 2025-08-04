@@ -5,7 +5,7 @@ import { supabase } from '../../lib/supabase';
 
 import { Edit, Save, X } from 'lucide-react';
 import toast from 'react-hot-toast';
-import ImageUpload from '../../components/admin/ImageUpload';
+import FolderExplorerSingle from '../../components/admin/FolderExplorerSingle';
 import Image from 'next/image';
 import Breadcrumb from '../../components/admin/Breadcrumb';
 
@@ -147,10 +147,11 @@ export default function ApplicationsPageAdmin() {
             </div>
             <div>
               {editing ? (
-                <ImageUpload
-                  currentImage={data?.hero_image}
+                <FolderExplorerSingle
+                  image={data?.hero_image || ''}
                   onImageChange={(imageUrl) => setData({ ...data!, hero_image: imageUrl })}
                   label="Hero Image"
+                  
                 />
               ) : (
                 <div>

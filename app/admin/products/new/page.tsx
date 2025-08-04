@@ -6,7 +6,7 @@ import { supabase } from '../../../lib/supabase';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import SimpleEnhancedUploader from '../../../components/admin/SimpleEnhancedUploader';
+import FolderExplorer from '../../../components/admin/FolderExplorer';
 
 interface Category {
   id: string;
@@ -248,16 +248,16 @@ export default function NewProductPage() {
           </div>
           {/* Image Upload */}
           <div>
-            <SimpleEnhancedUploader
+            <FolderExplorer
               images={formData.images.length > 0 ? formData.images : (formData.image_url ? [formData.image_url] : [])}
               onImagesChange={(images) => setFormData({ 
                 ...formData, 
                 images: images,
                 image_url: images.length > 0 ? images[0] : ''
               })}
-              multiple={true}
-              maxImages={10}
               label="Product Images"
+              
+              maxImages={10}
             />
             <p className="text-sm text-gray-500 mt-2">
               Upload multiple images for this product. The first image will be used as the main image.

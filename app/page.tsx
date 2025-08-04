@@ -6,6 +6,7 @@ import StatsSection from "./components/home/StatsSection";
 import ContactCTA from "./components/home/ContactCTA";
 import FloatingContactForm from "./components/home/FloatingContactForm";
 import FeaturedServices from "./components/home/FeaturedServices";
+import VendorsSlider from "./components/home/VendorsSlider";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
@@ -22,6 +23,7 @@ export default async function Home() {
           <StatsSection />
           <FeaturedServices />
           <FeaturedApplications />
+          <VendorsSlider />
           <ContactCTA />
           <FloatingContactForm />
         </div>

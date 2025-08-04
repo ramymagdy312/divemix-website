@@ -5,7 +5,7 @@ import { supabase } from '../../../lib/supabase';
 import { Plus, X, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import SimpleEnhancedUploader from '../../../components/admin/SimpleEnhancedUploader';
+import FolderExplorer from '../../../components/admin/FolderExplorer';
 
 interface Category {
   id: string;
@@ -233,12 +233,12 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
 
         {/* Product Images */}
         <div>
-          <SimpleEnhancedUploader
+          <FolderExplorer
             images={formData.images}
             onImagesChange={(images) => setFormData({ ...formData, images })}
-            multiple={true}
-            maxImages={10}
             label="Product Images (Up to 10 images)"
+            
+            maxImages={10}
           />
         </div>
 

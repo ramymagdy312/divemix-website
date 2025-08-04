@@ -14,6 +14,8 @@ import {
   FileText,
   ChevronDown,
   ChevronRight,
+  MessageCircle,
+  Mail,
 } from 'lucide-react';
 
 const navigation = [
@@ -24,6 +26,9 @@ const navigation = [
   { name: 'Applications', href: '/admin/applications', icon: Target },
   { name: 'Gallery', href: '/admin/gallery', icon: Image },
   { name: 'Gallery Categories', href: '/admin/gallery-categories', icon: Settings },
+  { name: 'Vendors', href: '/admin/vendors', icon: Users },
+  { name: 'Contact Messages', href: '/admin/contact-messages', icon: MessageCircle },
+  { name: 'Settings', href: '/admin/settings', icon: Mail },
   { name: 'Users', href: '/admin/users', icon: Users },
 ];
 
