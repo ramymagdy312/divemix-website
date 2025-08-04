@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabase';
 import { Plus, X } from 'lucide-react';
-import ImageUploader from '../../../components/admin/ImageUploader';
+import EnhancedSingleImageUploader from '../../../components/admin/EnhancedSingleImageUploader';
 import toast from 'react-hot-toast';
 
 export default function NewApplicationPage() {
@@ -127,11 +127,9 @@ export default function NewApplicationPage() {
         </div>
 
         <div>
-          <ImageUploader
-            images={formData.image_url ? [formData.image_url] : []}
-            onImagesChange={(images) => setFormData({ ...formData, image_url: images[0] || '' })}
-            multiple={false}
-            maxImages={1}
+          <EnhancedSingleImageUploader
+            image={formData.image_url}
+            onImageChange={(image) => setFormData({ ...formData, image_url: image })}
             label="Application Image"
           />
         </div>

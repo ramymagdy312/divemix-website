@@ -39,7 +39,7 @@ export default function ServicesPageAdmin() {
         console.error('Error fetching services page data:', error);
         setData(null);
       } else {
-        setData(null);
+        setData(pageData);
       }
     } catch (error) {
       console.error('Error:', error);

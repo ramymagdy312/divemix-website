@@ -5,7 +5,7 @@ import { supabase } from '../../../lib/supabase';
 import { Plus, X, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import ImageUploader from '../../../components/admin/ImageUploader';
+import SimpleEnhancedUploader from '../../../components/admin/SimpleEnhancedUploader';
 
 interface Category {
   id: string;
@@ -233,7 +233,7 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
 
         {/* Product Images */}
         <div>
-          <ImageUploader
+          <SimpleEnhancedUploader
             images={formData.images}
             onImagesChange={(images) => setFormData({ ...formData, images })}
             multiple={true}
