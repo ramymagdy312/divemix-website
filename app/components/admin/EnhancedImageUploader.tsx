@@ -37,10 +37,11 @@ const EnhancedImageUploader: React.FC<ImageUploaderProps> = ({
 
   // Load server images when modal opens
   useEffect(() => {
-    if (showServerImages && serverImages.length === 0) {
-      loadServerImages();
-    }
-  }, [showServerImages]);
+  if (showServerImages && serverImages.length === 0) {
+    loadServerImages();
+  }
+}, [showServerImages, serverImages.length]);
+
 
   const loadServerImages = async () => {
     setLoadingServerImages(true);

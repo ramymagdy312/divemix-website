@@ -36,14 +36,6 @@ const SimpleEnhancedUploader: React.FC<ImageUploaderProps> = ({
       }
     } catch (error) {
       console.error('Error loading server images:', error);
-      // Fallback to local images
-      // setServerImages([
-      //   '/uploads/diving-mask-professional.jpg',
-      //   '/uploads/diving-fins-blue.jpg',
-      //   '/uploads/underwater-camera.jpg',
-      //   '/uploads/diving-equipment-set.jpg',
-      //   '/uploads/safety-gear-diving.jpg'
-      // ]);
     }
   };
 
