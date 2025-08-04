@@ -1,7 +1,7 @@
 import AboutPageDB from "../components/about/AboutPageDB";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import ScrollToTop from "../components/ScrollToTop";
+import FloatingWhatsApp from "../components/FloatingWhatsApp";
 
 export default function About() {
   return (
@@ -11,7 +11,7 @@ export default function About() {
         <AboutPageDB />
       </main>
       <Footer />
-      <ScrollToTop />
+      <FloatingWhatsApp />
     </div>
   );
 }

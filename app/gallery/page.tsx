@@ -2,7 +2,7 @@ import DatabaseGallery from "../components/gallery/DatabaseGallery";
 import PageHeader from "../components/common/PageHeader";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import ScrollToTop from "../components/ScrollToTop";
+import FloatingWhatsApp from "../components/FloatingWhatsApp";
 
 export default function Gallery() {
   return (
@@ -19,7 +19,7 @@ export default function Gallery() {
         </div>
       </main>
       <Footer />
-      <ScrollToTop />
+      <FloatingWhatsApp />
     </div>
   );
 }

@@ -5,7 +5,6 @@ import { supabase } from '../../lib/supabase';
 
 import ContactHero from './ContactHero';
 import ContactIntro from './ContactIntro';
-import FloatingContactForm from './FloatingContactForm';
 import BranchLocations from './BranchLocations';
 import AnimatedElement from '../common/AnimatedElement';
 
@@ -83,16 +82,11 @@ export default function ContactPageDB() {
         />
         <div className="py-16 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col lg:flex-row gap-12 mb-20">
-              <div className="lg:w-1/2">
-                <ContactIntro 
-                  title={data.intro_title}
-                  description={data.intro_description}
-                />
-              </div>
-              <div className="lg:w-1/2 lg:sticky lg:top-8">
-                <FloatingContactForm />
-              </div>
+            <div className="mb-20">
+              <ContactIntro 
+                title={data.intro_title}
+                description={data.intro_description}
+              />
             </div>
             <BranchLocations branches={data.branches} />
           </div>

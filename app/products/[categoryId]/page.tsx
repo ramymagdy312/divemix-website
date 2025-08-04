@@ -2,7 +2,7 @@ import CategoryDetailDB from "../../components/products/CategoryDetailDB";
 import CategoryDetailFallback from "../../components/products/CategoryDetailFallback";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
-import ScrollToTop from "../../components/ScrollToTop";
+import FloatingWhatsApp from "../../components/FloatingWhatsApp";
 import { Suspense } from "react";
 
 export async function generateStaticParams() {
@@ -33,7 +33,7 @@ export default function CategoryPage({ params }: { params: { categoryId: string 
         </div>
       </main>
       <Footer />
-      <ScrollToTop />
+      <FloatingWhatsApp />
     </div>
   );
 }

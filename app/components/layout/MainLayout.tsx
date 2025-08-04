@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import Navbar from "../Navbar";
 import Footer from "../Footer";
-import ScrollToTop from "../ScrollToTop";
+import FloatingWhatsApp from "../FloatingWhatsApp";
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -13,7 +13,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
       <Navbar />
       <main className="flex-grow page-content">{children}</main>
       <Footer />
-      <ScrollToTop />
+      <FloatingWhatsApp />
     </div>
   );
 };

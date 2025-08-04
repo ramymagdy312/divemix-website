@@ -1,7 +1,7 @@
 import ContactPageDB from "../components/contact/ContactPageDB";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import ScrollToTop from "../components/ScrollToTop";
+import FloatingWhatsApp from "../components/FloatingWhatsApp";
 
 export default function Contact() {
   return (
@@ -11,7 +11,7 @@ export default function Contact() {
         <ContactPageDB />
       </main>
       <Footer />
-      <ScrollToTop />
+      <FloatingWhatsApp />
     </div>
   );
 }

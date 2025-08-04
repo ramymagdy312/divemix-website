@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { Package, Wrench, Target, Image, TrendingUp, Info, Phone } from 'lucide-react';
+import { Package, Wrench, Target, Image, Users, TrendingUp, Info, Phone } from 'lucide-react';
 
 interface Stats {
   products: number;
+  categories: number;
   services: number;
   applications: number;
+  vendors: number;
   gallery: number;
   galleryCategories: number;
   about: number;
@@ -20,8 +22,10 @@ interface Stats {
 export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats>({
     products: 0,
+    categories: 0,
     services: 0,
     applications: 0,
+    vendors: 0,
     gallery: 0,
     galleryCategories: 0,
     about: 0,
@@ -40,8 +44,10 @@ export default function AdminDashboard() {
     try {
       const [
         { count: productsCount },
+        { count: categoriesCount },
         { count: servicesCount },
         { count: applicationsCount },
+        { count: vendorsCount },
         { count: galleryCount },
         { count: galleryCategoriesCount },
         { count: aboutCount },
@@ -51,8 +57,10 @@ export default function AdminDashboard() {
         { count: applicationsPageCount },
       ] = await Promise.all([
         supabase.from('products').select('*', { count: 'exact', head: true }),
+        supabase.from('product_categories').select('*', { count: 'exact', head: true }),
         supabase.from('services').select('*', { count: 'exact', head: true }),
         supabase.from('applications').select('*', { count: 'exact', head: true }),
+        supabase.from('vendors').select('*', { count: 'exact', head: true }),
         supabase.from('gallery_images').select('*', { count: 'exact', head: true }),
         supabase.from('gallery_categories').select('*', { count: 'exact', head: true }),
         supabase.from('about_page').select('*', { count: 'exact', head: true }),
@@ -64,8 +72,10 @@ export default function AdminDashboard() {
 
       setStats({
         products: productsCount || 0,
+        categories: categoriesCount || 0,
         services: servicesCount || 0,
         applications: applicationsCount || 0,
+        vendors: vendorsCount || 0,
         gallery: galleryCount || 0,
         galleryCategories: galleryCategoriesCount || 0,
         about: aboutCount || 0,
@@ -79,8 +89,10 @@ export default function AdminDashboard() {
 
       setStats({
         products: 15,
+        categories: 10,
         services: 8,
         applications: 12,
+        vendors: 5,
         gallery: 16, // Updated to match actual gallery images count
         galleryCategories: 6, // All, Installations, Maintenance, Testing, Facilities, Training
         about: 1,
@@ -103,6 +115,13 @@ export default function AdminDashboard() {
       href: '/admin/products',
     },
     {
+      name: 'Categories',
+      value: stats.categories,
+      icon: Package,
+      color: 'bg-blue-500',
+      href: '/admin/categories',
+    },
+    {
       name: 'Services',
       value: stats.services,
       icon: Wrench,
@@ -117,26 +136,19 @@ export default function AdminDashboard() {
       href: '/admin/applications',
     },
     {
+      name: 'Vendors',
+      value: stats.vendors,
+      icon: Users,
+      color: 'bg-purple-500',
+      href: '/admin/vendors',
+    },
+    {
       name: 'Gallery',
       value: stats.gallery,
       icon: Image,
       color: 'bg-pink-500',
       href: '/admin/gallery',
-    },
-    {
-      name: 'About Page',
-      value: stats.about,
-      icon: Info,
-      color: 'bg-indigo-500',
-      href: '/admin/about',
-    },
-    {
-      name: 'Contact Page',
-      value: stats.contact,
-      icon: Phone,
-      color: 'bg-orange-500',
-      href: '/admin/contact',
-    },
+    }
   ];
 
   if (loading) {
@@ -208,18 +220,20 @@ export default function AdminDashboard() {
               <span className="text-lg font-semibold text-green-600">{stats.products}</span>
             </div>
             <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600">Active Categories</span>
+              <span className="text-lg font-semibold text-green-600">{stats.categories}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600">Active Vendors</span>
+              <span className="text-lg font-semibold text-green-600">{stats.vendors}</span>
+            </div>
+            <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600">Gallery Images</span>
               <span className="text-lg font-semibold text-purple-600">{stats.gallery}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600">Gallery Categories</span>
               <span className="text-lg font-semibold text-indigo-600">{stats.galleryCategories}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">Pages</span>
-              <span className="text-lg font-semibold text-blue-600">
-                {stats.about + stats.contact + stats.productsPage + stats.servicesPage + stats.applicationsPage}
-              </span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600">Last Update</span>
@@ -236,6 +250,12 @@ export default function AdminDashboard() {
               className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
             >
               Add New Product
+            </a>
+            <a
+              href="/admin/categories/new/"
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+            >
+              Add New Category
             </a>
             <a
               href="/admin/services/new"
