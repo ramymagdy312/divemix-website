@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import SimpleEnhancedUploader from '../components/admin/SimpleEnhancedUploader';
+import Image from 'next/image';
 import { Toaster } from 'react-hot-toast';
 
 export default function TestImageUploader() {
@@ -45,10 +46,12 @@ export default function TestImageUploader() {
                         <span className="text-sm font-medium text-gray-700">
                           {index + 1}.
                         </span>
-                        <img 
-                          src={image} 
+                        <Image 
+                          src={image}
                           alt={`Selected ${index + 1}`}
-                          className="w-12 h-12 object-cover rounded"
+                          width={48}
+                          height={48}
+                          className="object-cover rounded"
                         />
                         <div>
                           <p className="text-sm font-medium text-gray-900">
@@ -80,7 +83,7 @@ export default function TestImageUploader() {
                 <div className="flex items-start space-x-2">
                   <span className="font-bold">1.</span>
                   <div>
-                    <strong>📁 Server Images:</strong> Click "Choose from Server Images" to browse pre-uploaded images
+                    <strong>📁 Server Images:</strong> Click &quot;Choose from Server Images&quot; to browse pre-uploaded images
                   </div>
                 </div>
                 <div className="flex items-start space-x-2">
@@ -104,13 +107,13 @@ export default function TestImageUploader() {
                 <div className="flex items-start space-x-2">
                   <span className="font-bold">5.</span>
                   <div>
-                    <strong>⬆️ Upload New:</strong> Click "Upload New Images" or drag & drop files
+                    <strong>⬆️ Upload New:</strong> Click &quot;Upload New Images&quot; or drag & drop files
                   </div>
                 </div>
                 <div className="flex items-start space-x-2">
                   <span className="font-bold">6.</span>
                   <div>
-                    <strong>🔄 Bulk Actions:</strong> Use "Unselect All" and "Remove All" for quick management
+                    <strong>🔄 Bulk Actions:</strong> Use &quot;Unselect All&quot; and &quot;Remove All&quot; for quick management
                   </div>
                 </div>
               </div>
