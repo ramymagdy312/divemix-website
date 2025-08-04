@@ -290,6 +290,7 @@ const FolderExplorerSingle: React.FC<FolderExplorerSingleProps> = ({
           </h3>
           <div className="flex items-center space-x-2">
             <button
+              type="button"
               onClick={() => loadCurrentPath()}
               disabled={loading}
               className="p-2 text-gray-600 hover:text-gray-800 hover:bg-white rounded-lg transition-colors"
@@ -303,6 +304,7 @@ const FolderExplorerSingle: React.FC<FolderExplorerSingleProps> = ({
         {/* Breadcrumb Navigation */}
         <div className="flex items-center space-x-2 mb-3">
           <button
+            type="button"
             onClick={navigateBack}
             disabled={pathHistory.length <= 1}
             className="p-2 text-gray-600 hover:text-gray-800 hover:bg-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -316,6 +318,7 @@ const FolderExplorerSingle: React.FC<FolderExplorerSingleProps> = ({
               <React.Fragment key={item.path}>
                 {index > 0 && <ChevronRight className="h-3 w-3 text-gray-400" />}
                 <button
+                  type="button"
                   onClick={() => navigateToPath(item.path, item.index)}
                   className={`text-sm px-2 py-1 rounded hover:bg-gray-100 transition-colors ${
                     index === getBreadcrumbPath().length - 1 
@@ -340,6 +343,7 @@ const FolderExplorerSingle: React.FC<FolderExplorerSingleProps> = ({
         {/* Action Buttons */}
         <div className="flex items-center space-x-2">
           <button
+            type="button"
             onClick={() => setShowCreateForm(true)}
             disabled={loading}
             className="flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm disabled:opacity-50"
@@ -349,6 +353,7 @@ const FolderExplorerSingle: React.FC<FolderExplorerSingleProps> = ({
           </button>
           
           <button
+            type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
             className="flex items-center px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm disabled:opacity-50"
@@ -377,6 +382,7 @@ const FolderExplorerSingle: React.FC<FolderExplorerSingleProps> = ({
                 autoFocus
               />
               <button
+                type="button"
                 onClick={createFolder}
                 disabled={loading || !newFolderName.trim()}
                 className="px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors disabled:opacity-50"
@@ -384,6 +390,7 @@ const FolderExplorerSingle: React.FC<FolderExplorerSingleProps> = ({
                 <Check className="h-4 w-4" />
               </button>
               <button
+                type="button"
                 onClick={() => {
                   setShowCreateForm(false);
                   setNewFolderName('');
@@ -437,6 +444,7 @@ const FolderExplorerSingle: React.FC<FolderExplorerSingleProps> = ({
                       
                       {/* Delete Button */}
                       <button
+                        type="button"
                         onClick={(e) => deleteFolder(folder, e)}
                         className="absolute top-2 right-2 p-2 bg-red-500 text-white hover:bg-red-600 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg hover:shadow-xl"
                         title="Delete folder"
@@ -487,6 +495,7 @@ const FolderExplorerSingle: React.FC<FolderExplorerSingleProps> = ({
                           
                           {/* Delete Image Button */}
                           <button
+                            type="button"
                             onClick={(e) => deleteImage(imageUrl, e)}
                             className="absolute top-2 right-2 p-2 bg-red-500 text-white hover:bg-red-600 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg hover:shadow-xl"
                             title="Delete image"
@@ -532,6 +541,7 @@ const FolderExplorerSingle: React.FC<FolderExplorerSingleProps> = ({
               </span>
             </div>
             <button
+              type="button"
               onClick={() => onImageChange('')}
               className="text-sm text-red-600 hover:text-red-800 underline"
             >

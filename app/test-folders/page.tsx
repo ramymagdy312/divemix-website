@@ -138,7 +138,6 @@ export default function TestFoldersPage() {
               image={singleImage}
               onImageChange={setSingleImage}
               label="Category Image"
-              // initialPath="categories"
             />
 
             {/* Selected Image Display */}
