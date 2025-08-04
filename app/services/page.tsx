@@ -2,7 +2,7 @@ import ServiceGridDB from "../components/services/ServiceGridDB";
 import ServicesPageDB from "../components/services/ServicesPageDB";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import ScrollToTop from "../components/ScrollToTop";
+import FloatingWhatsApp from "../components/FloatingWhatsApp";
 
 export default function Services() {
   return (
@@ -14,7 +14,7 @@ export default function Services() {
         </ServicesPageDB>
       </main>
       <Footer />
-      <ScrollToTop />
+      <FloatingWhatsApp />
     </div>
   );
 }

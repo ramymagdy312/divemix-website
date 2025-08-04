@@ -2,7 +2,7 @@ import CategoryList from "../components/products/CategoryList";
 import ProductsPageDB from "../components/products/ProductsPageDB";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import ScrollToTop from "../components/ScrollToTop";
+import FloatingWhatsApp from "../components/FloatingWhatsApp";
 
 export default function Products() {
   return (
@@ -14,7 +14,7 @@ export default function Products() {
         </ProductsPageDB>
       </main>
       <Footer />
-      <ScrollToTop />
+      <FloatingWhatsApp />
     </div>
   );
 }

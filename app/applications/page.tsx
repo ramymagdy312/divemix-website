@@ -2,7 +2,7 @@ import ApplicationGridDB from "../components/applications/ApplicationGridDB";
 import ApplicationsPageDB from "../components/applications/ApplicationsPageDB";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import ScrollToTop from "../components/ScrollToTop";
+import FloatingWhatsApp from "../components/FloatingWhatsApp";
 
 export default function Applications() {
   return (
@@ -14,7 +14,7 @@ export default function Applications() {
         </ApplicationsPageDB>
       </main>
       <Footer />
-      <ScrollToTop />
+      <FloatingWhatsApp />
     </div>
   );
 }
