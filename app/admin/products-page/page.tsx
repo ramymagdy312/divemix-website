@@ -39,7 +39,7 @@ export default function ProductsPageAdmin() {
         console.error('Error fetching products page data:', error);
         setData(null);
       } else {
-        setData(null);
+        setData(pageData);
       }
     } catch (error) {
       console.error('Error:', error);

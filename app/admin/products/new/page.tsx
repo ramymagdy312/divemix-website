@@ -6,7 +6,7 @@ import { supabase } from '../../../lib/supabase';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import ImageUploader from '../../../components/admin/ImageUploader';
+import SimpleEnhancedUploader from '../../../components/admin/SimpleEnhancedUploader';
 
 interface Category {
   id: string;
@@ -248,7 +248,7 @@ export default function NewProductPage() {
           </div>
           {/* Image Upload */}
           <div>
-            <ImageUploader
+            <SimpleEnhancedUploader
               images={formData.images.length > 0 ? formData.images : (formData.image_url ? [formData.image_url] : [])}
               onImagesChange={(images) => setFormData({ 
                 ...formData, 
