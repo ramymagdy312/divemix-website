@@ -49,23 +49,24 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold mb-4">Newsletter</h3>
-            <p className="mb-4">
-              Stay updated with our latest news and products
+            <h3 className="text-lg font-semibold mb-4">About DiveMix</h3>
+            <p className="mb-4 text-gray-300">
+              Leading provider of innovative solutions and services. We're committed to delivering excellence and building lasting partnerships with our clients.
             </p>
-            <form className="flex">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-2 rounded-l-md text-gray-900 focus:outline-none"
-              />
-              <button
-                type="submit"
-                className="px-4 py-2 bg-cyan-600 rounded-r-md hover:bg-cyan-700 transition-colors"
+            <div className="flex space-x-4">
+              <Link 
+                href="/about" 
+                className="text-cyan-400 hover:text-cyan-300 transition-colors"
               >
-                Subscribe
-              </button>
-            </form>
+                Learn More
+              </Link>
+              <Link 
+                href="/contact" 
+                className="text-cyan-400 hover:text-cyan-300 transition-colors"
+              >
+                Get in Touch
+              </Link>
+            </div>
           </div>
         </div>
 

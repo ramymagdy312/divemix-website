@@ -38,7 +38,6 @@ const ApplicationGridDB: React.FC = () => {
       setApplications(data || []);
     } catch (error) {
       console.error('Error fetching applications:', error);
-      // Fallback to empty array if database fails
       setApplications([]);
     } finally {
       setLoading(false);
@@ -63,7 +62,8 @@ const ApplicationGridDB: React.FC = () => {
               id: application.id,
               name: application.name,
               desc: application.description,
-              features: application.use_cases || [],
+              use_cases: application.use_cases || [],
+              benefits: application.benefits || [],
               images: [application.image_url]
             }}
             index={index}

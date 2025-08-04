@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabase';
 
-import EnhancedSingleImageUploader from '../../../components/admin/EnhancedSingleImageUploader';
+import FolderExplorerSingle from '../../../components/admin/FolderExplorerSingle';
 import toast from 'react-hot-toast';
 
 export default function NewGalleryImagePage() {
@@ -85,10 +85,11 @@ export default function NewGalleryImagePage() {
         </div>
 
         <div>
-          <EnhancedSingleImageUploader
+          <FolderExplorerSingle
             image={formData.url}
             onImageChange={(url) => setFormData({ ...formData, url })}
             label="Gallery Image"
+            
           />
         </div>
 

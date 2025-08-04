@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 
 import { Edit, Save, X, Plus, Trash2 } from 'lucide-react';
-import ImageUpload from '../../components/admin/ImageUpload';
+import FolderExplorerSingle from '../../components/admin/FolderExplorerSingle';
 import Image from 'next/image';
 import Breadcrumb from '../../components/admin/Breadcrumb';
 import toast from 'react-hot-toast';
@@ -200,8 +200,8 @@ export default function AboutAdmin() {
             </div>
             <div>
               {editing ? (
-                <ImageUpload
-                  currentImage={data?.hero_image}
+                <FolderExplorerSingle
+                  image={data?.hero_image || ''}
                   onImageChange={(imageUrl) => setData({ ...data!, hero_image: imageUrl })}
                   label="Hero Image"
                 />

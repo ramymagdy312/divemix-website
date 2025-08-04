@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../../lib/supabase';
 import { Plus, X } from 'lucide-react';
-import EnhancedSingleImageUploader from '../../../../components/admin/EnhancedSingleImageUploader';
+import FolderExplorerSingle from '../../../../components/admin/FolderExplorerSingle';
 import toast from 'react-hot-toast';
 
 export default function EditApplicationPage({ params }: { params: { id: string } }) {
@@ -194,7 +194,7 @@ export default function EditApplicationPage({ params }: { params: { id: string }
         </div>
 
         <div>
-          <EnhancedSingleImageUploader
+          <FolderExplorerSingle
             image={formData.image_url}
             onImageChange={(image) => setFormData({ ...formData, image_url: image })}
             label="Application Image"

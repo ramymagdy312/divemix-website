@@ -5,6 +5,7 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData()
     const file = formData.get('file') as File | null
+    const folder = formData.get('folder') as string | null
 
     if (!file) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 })
@@ -20,10 +21,15 @@ export async function POST(req: NextRequest) {
 
     const buffer = Buffer.from(await file.arrayBuffer());
     const filename = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+    
+    // Determine upload path based on folder (support nested paths)
+    const uploadPath = folder && folder !== 'root' 
+      ? `uploads/${folder}/${filename}` 
+      : `uploads/${filename}`;
 
     const { data, error } = await supabase.storage
       .from('images')
-      .upload(`uploads/${filename}`, buffer, {
+      .upload(uploadPath, buffer, {
         contentType: file.type,
       })
 
@@ -38,6 +44,8 @@ export async function POST(req: NextRequest) {
       success: true,
       url: publicData.publicUrl,
       filename: filename,
+      folder: folder || 'root',
+      path: uploadPath
     });
   } catch (err) {
     console.error(err);
