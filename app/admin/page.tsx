@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { Package, Wrench, Target, Image, Users, TrendingUp, Info, Phone } from 'lucide-react';
+import { Package, Wrench, Target, Image, Users, TrendingUp, Info, Phone, MapPin } from 'lucide-react';
 
 interface Stats {
   products: number;

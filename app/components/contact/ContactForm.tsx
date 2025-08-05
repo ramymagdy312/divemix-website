@@ -1,23 +1,50 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Send, User, Mail, Phone, MessageSquare, MapPin, CheckCircle, AlertCircle, Loader } from 'lucide-react';
+import AnimatedElement from '../common/AnimatedElement';
 import { supabase } from '../../lib/supabase';
-import { Send, MessageSquare } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-interface ContactFormData {
+interface Branch {
+  id: string;
+  name: string;
+  address: string;
+  phone?: string;
+  email?: string;
+}
+
+interface ContactFormProps {
+  branches: Branch[];
+  selectedBranchId?: string;
+  onBranchSelect?: (branchId: string) => void;
+  className?: string;
+}
+
+interface FormData {
   name: string;
   email: string;
+  phone: string;
   subject: string;
   message: string;
+  branchId: string;
+}
+
+interface FormErrors {
+  name?: string;
+  email?: string;
+  subject?: string;
+  message?: string;
 }
 
 const ContactForm = () => {
-  const [formData, setFormData] = useState<ContactFormData>({
+  const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
+    phone: '',
     subject: '',
-    message: ''
+    message: '',
+    branchId: ''
   });
   const [loading, setLoading] = useState(false);
   const [contactEmail, setContactEmail] = useState('ramy.magdy@rockettravelsystem.com');
@@ -87,8 +114,10 @@ const ContactForm = () => {
         setFormData({
           name: '',
           email: '',
+          phone: '',
           subject: '',
-          message: ''
+          message: '',
+          branchId: ''
         });
       } else {
         const errorData = await response.json();

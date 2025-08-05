@@ -82,18 +82,6 @@ const ServiceGridDB: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      {/* Header Section */}
-      <div className="text-center space-y-4">
-        <AnimatedElement animation="fadeIn">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
-            Our Services
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Professional diving and marine services tailored to meet your specific needs
-          </p>
-        </AnimatedElement>
-      </div>
-
       {/* Stats Section */}
       <AnimatedElement animation="slideUp" delay={0.05}>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto mb-12">

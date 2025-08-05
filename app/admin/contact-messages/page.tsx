@@ -29,8 +29,13 @@ export default function ContactMessagesPage() {
   const fetchMessages = async () => {
     try {
       const { data, error } = await supabase
-        .from('contact_submissions')
-        .select('*')
+        .from('contact_messages')
+        .select(`
+          *,
+          branches (
+            name
+          )
+        `)
         .order('created_at', { ascending: false });
 
       if (error) {

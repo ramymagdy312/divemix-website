@@ -21,7 +21,7 @@ import {
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { name: 'Products', href: '/admin/products', icon: Package },
-  { name: 'Categories', href: '/admin/categories', icon: Settings },
+  { name: 'Product Categories', href: '/admin/categories', icon: Settings },
   { name: 'Services', href: '/admin/services', icon: Wrench },
   { name: 'Applications', href: '/admin/applications', icon: Target },
   { name: 'Gallery', href: '/admin/gallery', icon: Image },
