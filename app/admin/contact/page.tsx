@@ -21,6 +21,7 @@ interface ContactPageData {
     address: string;
     phone: string;
     email: string;
+    show_in_footer?: boolean;
     coordinates: {
       lat: number;
       lng: number;
@@ -92,6 +93,7 @@ export default function ContactAdmin() {
         address: '',
         phone: '',
         email: '',
+        show_in_footer: false,
         coordinates: { lat: 0, lng: 0 }
       }]
     });
@@ -104,7 +106,7 @@ export default function ContactAdmin() {
     });
   };
 
-  const updateBranch = (index: number, field: string, value: string | number) => {
+  const updateBranch = (index: number, field: string, value: string | number | boolean) => {
     if (!data) return;
     const newBranches = [...(data?.branches || [])];
     if (field === 'lat' || field === 'lng') {
@@ -321,6 +323,36 @@ export default function ContactAdmin() {
                       />
                     ) : (
                       <p className="text-gray-900">{branch.name}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Show in Footer
+                    </label>
+                    {editing ? (
+                      <div className="flex items-center mt-2">
+                        <input
+                          type="checkbox"
+                          checked={branch.show_in_footer || false}
+                          onChange={(e) => updateBranch(index, 'show_in_footer', e.target.checked)}
+                          className="h-4 w-4 text-cyan-600 focus:ring-cyan-500 border-gray-300 rounded"
+                        />
+                        <label className="ml-2 text-sm text-gray-700">
+                          Display this branch in the website footer
+                        </label>
+                      </div>
+                    ) : (
+                      <p className="text-gray-900">
+                        {branch.show_in_footer ? (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            Shown in Footer
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                            Hidden from Footer
+                          </span>
+                        )}
+                      </p>
                     )}
                   </div>
                   <div>

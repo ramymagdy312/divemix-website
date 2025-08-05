@@ -3,10 +3,12 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import Logo from "./common/Logo";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
 
   const navItems = [
     { name: "Home", path: "/" },
@@ -17,6 +19,13 @@ const Navbar = () => {
     { name: "Contact", path: "/contact" },
     { name: "About", path: "/about" },
   ];
+
+  const isActive = (path: string) => {
+    if (path === "/") {
+      return pathname === "/";
+    }
+    return pathname.startsWith(path);
+  };
 
   return (
     <nav className="bg-cyan-900 text-white sticky top-0 z-50">
@@ -32,7 +41,11 @@ const Navbar = () => {
                 <Link
                   key={item.name}
                   href={item.path}
-                  className="nav-item opacity-0 px-3 py-2 rounded-md text-sm font-medium hover:bg-cyan-800 transition-all duration-300 hover:scale-105"
+                  className={`px-3 py-2 rounded-md text-sm font-medium ${
+                    isActive(item.path)
+                      ? "bg-cyan-700 text-white border-b-2 border-cyan-300"
+                      : "hover:bg-cyan-800"
+                  }`}
                 >
                   {item.name}
                 </Link>
@@ -43,7 +56,7 @@ const Navbar = () => {
           <div className="md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md hover:bg-cyan-800 transition-colors duration-300"
+              className="inline-flex items-center justify-center p-2 rounded-md hover:bg-cyan-800"
             >
               {isOpen ? (
                 <X className="h-6 w-6" />
@@ -62,7 +75,11 @@ const Navbar = () => {
               <Link
                 key={item.name}
                 href={item.path}
-                className="nav-item opacity-0 block px-3 py-2 rounded-md text-base font-medium hover:bg-cyan-800 transition-all duration-300"
+                className={`block px-3 py-2 rounded-md text-base font-medium ${
+                  isActive(item.path)
+                    ? "bg-cyan-700 text-white border-l-4 border-cyan-300"
+                    : "hover:bg-cyan-800"
+                }`}
                 onClick={() => setIsOpen(false)}
               >
                 {item.name}
