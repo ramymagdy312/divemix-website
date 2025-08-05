@@ -154,22 +154,6 @@ const ProductListDB: React.FC<ProductListDBProps> = ({ categoryId }) => {
   }
   return (
     <div className="space-y-8">
-      {/* Header Section */}
-      {categoryInfo && (
-        <div className="text-center space-y-4">
-          <AnimatedElement animation="fadeIn">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
-              {categoryInfo.name} Products
-            </h2>
-            {categoryInfo.description && (
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                {categoryInfo.description}
-              </p>
-            )}
-          </AnimatedElement>
-        </div>
-      )}
-
       {/* Stats Section */}
       {products.length > 0 && (
         <AnimatedElement animation="slideUp" delay={0.1}>

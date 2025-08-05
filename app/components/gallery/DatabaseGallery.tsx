@@ -180,13 +180,6 @@ export default function DatabaseGallery() {
   return (
     <div className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Gallery</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Explore our work through images showcasing our products, services, and applications
-          </p>
-        </div>
-
         {/* Category Tabs */}
         <div className="flex flex-wrap justify-center gap-2 mb-12">
           {allCategories.map((category) => (

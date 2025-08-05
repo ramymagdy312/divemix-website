@@ -67,18 +67,6 @@ const CategoryList = () => {
 
   return (
     <div className="space-y-8">
-      {/* Header Section */}
-      <div className="text-center space-y-4">
-        <AnimatedElement animation="fadeIn">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
-            Product Categories
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Explore our comprehensive range of diving and marine equipment categories
-          </p>
-        </AnimatedElement>
-      </div>
-
       {/* Search Section */}
       <AnimatedElement animation="slideUp" delay={0.1}>
         <div className="max-w-md mx-auto" data-search>
