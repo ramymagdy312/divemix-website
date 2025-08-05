@@ -19,11 +19,10 @@ export default async function Home() {
           <HeroSection />
           <CompanySection />
           <FeaturedCategories />
-          <StatsSection />
           <FeaturedServices />
+          <StatsSection />
           <FeaturedApplications />
           <VendorsSlider />
-          <ContactCTA />
         </div>
       </main>
       <Footer />
