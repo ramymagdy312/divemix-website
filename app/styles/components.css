@@ -1,0 +1,339 @@
+/* Enhanced Component Styles */
+
+/* Card Hover Effects */
+.card-enhanced {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-enhanced::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.card-enhanced:hover::before {
+  left: 100%;
+}
+
+/* Gradient Text Effect */
+.gradient-text {
+  background: linear-gradient(135deg, #0891b2, #1d4ed8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Floating Animation */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.float-animation {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Pulse Glow Effect */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(8, 145, 178, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(8, 145, 178, 0.6);
+  }
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Shimmer Loading Effect */
+@keyframes shimmer {
+  0% {
+    background-position: -468px 0;
+  }
+  100% {
+    background-position: 468px 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 25%,
+    #e0e0e0 50%,
+    #f0f0f0 75%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* Enhanced Button Styles */
+.btn-enhanced {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.btn-enhanced::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.btn-enhanced:hover::before {
+  left: 100%;
+}
+
+/* Grid Item Stagger Animation */
+.grid-stagger > * {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: slideInUp 0.6s ease forwards;
+}
+
+.grid-stagger > *:nth-child(1) { animation-delay: 0.1s; }
+.grid-stagger > *:nth-child(2) { animation-delay: 0.2s; }
+.grid-stagger > *:nth-child(3) { animation-delay: 0.3s; }
+.grid-stagger > *:nth-child(4) { animation-delay: 0.4s; }
+.grid-stagger > *:nth-child(5) { animation-delay: 0.5s; }
+.grid-stagger > *:nth-child(6) { animation-delay: 0.6s; }
+
+@keyframes slideInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Enhanced Loading Spinner */
+.loading-enhanced {
+  position: relative;
+  width: 64px;
+  height: 64px;
+}
+
+.loading-enhanced::before,
+.loading-enhanced::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  animation: spin 1.5s linear infinite;
+}
+
+.loading-enhanced::before {
+  width: 64px;
+  height: 64px;
+  border: 4px solid #e5e7eb;
+  border-top-color: #0891b2;
+}
+
+.loading-enhanced::after {
+  width: 48px;
+  height: 48px;
+  top: 8px;
+  left: 8px;
+  border: 4px solid transparent;
+  border-top-color: #1d4ed8;
+  animation-duration: 1s;
+  animation-direction: reverse;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive Utilities */
+@media (max-width: 768px) {
+  .card-enhanced {
+    margin-bottom: 1rem;
+  }
+  
+  .grid-stagger > * {
+    animation-delay: 0.1s !important;
+  }
+}
+
+/* Advanced Hover Effects */
+.card-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+}
+
+.card-3d:hover {
+  transform: rotateY(5deg) rotateX(5deg) translateZ(20px);
+}
+
+/* Magnetic Effect */
+.magnetic {
+  transition: transform 0.3s ease;
+}
+
+.magnetic:hover {
+  transform: scale(1.05) translateZ(0);
+}
+
+/* Glowing Border Animation */
+@keyframes glow-border {
+  0%, 100% {
+    border-color: rgba(8, 145, 178, 0.3);
+    box-shadow: 0 0 20px rgba(8, 145, 178, 0.1);
+  }
+  50% {
+    border-color: rgba(8, 145, 178, 0.8);
+    box-shadow: 0 0 30px rgba(8, 145, 178, 0.3);
+  }
+}
+
+.glow-border {
+  animation: glow-border 2s ease-in-out infinite;
+}
+
+/* Parallax Scroll Effect */
+.parallax {
+  transform: translateZ(0);
+  transition: transform 0.1s ease-out;
+}
+
+/* Interactive Background Patterns */
+.pattern-dots {
+  background-image: radial-gradient(circle, rgba(8, 145, 178, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.pattern-grid {
+  background-image: 
+    linear-gradient(rgba(8, 145, 178, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(8, 145, 178, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Smooth Reveal Animation */
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.reveal {
+  animation: reveal 0.8s ease-out forwards;
+}
+
+/* Enhanced Button Interactions */
+.btn-interactive {
+  position: relative;
+  overflow: hidden;
+  transform: translateZ(0);
+}
+
+.btn-interactive::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn-interactive:hover::after {
+  width: 300px;
+  height: 300px;
+}
+
+/* Typing Animation */
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes blink {
+  50% { border-color: transparent; }
+}
+
+.typing {
+  overflow: hidden;
+  border-right: 2px solid #0891b2;
+  white-space: nowrap;
+  animation: typing 3s steps(40, end), blink 0.75s step-end infinite;
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .card-enhanced {
+    background: #1f2937;
+    border-color: #374151;
+  }
+  
+  .gradient-text {
+    background: linear-gradient(135deg, #06b6d4, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .pattern-dots {
+    background-image: radial-gradient(circle, rgba(6, 182, 212, 0.2) 1px, transparent 1px);
+  }
+
+  .pattern-grid {
+    background-image: 
+      linear-gradient(rgba(6, 182, 212, 0.2) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(6, 182, 212, 0.2) 1px, transparent 1px);
+  }
+}
+
+/* Performance Optimizations */
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+  .card-enhanced,
+  .float-animation,
+  .pulse-glow,
+  .shimmer,
+  .grid-stagger > *,
+  .reveal {
+    animation: none !important;
+    transition: none !important;
+  }
+}
