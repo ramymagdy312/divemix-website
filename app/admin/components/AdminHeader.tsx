@@ -15,34 +15,30 @@ export default function AdminHeader({ user }: AdminHeaderProps) {
   };
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
-          <div className="flex items-center">
-            <h1 className="text-2xl font-bold text-gray-900">DiveMix Admin Panel</h1>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Link
-              href="/"
-              className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
-            >
-              <ExternalLink className="h-4 w-4" />
-              <span>View Website</span>
-            </Link>
-            <div className="flex items-center space-x-2">
-              <UserIcon className="h-5 w-5 text-gray-400" />
-              <span className="text-sm text-gray-700">{user.email}</span>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
-            >
-              <LogOut className="h-4 w-4" />
-              <span>Logout</span>
-            </button>
-          </div>
-        </div>
+    <div className="flex flex-1 items-center justify-between">
+      <div className="flex items-center">
+        <h1 className="text-lg font-semibold">DiveMix Admin Panel</h1>
       </div>
-    </header>
+      <div className="flex items-center space-x-4">
+        <Link
+          href="/"
+          className="flex items-center space-x-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
+        >
+          <ExternalLink className="h-4 w-4" />
+          <span>View Website</span>
+        </Link>
+        <div className="flex items-center space-x-2">
+          <UserIcon className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">{user.email}</span>
+        </div>
+        <button
+          onClick={handleLogout}
+          className="flex items-center space-x-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
+        >
+          <LogOut className="h-4 w-4" />
+          <span>Logout</span>
+        </button>
+      </div>
+    </div>
   );
 }

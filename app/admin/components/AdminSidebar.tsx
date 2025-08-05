@@ -18,6 +18,27 @@ import {
   Mail,
 } from 'lucide-react';
 
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+} from '@/app/components/ui/sidebar';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/app/components/ui/collapsible';
+
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { name: 'Products', href: '/admin/products', icon: Package },
@@ -55,82 +76,104 @@ export default function AdminSidebar() {
   }, [isPagesActive]);
 
   return (
-    <div className="w-64 bg-white shadow-sm h-screen">
-      <nav className="mt-8">
-        <div className="px-4">
-          {navigation.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`group flex items-center px-4 py-3 text-sm font-medium rounded-md mb-2 transition-colors ${
-                  isActive
-                    ? 'bg-cyan-100 text-cyan-700'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                }`}
-              >
-                <item.icon
-                  className={`mr-3 h-5 w-5 ${
-                    isActive ? 'text-cyan-500' : 'text-gray-400 group-hover:text-gray-500'
-                  }`}
-                />
-                {item.name}
-              </Link>
-            );
-          })}
-          
-          {/* Pages Section */}
-          <div className="mb-2">
-            <button
-              onClick={() => setPagesExpanded(!pagesExpanded)}
-              className={`group flex items-center w-full px-4 py-3 text-sm font-medium rounded-md transition-colors ${
-                isPagesActive
-                  ? 'bg-cyan-100 text-cyan-700'
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-              }`}
-            >
-              <FileText
-                className={`mr-3 h-5 w-5 ${
-                  isPagesActive ? 'text-cyan-500' : 'text-gray-400 group-hover:text-gray-500'
-                }`}
-              />
-              <span className="flex-1 text-left">Pages</span>
-              {pagesExpanded ? (
-                <ChevronDown className="h-4 w-4 text-gray-400" />
-              ) : (
-                <ChevronRight className="h-4 w-4 text-gray-400" />
-              )}
-            </button>
-            
-            {pagesExpanded && (
-              <div className="ml-2 mt-1 space-y-1 border-l-2 border-gray-100 pl-2">
-                {pagesNavigation.map((item) => {
-                  const isActive = pathname === item.href;
-                  return (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className={`group flex items-center px-3 py-2 text-sm rounded-md transition-colors ${
-                        isActive
-                          ? 'bg-cyan-50 text-cyan-600 font-medium'
-                          : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
-                      }`}
-                    >
-                      <item.icon
-                        className={`mr-2 h-4 w-4 ${
-                          isActive ? 'text-cyan-500' : 'text-gray-400 group-hover:text-gray-500'
-                        }`}
-                      />
-                      {item.name}
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
+    <Sidebar variant="inset">
+      <SidebarHeader>
+        <div className="flex items-center gap-2 px-4 py-2">
+          <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-cyan-600 text-white">
+            <LayoutDashboard className="size-4" />
+          </div>
+          <div className="grid flex-1 text-left text-sm leading-tight">
+            <span className="truncate font-semibold">Admin Panel</span>
+            <span className="truncate text-xs text-muted-foreground">Divemix Website</span>
           </div>
         </div>
-      </nav>
-    </div>
+      </SidebarHeader>
+      
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Main Navigation</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navigation.map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <SidebarMenuItem key={item.name}>
+                    <SidebarMenuButton 
+                      asChild 
+                      isActive={isActive}
+                      tooltip={item.name}
+                    >
+                      <Link href={item.href}>
+                        <item.icon />
+                        <span>{item.name}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Pages Management</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <Collapsible
+                open={pagesExpanded}
+                onOpenChange={setPagesExpanded}
+                className="group/collapsible"
+              >
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton
+                      isActive={isPagesActive}
+                      className="w-full justify-between"
+                      tooltip="Pages Management"
+                    >
+                      <div className="flex items-center gap-2">
+                        <FileText />
+                        <span>Pages</span>
+                      </div>
+                      <ChevronRight className="h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      {pagesNavigation.map((item) => {
+                        const isActive = pathname === item.href;
+                        return (
+                          <SidebarMenuSubItem key={item.name}>
+                            <SidebarMenuSubButton asChild isActive={isActive}>
+                              <Link href={item.href}>
+                                <item.icon />
+                                <span>{item.name}</span>
+                              </Link>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        );
+                      })}
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                </SidebarMenuItem>
+              </Collapsible>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+      
+      <SidebarFooter>
+        <div className="flex items-center gap-2 px-2 py-1 text-xs text-muted-foreground">
+          <div className="flex aspect-square size-6 items-center justify-center rounded-md bg-cyan-600 text-white">
+            <Package className="size-3" />
+          </div>
+          <div className="grid flex-1 text-left text-xs leading-tight">
+            <span className="truncate font-medium">DiveMix</span>
+            <span className="truncate text-xs">Admin v1.0</span>
+          </div>
+        </div>
+      </SidebarFooter>
+    </Sidebar>
   );
 }
