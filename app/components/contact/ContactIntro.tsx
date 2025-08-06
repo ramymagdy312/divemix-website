@@ -14,7 +14,7 @@ const ContactIntro = ({
   description = "Whether you're looking to upgrade your current systems, need expert consultation, or want to explore our latest innovations, our team is here to help. With decades of experience and a commitment to excellence, we provide personalized solutions that meet your specific requirements."
 }: ContactIntroProps) => {
   return (
-    <Card className="border-0 shadow-none bg-transparent max-w-3xl mx-auto">
+    <Card className="border-0 shadow-none bg-transparent max-w-3xl mx-auto ">
       <CardHeader className="px-0 pb-6 text-center">
         <div className="flex justify-center mb-4">
           <Badge variant="secondary">

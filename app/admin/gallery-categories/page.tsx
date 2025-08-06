@@ -21,6 +21,17 @@ import {
   TableHeader,
   TableRow,
 } from '@/app/components/ui/table';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/app/components/ui/alert-dialog';
 
 export default function GalleryCategoriesAdmin() {
   const [data, setData] = useState<any>(null);
@@ -129,8 +140,6 @@ export default function GalleryCategoriesAdmin() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this category?')) return;
-
     try {
       const { error } = await supabase
         .from('gallery_categories')
@@ -390,14 +399,29 @@ export default function GalleryCategoriesAdmin() {
                           <Edit className="h-4 w-4" />
                         </Button>
                         {category.slug !== 'all' && (
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => handleDelete(category.id)}
-                          >
-                            <Trash2 className="h-4 w-4 text-destructive" />
+
+                          <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="ghost" size="sm">
+                            <Trash2 className="h-4 w-4" />
                           </Button>
-                        )}
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will permanently delete the category "{category.name}".
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleDelete(category.id)}>
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                      )}
                       </div>
                     )}
                   </TableCell>

@@ -98,10 +98,6 @@ export default function VendorsPage() {
   };
 
   const deleteVendor = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this vendor? This action cannot be undone.')) {
-      return;
-    }
-
     setDeleting(id);
     try {
       const { error } = await supabase

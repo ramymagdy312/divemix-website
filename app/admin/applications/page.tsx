@@ -69,8 +69,6 @@ export default function ApplicationsPage() {
   };
 
   const deleteApplication = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this application?')) return;
-
     try {
       const { error } = await supabase
         .from('applications')

@@ -1,6 +1,7 @@
 {
   "/page": "app/page.js",
-  "/admin/vendors/page": "app/admin/vendors/page.js",
-  "/admin/vendors/new/page": "app/admin/vendors/new/page.js",
-  "/admin/applications/page": "app/admin/applications/page.js"
+  "/contact/page": "app/contact/page.js",
+  "/admin/applications/page": "app/admin/applications/page.js",
+  "/admin/page": "app/admin/page.js",
+  "/admin/gallery/page": "app/admin/gallery/page.js"
 }
