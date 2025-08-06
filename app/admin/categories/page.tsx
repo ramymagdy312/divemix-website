@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Plus, Edit, Trash2, Search, AlertCircle, Settings } from 'lucide-react';
+import { Plus, Edit, Trash2, Search, AlertCircle, Package } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
@@ -30,6 +30,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/app/components/ui/alert-dialog';
+
 
 interface Category {
   id: string;
@@ -181,187 +182,173 @@ export default function CategoriesPage() {
   }
 
   return (
-    <div>
+    <div className="space-y-6">
       {/* Error/Demo Mode Banner */}
       {(usingFallback || error) && (
-        <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <div className="flex items-center">
-            <AlertCircle className="h-5 w-5 text-yellow-400 mr-3" />
-            <div className="flex-1">
-              <h3 className="text-sm font-medium text-yellow-800">
-                {error ? 'Database Connection Issue' : 'Demo Mode Active'}
-              </h3>
-              <p className="text-sm text-yellow-700 mt-1">
-                {error ? (
-                  <>Database error: {error}. Showing sample categories.</>
-                ) : (
-                  <>Showing sample categories. Database not configured.</>
-                )}
-                <Link href="/check-products-database" className="underline ml-2">
-                  Set up database →
-                </Link>
-              </p>
-            </div>
-          </div>
-        </div>
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>
+            {error ? 'Database Connection Issue' : 'Demo Mode Active'}
+          </AlertTitle>
+          <AlertDescription>
+            {error ? (
+              <>Database error: {error}. Showing sample categories.</>
+            ) : (
+              <>Showing sample categories. Database not configured.</>
+            )}
+            <Link href="/check-products-database" className="underline ml-2">
+              Set up database →
+            </Link>
+          </AlertDescription>
+        </Alert>
       )}
-
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Product Categories Management</h1>
-          <p className="mt-2 text-gray-600">
-            {usingFallback ? 'Manage sample categories (Demo Mode)' : 'Manage product categories'}
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight">Category Management</h1>
+          <p className="text-muted-foreground">
+            {usingFallback ? 'Managing sample categories (Demo Mode)' : 'Managing all company categories'}
           </p>
         </div>
-        <Link
-          href="/admin/categories/new"
-          className={`inline-flex items-center px-4 py-2 rounded-md transition-colors ${
-            usingFallback 
-              ? 'bg-gray-400 text-white cursor-not-allowed' 
-              : 'bg-cyan-600 text-white hover:bg-cyan-700'
-          }`}
-          onClick={(e) => {
-            if (usingFallback) {
-              e.preventDefault();
-              }
-          }}
-        >
-          <Plus className="h-5 w-5 mr-2" />
-          {usingFallback ? 'Database Required' : 'Add New Category'}
-        </Link>
-      </div>
-
-      <div className="mb-6">
-        <div className="relative">
-          <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search categories..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-      </div>
-
-      <div className="bg-white shadow overflow-hidden sm:rounded-md">
-        <ul className="divide-y divide-gray-200">
-          {filteredCategories.map((category) => (
-            <li key={category.id}>
-              <div className="px-4 py-4 flex items-center justify-between">
-                <div className="flex items-center">
-                  <Image
-                    src={category.image_url}
-                    alt={category.name}
-                    width={64}
-                    height={64}
-                    className="h-16 w-16 object-cover rounded-md mr-4"
-                  />
-                  <div>
-                    <h3 className="text-lg font-medium text-gray-900">
-                      {category.name}
-                    </h3>
-                    <p className="text-sm text-gray-600 mt-1 max-w-md">
-                      {category.description}
-                    </p>
-                    <div className="flex items-center mt-2 space-x-4">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        category.is_active 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-red-100 text-red-800'
-                      }`}>
-                        {category.is_active ? 'Active' : 'Inactive'}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        Order: {category.display_order}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Link
-                    href={`/admin/categories/${category.id}/edit`}
-                    className={`p-2 transition-colors ${
-                      usingFallback 
-                        ? 'text-gray-300 cursor-not-allowed' 
-                        : 'text-gray-400 hover:text-gray-600'
-                    }`}
-                    onClick={(e) => {
-                      if (usingFallback) {
-                        e.preventDefault();
-                        }
-                    }}
-                  >
-                    <Edit className="h-5 w-5" />
-                  </Link>
-                  <button
-                    onClick={() => deleteCategory(category.id)}
-                    className={`p-2 transition-colors ${
-                      usingFallback 
-                        ? 'text-gray-300 cursor-not-allowed' 
-                        : 'text-red-400 hover:text-red-600'
-                    }`}
-                  >
-                    <Trash2 className="h-5 w-5" />
-                  </button>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {filteredCategories.length === 0 && (
-        <div className="text-center py-12">
-          <Alert>
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>No categories found</AlertDescription>
-          </Alert>
-          {!usingFallback && (
-            <Button asChild className="mt-4">
-              <Link href="/admin/categories/new">
-                <Plus className="h-4 w-4 mr-2" />
-                Add Your First Category
-              </Link>
-            </Button>
-          )}
-        </div>
-      )}
-
-      {/* Help Section */}
-      {usingFallback && (
-        <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-blue-800 mb-4">🚀 Getting Started</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-700">
-            <div>
-              <h4 className="font-medium mb-2">To Add Real Categories:</h4>
-              <ol className="space-y-1">
-                <li>1. Set up database tables</li>
-                <li>2. Configure product categories</li>
-                <li>3. Add your categories</li>
-                <li>4. Manage products</li>
-              </ol>
-            </div>
-            <div>
-              <h4 className="font-medium mb-2">Current Features:</h4>
-              <ul className="space-y-1">
-                <li>• View sample categories</li>
-                <li>• Search functionality</li>
-                <li>• Category management</li>
-                <li>• Image management</li>
-              </ul>
-            </div>
-          </div>
-          <div className="mt-4">
-            <Link
-              href="/check-products-database"
-              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-            >
-              Set Up Database Now →
+        <div className="flex items-center space-x-2">
+          <Badge variant={usingFallback ? "destructive" : "secondary"}>
+            <Package className="h-3 w-3 mr-1" />
+            {usingFallback ? "Demo Mode" : "Live"}
+          </Badge>
+          <Button asChild disabled={usingFallback}>
+            <Link href="/admin/categories/new">
+              <Plus className="h-4 w-4 mr-2" />
+              Add New Category
             </Link>
-          </div>
+          </Button>
         </div>
-      )}
+      </div>
+
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Search categories..."
+          className="pl-10"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+      {/* Categories Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Categories</CardTitle>
+          <CardDescription>
+            {filteredCategories.length} category{filteredCategories.length !== 1 ? 'ies' : 'y'} found
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Category</TableHead>
+                <TableHead>Category</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Order</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredCategories.map((category) => (
+                <TableRow key={category.id}>
+                  <TableCell>
+                    <div className="flex items-center space-x-3">
+                      {category.image_url && (
+                        <Image
+                          src={category.image_url}
+                          alt={category.name}
+                          width={48}
+                          height={48}
+                          className="h-12 w-12 object-cover rounded-md"
+                        />
+                      )}
+                      <div>
+                        <div className="font-medium">{category.name}</div>
+                        <div className="text-sm text-muted-foreground max-w-md truncate">
+                          {category.description}
+                        </div>
+                        {usingFallback && (
+                          <Badge variant="outline" className="mt-1">
+                            Demo Category
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="secondary">
+                      {category.name || 'No Category'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={category.is_active ? "default" : "destructive"}>
+                      {category.is_active ? 'Active' : 'Inactive'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {category.display_order}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end space-x-2">
+                      <Button variant="ghost" size="sm" asChild disabled={usingFallback}>
+                        <Link href={`/admin/categories/${category.id}/edit`}>
+                          <Edit className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="ghost" size="sm" disabled={usingFallback}>
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will permanently delete the category "{category.name}".
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => deleteCategory(category.id)}>
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+
+          {filteredCategories.length === 0 && (
+            <div className="text-center py-12">
+              <Package className="mx-auto h-12 w-12 text-muted-foreground" />
+              <h3 className="mt-2 text-sm font-semibold">No categories found</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {searchTerm ? 'Try adjusting your search terms.' : 'Get started by creating a new category.'}
+              </p>
+              {!usingFallback && !searchTerm && (
+                <div className="mt-6">
+                  <Button asChild>
+                    <Link href="/admin/categories/new">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Your First Category
+                    </Link>
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

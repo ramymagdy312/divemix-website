@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
+import Image from 'next/image';
 
 interface GalleryImage {
   id: string;
@@ -213,10 +214,11 @@ export default function DatabaseGallery() {
                   onClick={() => openModal(image)}
                 >
                   <div className="aspect-w-4 aspect-h-3 bg-gray-200" style={{ aspectRatio: '4/3' }}>
-                    <img
+                    <Image
                       src={image.url}
                       alt={image.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-500"
                       onError={(e) => {
                         console.error('Image failed to load:', image.url);
                         console.error('Error details:', e);
@@ -254,11 +256,15 @@ export default function DatabaseGallery() {
         {selectedImage && (
           <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50" onClick={closeModal}>
             <div className="relative max-w-4xl max-h-full p-4" onClick={(e) => e.stopPropagation()}>
-              <img
-                src={selectedImage.url}
-                alt={selectedImage.title}
-                className="max-w-full max-h-full object-contain"
-              />
+              <div className="relative w-full h-full">
+                <Image
+                  src={selectedImage.url}
+                  alt={selectedImage.title}
+                  width={1200}
+                  height={800}
+                  className="max-w-full max-h-full object-contain"
+                />
+              </div>
               
               {/* Close Button */}
               <button

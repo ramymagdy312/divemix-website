@@ -5,7 +5,7 @@ import path from 'path';
 
 export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url);
+    const { searchParams } = req.nextUrl;
     const folder = searchParams.get('folder') || 'root';
     
     const images: any[] = [];
