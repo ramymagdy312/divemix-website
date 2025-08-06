@@ -1,11 +1,26 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 
-import { Edit, Save, X, Plus, Trash2, Eye, EyeOff } from 'lucide-react';
+import { Edit, Save, X, Plus, Trash2, Eye, EyeOff, Image as ImageIcon } from 'lucide-react';
 import Breadcrumb from '../../components/admin/Breadcrumb';
 import toast from 'react-hot-toast';
+import { Button } from '@/app/components/ui/button';
+import { Input } from '@/app/components/ui/input';
+import { Label } from '@/app/components/ui/label';
+import { Textarea } from '@/app/components/ui/textarea';
+import { Switch } from '@/app/components/ui/switch';
+import { Badge } from '@/app/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/app/components/ui/table';
 
 export default function GalleryCategoriesAdmin() {
   const [data, setData] = useState<any>(null);
@@ -84,7 +99,6 @@ export default function GalleryCategoriesAdmin() {
   const handleAdd = async () => {
     setSaving(true);
     try {
-      // Auto-generate slug if not provided
       const slug = newCategory.slug || generateSlug(newCategory.name);
 
       const { error } = await supabase
@@ -157,244 +171,242 @@ export default function GalleryCategoriesAdmin() {
       ]} />
       
       <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Gallery Categories</h1>
-          <p className="mt-2 text-gray-600">Manage gallery image categories</p>
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight flex items-center">
+            <ImageIcon className="h-8 w-8 mr-3 text-primary" />
+            Gallery Categories
+          </h1>
+          <p className="text-muted-foreground">Manage gallery image categories</p>
         </div>
-        <button
-          onClick={() => setShowAddForm(true)}
-          className="bg-cyan-600 text-white px-4 py-2 rounded-md hover:bg-cyan-700 flex items-center space-x-2"
-        >
-          <Plus className="h-4 w-4" />
-          <span>Add Category</span>
-        </button>
+        <Button onClick={() => setShowAddForm(true)}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Category
+        </Button>
       </div>
 
       {/* Add Form */}
       {showAddForm && (
-        <div className="bg-white shadow rounded-lg p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4">Add New Category</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
-              <input
-                type="text"
-                value={newCategory.name}
-                onChange={(e) => {
-                  const name = e.target.value;
-                  setNewCategory({ 
-                    ...newCategory, 
-                    name,
-                    slug: newCategory.slug || generateSlug(name)
-                  });
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>Add New Category</CardTitle>
+            <CardDescription>
+              Create a new gallery category to organize your images
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="category-name">Name</Label>
+                <Input
+                  id="category-name"
+                  type="text"
+                  value={newCategory.name}
+                  onChange={(e) => {
+                    const name = e.target.value;
+                    setNewCategory({ 
+                      ...newCategory, 
+                      name,
+                      slug: newCategory.slug || generateSlug(name)
+                    });
+                  }}
+                  placeholder="Category name"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="category-slug">Slug</Label>
+                <Input
+                  id="category-slug"
+                  type="text"
+                  value={newCategory.slug}
+                  onChange={(e) => setNewCategory({ ...newCategory, slug: e.target.value })}
+                  placeholder="category-slug"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="display-order">Display Order</Label>
+                <Input
+                  id="display-order"
+                  type="number"
+                  value={newCategory.display_order}
+                  onChange={(e) => setNewCategory({ ...newCategory, display_order: parseInt(e.target.value) || 0 })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Status</Label>
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="is_active"
+                    checked={newCategory.is_active}
+                    onCheckedChange={(checked) => setNewCategory({ ...newCategory, is_active: checked })}
+                  />
+                  <Label htmlFor="is_active">Active</Label>
+                </div>
+              </div>
+            </div>
+            <div className="mt-4 space-y-2">
+              <Label htmlFor="category-description">Description</Label>
+              <Textarea
+                id="category-description"
+                value={newCategory.description}
+                onChange={(e) => setNewCategory({ ...newCategory, description: e.target.value })}
+                rows={3}
+                placeholder="Category description"
+              />
+            </div>
+            <div className="flex space-x-2 mt-6">
+              <Button
+                onClick={handleAdd}
+                disabled={saving || !newCategory.name}
+              >
+                <Save className="h-4 w-4 mr-2" />
+                {saving ? 'Adding...' : 'Add Category'}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowAddForm(false);
+                  setNewCategory({ name: '', description: '', slug: '', display_order: 0, is_active: true });
                 }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                placeholder="Category name"
-              />
+              >
+                <X className="h-4 w-4 mr-2" />
+                Cancel
+              </Button>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Slug</label>
-              <input
-                type="text"
-                value={newCategory.slug}
-                onChange={(e) => setNewCategory({ ...newCategory, slug: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                placeholder="category-slug"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Display Order</label>
-              <input
-                type="number"
-                value={newCategory.display_order}
-                onChange={(e) => setNewCategory({ ...newCategory, display_order: parseInt(e.target.value) || 0 })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
-              />
-            </div>
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="is_active"
-                checked={newCategory.is_active}
-                onChange={(e) => setNewCategory({ ...newCategory, is_active: e.target.checked })}
-                className="h-4 w-4 text-cyan-600 focus:ring-cyan-500 border-gray-300 rounded"
-              />
-              <label htmlFor="is_active" className="ml-2 block text-sm text-gray-900">
-                Active
-              </label>
-            </div>
-          </div>
-          <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-            <textarea
-              value={newCategory.description}
-              onChange={(e) => setNewCategory({ ...newCategory, description: e.target.value })}
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
-              placeholder="Category description"
-            />
-          </div>
-          <div className="flex space-x-4 mt-6">
-            <button
-              onClick={handleAdd}
-              disabled={saving || !newCategory.name}
-              className="bg-cyan-600 text-white px-4 py-2 rounded-md hover:bg-cyan-700 disabled:opacity-50 flex items-center space-x-2"
-            >
-              <Save className="h-4 w-4" />
-              <span>{saving ? 'Adding...' : 'Add Category'}</span>
-            </button>
-            <button
-              onClick={() => {
-                setShowAddForm(false);
-                setNewCategory({ name: '', description: '', slug: '', display_order: 0, is_active: true });
-              }}
-              className="px-4 py-2 text-gray-600 hover:text-gray-800 flex items-center space-x-2"
-            >
-              <X className="h-4 w-4" />
-              <span>Cancel</span>
-            </button>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       )}
 
       {/* Categories List */}
-      <div className="bg-white shadow rounded-lg overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Name
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Slug
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Order
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {(data || []).map((category: any) => (
-              <tr key={category.id}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {editingId === category.id ? (
-                    <input
-                      type="text"
-                      value={category.name}
-                      onChange={(e) => handleCategoryChange(category.id, 'name', e.target.value)}
-                      className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                    />
-                  ) : (
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">{category.name}</div>
-                      {category.description && (
-                        <div className="text-sm text-gray-500">{category.description}</div>
-                      )}
-                    </div>
-                  )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {editingId === category.id ? (
-                    <input
-                      type="text"
-                      value={category.slug}
-                      onChange={(e) => handleCategoryChange(category.id, 'slug', e.target.value)}
-                      className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                    />
-                  ) : (
-                    <span className="text-sm text-gray-900">{category.slug}</span>
-                  )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {editingId === category.id ? (
-                    <input
-                      type="number"
-                      value={category.display_order}
-                      onChange={(e) => handleCategoryChange(category.id, 'display_order', parseInt(e.target.value) || 0)}
-                      className="w-20 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                    />
-                  ) : (
-                    <span className="text-sm text-gray-900">{category.display_order}</span>
-                  )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {editingId === category.id ? (
-                    <input
-                      type="checkbox"
-                      checked={category.is_active}
-                      onChange={(e) => handleCategoryChange(category.id, 'is_active', e.target.checked)}
-                      className="h-4 w-4 text-cyan-600 focus:ring-cyan-500 border-gray-300 rounded"
-                    />
-                  ) : (
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      category.is_active 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-red-100 text-red-800'
-                    }`}>
-                      {category.is_active ? (
-                        <>
-                          <Eye className="h-3 w-3 mr-1" />
-                          Active
-                        </>
-                      ) : (
-                        <>
-                          <EyeOff className="h-3 w-3 mr-1" />
-                          Inactive
-                        </>
-                      )}
-                    </span>
-                  )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  {editingId === category.id ? (
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => handleSave(category)}
-                        disabled={saving}
-                        className="text-green-600 hover:text-green-900 disabled:opacity-50"
-                      >
-                        <Save className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => {
-                          setEditingId(null);
-                          fetchCategories(); // Reset changes
-                        }}
-                        className="text-gray-600 hover:text-gray-900"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => setEditingId(category.id)}
-                        className="text-cyan-600 hover:text-cyan-900"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </button>
-                      {category.slug !== 'all' && (
-                        <button
-                          onClick={() => handleDelete(category.id)}
-                          className="text-red-600 hover:text-red-900"
+      <Card>
+        <CardHeader>
+          <CardTitle>Categories</CardTitle>
+          <CardDescription>
+            Manage your gallery categories
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Slug</TableHead>
+                <TableHead>Order</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {(data || []).map((category: any) => (
+                <TableRow key={category.id}>
+                  <TableCell>
+                    {editingId === category.id ? (
+                      <Input
+                        type="text"
+                        value={category.name}
+                        onChange={(e) => handleCategoryChange(category.id, 'name', e.target.value)}
+                      />
+                    ) : (
+                      <div>
+                        <div className="font-medium">{category.name}</div>
+                        {category.description && (
+                          <div className="text-sm text-muted-foreground">{category.description}</div>
+                        )}
+                      </div>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {editingId === category.id ? (
+                      <Input
+                        type="text"
+                        value={category.slug}
+                        onChange={(e) => handleCategoryChange(category.id, 'slug', e.target.value)}
+                      />
+                    ) : (
+                      <span className="text-sm">{category.slug}</span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {editingId === category.id ? (
+                      <Input
+                        type="number"
+                        value={category.display_order}
+                        onChange={(e) => handleCategoryChange(category.id, 'display_order', parseInt(e.target.value) || 0)}
+                        className="w-20"
+                      />
+                    ) : (
+                      <span className="text-sm">{category.display_order}</span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {editingId === category.id ? (
+                      <Switch
+                        checked={category.is_active}
+                        onCheckedChange={(checked) => handleCategoryChange(category.id, 'is_active', checked)}
+                      />
+                    ) : (
+                      <Badge variant={category.is_active ? "default" : "secondary"}>
+                        {category.is_active ? (
+                          <>
+                            <Eye className="h-3 w-3 mr-1" />
+                            Active
+                          </>
+                        ) : (
+                          <>
+                            <EyeOff className="h-3 w-3 mr-1" />
+                            Inactive
+                          </>
+                        )}
+                      </Badge>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {editingId === category.id ? (
+                      <div className="flex space-x-2">
+                        <Button
+                          size="sm"
+                          onClick={() => handleSave(category)}
+                          disabled={saving}
                         >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                          <Save className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setEditingId(null);
+                            fetchCategories();
+                          }}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="flex space-x-2">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => setEditingId(category.id)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        {category.slug !== 'all' && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleDelete(category.id)}
+                          >
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        )}
+                      </div>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   );
 }

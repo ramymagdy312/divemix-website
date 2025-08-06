@@ -6,6 +6,21 @@ import { Plus, Edit, Trash2, Search, Image as ImageIcon } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
+import { Button } from '@/app/components/ui/button';
+import { Input } from '@/app/components/ui/input';
+import { Badge } from '@/app/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/app/components/ui/alert-dialog';
 
 interface GalleryImage {
   id: string;
@@ -74,35 +89,45 @@ export default function GalleryPage() {
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Gallery</h1>
-          <p className="mt-2 text-gray-600">Manage all gallery images</p>
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight flex items-center">
+            <ImageIcon className="h-8 w-8 mr-3 text-primary" />
+            Gallery
+          </h1>
+          <p className="text-muted-foreground">Manage all gallery images</p>
         </div>
-        <Link
-          href="/admin/gallery/new"
-          className="inline-flex items-center px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700 transition-colors"
-        >
-          <Plus className="h-5 w-5 mr-2" />
-          Add New Image
-        </Link>
+        <Button asChild>
+          <Link href="/admin/gallery/new">
+            <Plus className="h-4 w-4 mr-2" />
+            Add New Image
+          </Link>
+        </Button>
       </div>
 
-      <div className="mb-6">
-        <div className="relative">
-          <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search images..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Search Images</CardTitle>
+          <CardDescription>
+            Find images by title or category
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="relative">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search images..."
+              className="pl-10"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </CardContent>
+      </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-6">
         {filteredImages.map((image) => (
-          <div key={image.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
+          <Card key={image.id} className="overflow-hidden">
             <div className="aspect-square relative">
               <Image
                 src={image.url}
@@ -111,25 +136,41 @@ export default function GalleryPage() {
                 className="object-cover"
               />
             </div>
-            <div className="p-4">
-              <h3 className="font-medium text-gray-900 truncate">{image.title}</h3>
-              <p className="text-sm text-gray-500 mt-1">{image.category}</p>
+            <CardContent className="p-4">
+              <h3 className="font-medium truncate">{image.title}</h3>
+              <Badge variant="secondary" className="mt-1">
+                {image.category}
+              </Badge>
               <div className="flex justify-end space-x-2 mt-3">
-                <Link
-                  href={`/admin/gallery/${image.id}/edit`}
-                  className="p-1 text-gray-400 hover:text-gray-600"
-                >
-                  <Edit className="h-4 w-4" />
-                </Link>
-                <button
-                  onClick={() => deleteImage(image.id)}
-                  className="p-1 text-red-400 hover:text-red-600"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link href={`/admin/gallery/${image.id}/edit`}>
+                    <Edit className="h-4 w-4" />
+                  </Link>
+                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="ghost" size="sm">
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete Image</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to delete this image? This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => deleteImage(image.id)}>
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
 

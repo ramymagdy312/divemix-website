@@ -5,8 +5,29 @@ import { supabase } from '../../lib/supabase';
 import { Plus, Edit, Trash2, Eye, EyeOff, ExternalLink, Users } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import Breadcrumb from '../../components/admin/Breadcrumb';
 import toast from 'react-hot-toast';
+import { Button } from '@/app/components/ui/button';
+import { Badge } from '@/app/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/app/components/ui/table';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/app/components/ui/alert-dialog';
 
 interface Vendor {
   id: string;
@@ -113,28 +134,23 @@ export default function VendorsPage() {
   }
 
   return (
-    <div>
-      <Breadcrumb items={[
-        { name: 'Vendors' }
-      ]} />
-      
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-            <Users className="h-8 w-8 mr-3 text-cyan-600" />
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight flex items-center">
+            <Users className="h-8 w-8 mr-3 text-primary" />
             Vendors Management
           </h1>
-          <p className="mt-2 text-gray-600">
+          <p className="text-muted-foreground">
             Manage your trusted partners and vendors displayed on the homepage
           </p>
         </div>
-        <Link
-          href="/admin/vendors/new"
-          className="bg-cyan-600 text-white px-4 py-2 rounded-md hover:bg-cyan-700 flex items-center space-x-2"
-        >
-          <Plus className="h-4 w-4" />
-          <span>Add Vendor</span>
-        </Link>
+        <Button asChild>
+          <Link href="/admin/vendors/new">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Vendor
+          </Link>
+        </Button>
       </div>
 
       {vendors.length === 0 ? (

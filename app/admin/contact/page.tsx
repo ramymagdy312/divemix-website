@@ -1,14 +1,20 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 
 import { Edit, Save, X, Plus, Trash2, MapPin } from 'lucide-react';
 import FolderExplorerSingle from '../../components/admin/FolderExplorerSingle';
 import Image from 'next/image';
 import Breadcrumb from '../../components/admin/Breadcrumb';
-
 import toast from 'react-hot-toast';
+import { Button } from '@/app/components/ui/button';
+import { Input } from '@/app/components/ui/input';
+import { Label } from '@/app/components/ui/label';
+import { Textarea } from '@/app/components/ui/textarea';
+import { Switch } from '@/app/components/ui/switch';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import { Separator } from '@/app/components/ui/separator';
 
 interface ContactPageData {
   id: string;
@@ -222,61 +228,66 @@ export default function ContactAdmin() {
       ]} />
       
       <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Contact Page Management</h1>
-          <p className="mt-2 text-gray-600">Manage the content of your Contact page</p>
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight flex items-center">
+            <MapPin className="h-8 w-8 mr-3 text-primary" />
+            Contact Page Management
+          </h1>
+          <p className="text-muted-foreground">Manage the content of your Contact page</p>
         </div>
-        <div className="flex space-x-4">
+        <div className="flex space-x-2">
           {editing ? (
             <>
-              <button
+              <Button
+                variant="outline"
                 onClick={() => setEditing(false)}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800 flex items-center space-x-2"
               >
-                <X className="h-4 w-4" />
-                <span>Cancel</span>
-              </button>
-              <button
+                <X className="h-4 w-4 mr-2" />
+                Cancel
+              </Button>
+              <Button
                 onClick={handleSave}
                 disabled={saving}
-                className="bg-cyan-600 text-white px-4 py-2 rounded-md hover:bg-cyan-700 flex items-center space-x-2 disabled:opacity-50"
               >
-                <Save className="h-4 w-4" />
-                <span>{saving ? 'Saving...' : 'Save Changes'}</span>
-              </button>
+                <Save className="h-4 w-4 mr-2" />
+                {saving ? 'Saving...' : 'Save Changes'}
+              </Button>
             </>
           ) : (
-            <button
+            <Button
               onClick={() => setEditing(true)}
-              className="bg-cyan-600 text-white px-4 py-2 rounded-md hover:bg-cyan-700 flex items-center space-x-2"
             >
-              <Edit className="h-4 w-4" />
-              <span>Edit Page</span>
-            </button>
+              <Edit className="h-4 w-4 mr-2" />
+              Edit Page
+            </Button>
           )}
         </div>
       </div>
 
       <div className="space-y-8">
         {/* Basic Info */}
-        <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">Basic Information</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Page Title
-              </label>
-              {editing ? (
-                <input
-                  type="text"
-                  value={data?.title}
-                  onChange={(e) => setData({ ...data!, title: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                />
-              ) : (
-                <p className="text-gray-900">{data?.title}</p>
-              )}
-            </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Basic Information</CardTitle>
+            <CardDescription>
+              Configure the main content and hero section of the contact page
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="page-title">Page Title</Label>
+                {editing ? (
+                  <Input
+                    id="page-title"
+                    type="text"
+                    value={data?.title || ''}
+                    onChange={(e) => setData({ ...data!, title: e.target.value })}
+                  />
+                ) : (
+                  <p className="text-sm font-medium">{data?.title}</p>
+                )}
+              </div>
             <div>
               {editing ? (
                 <FolderExplorerSingle
@@ -321,49 +332,57 @@ export default function ContactAdmin() {
               <p className="text-gray-900">{data?.description}</p>
             )}
           </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Intro Section */}
-        <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">Introduction Section</h2>
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Intro Title
-              </label>
+        <Card>
+          <CardHeader>
+            <CardTitle>Introduction Section</CardTitle>
+            <CardDescription>
+              Configure the introduction content that appears below the hero section
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="intro-title">Intro Title</Label>
               {editing ? (
-                <input
+                <Input
+                  id="intro-title"
                   type="text"
-                  value={data?.intro_title}
+                  value={data?.intro_title || ''}
                   onChange={(e) => setData({ ...data!, intro_title: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                 />
               ) : (
-                <p className="text-gray-900">{data?.intro_title}</p>
+                <p className="text-sm font-medium">{data?.intro_title}</p>
               )}
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Intro Description
-              </label>
+            <div className="space-y-2">
+              <Label htmlFor="intro-description">Intro Description</Label>
               {editing ? (
-                <textarea
-                  value={data?.intro_description}
+                <Textarea
+                  id="intro-description"
+                  value={data?.intro_description || ''}
                   onChange={(e) => setData({ ...data!, intro_description: e.target.value })}
                   rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                 />
               ) : (
-                <p className="text-gray-900">{data?.intro_description}</p>
+                <p className="text-sm">{data?.intro_description}</p>
               )}
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Branches */}
-        <div className="bg-white shadow rounded-lg p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold">Branch Locations</h2>
+        <Card>
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <div>
+                <CardTitle>Branch Locations</CardTitle>
+                <CardDescription>
+                  Manage your company branch locations and contact information
+                </CardDescription>
+              </div>
             {editing && (
               <button
                 onClick={addBranch}
@@ -579,7 +598,8 @@ export default function ContactAdmin() {
               </div>
             ))}
           </div>
-        </div>
+          </CardHeader>
+        </Card>
       </div>
     </div>
   );

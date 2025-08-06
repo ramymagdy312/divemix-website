@@ -2,10 +2,34 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Plus, Edit, Trash2, Search, AlertCircle } from 'lucide-react';
+import { Plus, Edit, Trash2, Search, AlertCircle, Settings } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
+import { Button } from '@/app/components/ui/button';
+import { Input } from '@/app/components/ui/input';
+import { Badge } from '@/app/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/app/components/ui/alert';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/app/components/ui/table';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/app/components/ui/alert-dialog';
 
 interface Category {
   id: string;
@@ -289,15 +313,17 @@ export default function CategoriesPage() {
 
       {filteredCategories.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-500">No categories found</p>
+          <Alert>
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>No categories found</AlertDescription>
+          </Alert>
           {!usingFallback && (
-            <Link
-              href="/admin/categories/new"
-              className="mt-4 inline-flex items-center px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700 transition-colors"
-            >
-              <Plus className="h-5 w-5 mr-2" />
-              Add Your First Category
-            </Link>
+            <Button asChild className="mt-4">
+              <Link href="/admin/categories/new">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Your First Category
+              </Link>
+            </Button>
           )}
         </div>
       )}
