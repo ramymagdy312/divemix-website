@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { Package, Wrench, Target, Image, Users, TrendingUp, Info, Phone, MapPin, Plus, ArrowUpRight, Activity, BarChart3, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Package, Wrench, Target, Image as ImageIcon, Users, TrendingUp, Info, Phone, MapPin, Plus, ArrowUpRight, Activity, BarChart3, AlertCircle, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Badge } from '@/app/components/ui/badge';
@@ -113,68 +113,7 @@ export default function AdminDashboard() {
     }
   };
 
-  const statCards = [
-    {
-      name: 'Products',
-      value: stats.products,
-      icon: Package,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-100',
-      href: '/admin/products',
-      change: '+12%',
-      changeType: 'positive' as const,
-    },
-    {
-      name: 'Categories',
-      value: stats.categories,
-      icon: Package,
-      color: 'text-indigo-600',
-      bgColor: 'bg-indigo-100',
-      href: '/admin/categories',
-      change: '+5%',
-      changeType: 'positive' as const,
-    },
-    {
-      name: 'Services',
-      value: stats.services,
-      icon: Wrench,
-      color: 'text-green-600',
-      bgColor: 'bg-green-100',
-      href: '/admin/services',
-      change: '+8%',
-      changeType: 'positive' as const,
-    },
-    {
-      name: 'Applications',
-      value: stats.applications,
-      icon: Target,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-100',
-      href: '/admin/applications',
-      change: '+15%',
-      changeType: 'positive' as const,
-    },
-    {
-      name: 'Vendors',
-      value: stats.vendors,
-      icon: Users,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-100',
-      href: '/admin/vendors',
-      change: '+3%',
-      changeType: 'positive' as const,
-    },
-    {
-      name: 'Gallery',
-      value: stats.gallery,
-      icon: Image,
-      color: 'text-pink-600',
-      bgColor: 'bg-pink-100',
-      href: '/admin/gallery',
-      change: '+20%',
-      changeType: 'positive' as const,
-    }
-  ];
+
 
   if (loading) {
     return (
@@ -204,34 +143,155 @@ export default function AdminDashboard() {
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-        {statCards.map((card) => (
-          <Card key={card.name} className="hover:shadow-md transition-shadow">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {card.name}
-              </CardTitle>
-              <div className={`${card.bgColor} p-2 rounded-md`}>
-                <card.icon className={`h-4 w-4 ${card.color}`} />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{card.value}</div>
-              <div className="flex items-center text-xs text-muted-foreground">
-                <TrendingUp className="w-3 h-3 mr-1 text-green-500" />
-                <span className="text-green-500">{card.change}</span>
-                <span className="ml-1">from last month</span>
-              </div>
-              <div className="mt-3">
-                <Button asChild variant="ghost" size="sm" className="w-full justify-between">
-                  <Link href={card.href}>
-                    View All
-                    <ArrowUpRight className="w-3 h-3" />
-                  </Link>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+        <Card className="hover:shadow-md transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Products</CardTitle>
+            <div className="bg-blue-100 p-2 rounded-md">
+              <Package className="h-4 w-4 text-blue-600" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.products}</div>
+            <div className="flex items-center text-xs text-muted-foreground">
+              <TrendingUp className="w-3 h-3 mr-1 text-green-500" />
+              <span className="text-green-500">+12%</span>
+              <span className="ml-1">from last month</span>
+            </div>
+            <div className="mt-3">
+              <Button asChild variant="ghost" size="sm" className="w-full justify-between">
+                <Link href="/admin/products">
+                  View All
+                  <ArrowUpRight className="w-3 h-3" />
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-md transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Categories</CardTitle>
+            <div className="bg-indigo-100 p-2 rounded-md">
+              <Package className="h-4 w-4 text-indigo-600" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.categories}</div>
+            <div className="flex items-center text-xs text-muted-foreground">
+              <TrendingUp className="w-3 h-3 mr-1 text-green-500" />
+              <span className="text-green-500">+5%</span>
+              <span className="ml-1">from last month</span>
+            </div>
+            <div className="mt-3">
+              <Button asChild variant="ghost" size="sm" className="w-full justify-between">
+                <Link href="/admin/categories">
+                  View All
+                  <ArrowUpRight className="w-3 h-3" />
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-md transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Services</CardTitle>
+            <div className="bg-green-100 p-2 rounded-md">
+              <Wrench className="h-4 w-4 text-green-600" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.services}</div>
+            <div className="flex items-center text-xs text-muted-foreground">
+              <TrendingUp className="w-3 h-3 mr-1 text-green-500" />
+              <span className="text-green-500">+8%</span>
+              <span className="ml-1">from last month</span>
+            </div>
+            <div className="mt-3">
+              <Button asChild variant="ghost" size="sm" className="w-full justify-between">
+                <Link href="/admin/services">
+                  View All
+                  <ArrowUpRight className="w-3 h-3" />
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-md transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Applications</CardTitle>
+            <div className="bg-purple-100 p-2 rounded-md">
+              <Target className="h-4 w-4 text-purple-600" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.applications}</div>
+            <div className="flex items-center text-xs text-muted-foreground">
+              <TrendingUp className="w-3 h-3 mr-1 text-green-500" />
+              <span className="text-green-500">+15%</span>
+              <span className="ml-1">from last month</span>
+            </div>
+            <div className="mt-3">
+              <Button asChild variant="ghost" size="sm" className="w-full justify-between">
+                <Link href="/admin/applications">
+                  View All
+                  <ArrowUpRight className="w-3 h-3" />
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-md transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Vendors</CardTitle>
+            <div className="bg-orange-100 p-2 rounded-md">
+              <Users className="h-4 w-4 text-orange-600" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.vendors}</div>
+            <div className="flex items-center text-xs text-muted-foreground">
+              <TrendingUp className="w-3 h-3 mr-1 text-green-500" />
+              <span className="text-green-500">+3%</span>
+              <span className="ml-1">from last month</span>
+            </div>
+            <div className="mt-3">
+              <Button asChild variant="ghost" size="sm" className="w-full justify-between">
+                <Link href="/admin/vendors">
+                  View All
+                  <ArrowUpRight className="w-3 h-3" />
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-md transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Gallery</CardTitle>
+            <div className="bg-pink-100 p-2 rounded-md">
+              <ImageIcon className="h-4 w-4 text-pink-600" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.gallery}</div>
+            <div className="flex items-center text-xs text-muted-foreground">
+              <TrendingUp className="w-3 h-3 mr-1 text-green-500" />
+              <span className="text-green-500">+20%</span>
+              <span className="ml-1">from last month</span>
+            </div>
+            <div className="mt-3">
+              <Button asChild variant="ghost" size="sm" className="w-full justify-between">
+                <Link href="/admin/gallery">
+                  View All
+                  <ArrowUpRight className="w-3 h-3" />
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* System Status Alert */}
@@ -334,7 +394,7 @@ export default function AdminDashboard() {
               </Button>
               <Button asChild variant="ghost" className="w-full justify-start" size="sm">
                 <Link href="/admin/gallery/new">
-                  <Image className="w-4 h-4 mr-2" />
+                  <ImageIcon className="w-4 h-4 mr-2" />
                   Add Gallery Image
                 </Link>
               </Button>

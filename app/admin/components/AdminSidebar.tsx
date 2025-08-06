@@ -76,7 +76,7 @@ export default function AdminSidebar() {
   }, [isPagesActive]);
 
   return (
-    <Sidebar variant="inset">
+    <Sidebar collapsible="icon">
       <SidebarHeader>
         <div className="flex items-center gap-2 px-4 py-2">
           <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-cyan-600 text-white">
@@ -164,15 +164,19 @@ export default function AdminSidebar() {
       </SidebarContent>
       
       <SidebarFooter>
-        <div className="flex items-center gap-2 px-2 py-1 text-xs text-muted-foreground">
-          <div className="flex aspect-square size-6 items-center justify-center rounded-md bg-cyan-600 text-white">
-            <Package className="size-3" />
-          </div>
-          <div className="grid flex-1 text-left text-xs leading-tight">
-            <span className="truncate font-medium">DiveMix</span>
-            <span className="truncate text-xs">Admin v1.0</span>
-          </div>
-        </div>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton tooltip="DiveMix Admin v1.0">
+              <div className="flex aspect-square size-6 items-center justify-center rounded-md bg-cyan-600 text-white">
+                <Package className="size-3" />
+              </div>
+              <div className="grid flex-1 text-left text-xs leading-tight">
+                <span className="truncate font-medium">DiveMix</span>
+                <span className="truncate text-xs text-muted-foreground">Admin v1.0</span>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   );

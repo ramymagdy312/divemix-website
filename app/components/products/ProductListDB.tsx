@@ -251,7 +251,7 @@ const ProductListDB: React.FC<ProductListDBProps> = ({ categoryId }) => {
       <AnimatedElement animation="fadeIn" delay={0.2}>
         {paginatedProducts.length > 0 ? (
           <div className={viewMode === 'grid' 
-            ? "grid grid-cols-1 md:grid-cols-2 gap-8 grid-stagger" 
+            ? "grid grid-cols-1 md:grid-cols-2 gap-8 grid-stagger items-stretch" 
             : "space-y-8"
           }>
             {paginatedProducts.map((product, index) => {

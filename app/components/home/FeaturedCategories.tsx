@@ -66,7 +66,7 @@ const FeaturedCategories = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
           {categories.map((category, index) => (
             <CategoryCard 
               key={category.id} 
