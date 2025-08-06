@@ -3,10 +3,14 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../../lib/supabase';
-import { AlertCircle, ArrowLeft } from 'lucide-react';
+import { AlertCircle, ArrowLeft, Settings } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import CategoryForm from '../../components/CategoryForm';
+import { Button } from '@/app/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/app/components/ui/alert';
+import { Skeleton } from '@/app/components/ui/skeleton';
 
 interface Category {
   id: string;
@@ -161,25 +165,26 @@ export default function EditCategoryPage({ params }: { params: { id: string } })
   if (!initialData) {
     return (
       <div className="text-center py-12">
-        <div className="mb-4">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Category Not Found</h1>
-          <p className="text-gray-500">The requested category could not be found.</p>
-        </div>
-        <div className="space-x-4">
-          <Link
-            href="/admin/categories"
-            className="inline-flex items-center px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Categories
-          </Link>
-          <Link
-            href="/check-products-database"
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-          >
-            <AlertCircle className="h-4 w-4 mr-2" />
-            Check Database
-          </Link>
+        <Alert className="mb-4">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Category Not Found</AlertTitle>
+          <AlertDescription>
+            The requested category could not be found.
+          </AlertDescription>
+        </Alert>
+        <div className="space-x-2">
+          <Button asChild>
+            <Link href="/admin/categories">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Categories
+            </Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link href="/check-products-database">
+              <AlertCircle className="h-4 w-4 mr-2" />
+              Check Database
+            </Link>
+          </Button>
         </div>
       </div>
     );

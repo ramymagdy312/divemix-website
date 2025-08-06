@@ -6,6 +6,13 @@ import { supabase } from '../../../../lib/supabase';
 
 import FolderExplorerSingle from '../../../../components/admin/FolderExplorerSingle';
 import toast from 'react-hot-toast';
+import { Button } from '@/app/components/ui/button';
+import { Input } from '@/app/components/ui/input';
+import { Label } from '@/app/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import { Alert, AlertDescription } from '@/app/components/ui/alert';
+import { ArrowLeft, Image as ImageIcon } from 'lucide-react';
+import Link from 'next/link';
 
 export default function EditGalleryImagePage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -113,13 +120,16 @@ export default function EditGalleryImagePage({ params }: { params: { id: string 
   if (!initialData) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">Image not found</p>
-        <button
+        <Alert>
+          <AlertDescription>Image not found</AlertDescription>
+        </Alert>
+        <Button
           onClick={() => router.push('/admin/gallery')}
-          className="mt-4 px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700"
+          className="mt-4"
         >
+          <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Gallery
-        </button>
+        </Button>
       </div>
     );
   }

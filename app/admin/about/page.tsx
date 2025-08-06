@@ -3,11 +3,17 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 
-import { Edit, Save, X, Plus, Trash2 } from 'lucide-react';
+import { Edit, Save, X, Plus, Trash2, Info } from 'lucide-react';
 import FolderExplorerSingle from '../../components/admin/FolderExplorerSingle';
 import Image from 'next/image';
 import Breadcrumb from '../../components/admin/Breadcrumb';
 import toast from 'react-hot-toast';
+import { Button } from '@/app/components/ui/button';
+import { Input } from '@/app/components/ui/input';
+import { Label } from '@/app/components/ui/label';
+import { Textarea } from '@/app/components/ui/textarea';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import { Separator } from '@/app/components/ui/separator';
 
 interface AboutPageData {
   id: string;

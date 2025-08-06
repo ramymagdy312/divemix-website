@@ -3,11 +3,17 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { supabase } from '../../../../lib/supabase';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, Users } from 'lucide-react';
 import Link from 'next/link';
 import Breadcrumb from '../../../../components/admin/Breadcrumb';
 import FolderExplorerSingle from '../../../../components/admin/FolderExplorerSingle';
 import toast from 'react-hot-toast';
+import { Button } from '@/app/components/ui/button';
+import { Input } from '@/app/components/ui/input';
+import { Label } from '@/app/components/ui/label';
+import { Textarea } from '@/app/components/ui/textarea';
+import { Switch } from '@/app/components/ui/switch';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 
 interface Vendor {
   id: string;
@@ -152,107 +158,117 @@ export default function EditVendorPage() {
       ]} />
       
       <div className="flex items-center mb-8">
-        <Link
-          href="/admin/vendors"
-          className="mr-4 p-2 text-gray-600 hover:text-gray-800 rounded-md hover:bg-gray-100"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Link>
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Edit Vendor</h1>
-          <p className="mt-2 text-gray-600">Update vendor information and settings</p>
+        <Button variant="ghost" size="sm" asChild className="mr-4">
+          <Link href="/admin/vendors">
+            <ArrowLeft className="h-4 w-4" />
+          </Link>
+        </Button>
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight flex items-center">
+            <Users className="h-8 w-8 mr-3 text-primary" />
+            Edit Vendor
+          </h1>
+          <p className="text-muted-foreground">Update vendor information and settings</p>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
-        <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-xl font-semibold mb-6">Vendor Information</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Vendor Name */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Vendor Name *
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-                placeholder="Enter vendor name"
-              />
-            </div>
-
-            {/* Website URL */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Website URL
-              </label>
-              <input
-                type="url"
-                value={formData.website_url}
-                onChange={(e) => setFormData({ ...formData, website_url: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-                placeholder="https://example.com"
-              />
-            </div>
-
-            {/* Display Order */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Display Order
-              </label>
-              <input
-                type="number"
-                min="1"
-                value={formData.display_order}
-                onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 1 })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-              />
-              <p className="text-sm text-gray-500 mt-1">
-                Lower numbers appear first in the slider
-              </p>
-            </div>
-
-            {/* Status */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Status
-              </label>
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="is_active"
-                  checked={formData.is_active}
-                  onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                  className="h-4 w-4 text-cyan-600 focus:ring-cyan-500 border-gray-300 rounded"
+        <Card>
+          <CardHeader>
+            <CardTitle>Vendor Information</CardTitle>
+            <CardDescription>
+              Update the basic information for this vendor
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Vendor Name */}
+              <div className="space-y-2">
+                <Label htmlFor="vendor-name">
+                  Vendor Name *
+                </Label>
+                <Input
+                  id="vendor-name"
+                  type="text"
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="Enter vendor name"
                 />
-                <label htmlFor="is_active" className="ml-2 text-sm text-gray-700">
-                  Active (visible on homepage)
-                </label>
+              </div>
+
+              {/* Website URL */}
+              <div className="space-y-2">
+                <Label htmlFor="website-url">
+                  Website URL
+                </Label>
+                <Input
+                  id="website-url"
+                  type="url"
+                  value={formData.website_url}
+                  onChange={(e) => setFormData({ ...formData, website_url: e.target.value })}
+                  placeholder="https://example.com"
+                />
+              </div>
+
+              {/* Display Order */}
+              <div className="space-y-2">
+                <Label htmlFor="display-order">
+                  Display Order
+                </Label>
+                <Input
+                  id="display-order"
+                  type="number"
+                  min="1"
+                  value={formData.display_order}
+                  onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 1 })}
+                />
+                <p className="text-sm text-muted-foreground">
+                  Lower numbers appear first in the slider
+                </p>
+              </div>
+
+              {/* Status */}
+              <div className="space-y-2">
+                <Label>Status</Label>
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="is_active"
+                    checked={formData.is_active}
+                    onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
+                  />
+                  <Label htmlFor="is_active">
+                    Active (visible on homepage)
+                  </Label>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Description */}
-          <div className="mt-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Description
-            </label>
-            <textarea
-              rows={3}
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-              placeholder="Brief description of the vendor or partnership"
-            />
-          </div>
-        </div>
+            {/* Description */}
+            <div className="mt-6 space-y-2">
+              <Label htmlFor="description">
+                Description
+              </Label>
+              <Textarea
+                id="description"
+                rows={3}
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder="Brief description of the vendor or partnership"
+              />
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Logo Upload */}
-        <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-xl font-semibold mb-6">Vendor Logo</h2>
+        <Card>
+          <CardHeader>
+            <CardTitle>Vendor Logo</CardTitle>
+            <CardDescription>
+              Upload or update the vendor's logo image
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
           
           <FolderExplorerSingle
             image={formData.logo_url}
@@ -260,33 +276,32 @@ export default function EditVendorPage() {
             label="Vendor Logo *"
           />
           
-          <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-            <h3 className="text-sm font-medium text-blue-900 mb-2">Logo Guidelines:</h3>
-            <ul className="text-sm text-blue-800 space-y-1">
-              <li>• Recommended size: 200x100 pixels or similar aspect ratio</li>
-              <li>• Format: PNG with transparent background preferred</li>
-              <li>• High quality logo for best display results</li>
-              <li>• Logo will be displayed in grayscale by default, color on hover</li>
-            </ul>
-          </div>
-        </div>
+            <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+              <h3 className="text-sm font-medium text-blue-900 mb-2">Logo Guidelines:</h3>
+              <ul className="text-sm text-blue-800 space-y-1">
+                <li>• Recommended size: 200x100 pixels or similar aspect ratio</li>
+                <li>• Format: PNG with transparent background preferred</li>
+                <li>• High quality logo for best display results</li>
+                <li>• Logo will be displayed in grayscale by default, color on hover</li>
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Form Actions */}
-        <div className="flex justify-end space-x-4">
-          <Link
-            href="/admin/vendors"
-            className="px-4 py-2 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-md hover:bg-gray-50"
-          >
-            Cancel
-          </Link>
-          <button
+        <div className="flex justify-end space-x-2">
+          <Button variant="outline" asChild>
+            <Link href="/admin/vendors">
+              Cancel
+            </Link>
+          </Button>
+          <Button
             type="submit"
             disabled={saving}
-            className="bg-cyan-600 text-white px-6 py-2 rounded-md hover:bg-cyan-700 disabled:opacity-50 flex items-center space-x-2"
           >
-            <Save className="h-4 w-4" />
-            <span>{saving ? 'Updating...' : 'Update Vendor'}</span>
-          </button>
+            <Save className="h-4 w-4 mr-2" />
+            {saving ? 'Updating...' : 'Update Vendor'}
+          </Button>
         </div>
       </form>
     </div>

@@ -5,6 +5,22 @@ import { supabase } from '../../lib/supabase';
 import { MessageCircle, Mail, Calendar, User, Eye, Trash2, CheckCircle, Clock } from 'lucide-react';
 import Breadcrumb from '../../components/admin/Breadcrumb';
 import toast from 'react-hot-toast';
+import { Button } from '@/app/components/ui/button';
+import { Badge } from '@/app/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
+import { Separator } from '@/app/components/ui/separator';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/app/components/ui/alert-dialog';
 
 interface ContactSubmission {
   id: string;

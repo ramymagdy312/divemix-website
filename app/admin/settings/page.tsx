@@ -3,8 +3,18 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { Save, Mail, MessageCircle, Settings as SettingsIcon, Clock, Globe, Shield, Plus, Trash2, Edit3 } from 'lucide-react';
-import Breadcrumb from '../../components/admin/Breadcrumb';
 import toast from 'react-hot-toast';
+import { Button } from '@/app/components/ui/button';
+import { Input } from '@/app/components/ui/input';
+import { Label } from '@/app/components/ui/label';
+import { Textarea } from '@/app/components/ui/textarea';
+import { Switch } from '@/app/components/ui/switch';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
+import { Separator } from '@/app/components/ui/separator';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
+import { Badge } from '@/app/components/ui/badge';
+import { Alert, AlertDescription } from '@/app/components/ui/alert';
 
 interface Setting {
   key: string;
@@ -234,421 +244,480 @@ export default function SettingsPage() {
   const supportSectionEnabledSetting = settings.find(s => s.key === 'support_section_enabled');
 
   return (
-    <div>
-      <Breadcrumb items={[
-        { name: 'Settings' }
-      ]} />
-      
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-            <SettingsIcon className="h-8 w-8 mr-3 text-cyan-600" />
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight flex items-center">
+            <SettingsIcon className="h-8 w-8 mr-3 text-primary" />
             System Settings
           </h1>
-          <p className="mt-2 text-gray-600">
+          <p className="text-muted-foreground">
             Configure email, WhatsApp, footer, and support section settings
           </p>
         </div>
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="bg-cyan-600 text-white px-6 py-2 rounded-md hover:bg-cyan-700 disabled:opacity-50 flex items-center space-x-2"
-        >
-          <Save className="h-4 w-4" />
-          <span>{saving ? 'Saving...' : 'Save Settings'}</span>
-        </button>
+        <Button onClick={handleSave} disabled={saving}>
+          <Save className="h-4 w-4 mr-2" />
+          {saving ? 'Saving...' : 'Save Settings'}
+        </Button>
       </div>
 
-      <div className="space-y-8">
+      <Tabs defaultValue="email" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="email">Email</TabsTrigger>
+          <TabsTrigger value="whatsapp">WhatsApp</TabsTrigger>
+          <TabsTrigger value="footer">Footer</TabsTrigger>
+          <TabsTrigger value="support">Support</TabsTrigger>
+        </TabsList>
+
         {/* Email Settings */}
-        <div className="bg-white shadow rounded-lg p-6">
-          <div className="flex items-center mb-6">
-            <Mail className="h-6 w-6 text-blue-600 mr-3" />
-            <h2 className="text-xl font-semibold text-gray-900">Email Settings</h2>
-          </div>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Contact Form Email Address
-              </label>
-              <input
-                type="email"
-                value={contactEmailSetting?.value || ''}
-                onChange={(e) => updateSetting('contact_email', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-                placeholder="contact@example.com"
-              />
-              <p className="text-sm text-gray-500 mt-1">
-                Email address where contact form submissions will be sent
-              </p>
-            </div>
-          </div>
-        </div>
+        <TabsContent value="email">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Mail className="h-6 w-6 text-blue-600 mr-3" />
+                Email Settings
+              </CardTitle>
+              <CardDescription>
+                Configure email settings for contact form submissions
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="contact-email">Contact Form Email Address</Label>
+                <Input
+                  id="contact-email"
+                  type="email"
+                  value={contactEmailSetting?.value || ''}
+                  onChange={(e) => updateSetting('contact_email', e.target.value)}
+                  placeholder="contact@example.com"
+                />
+                <p className="text-sm text-muted-foreground">
+                  Email address where contact form submissions will be sent
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         {/* WhatsApp Settings */}
-        <div className="bg-white shadow rounded-lg p-6">
-          <div className="flex items-center mb-6">
-            <MessageCircle className="h-6 w-6 text-green-600 mr-3" />
-            <h2 className="text-xl font-semibold text-gray-900">WhatsApp Settings</h2>
-          </div>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                WhatsApp Number
-              </label>
-              <input
-                type="text"
-                value={whatsappNumberSetting?.value || ''}
-                onChange={(e) => updateSetting('whatsapp_number', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-                placeholder="+1234567890"
-              />
-              <p className="text-sm text-gray-500 mt-1">
-                WhatsApp number with country code (e.g., +201234567890)
-              </p>
-            </div>
+        <TabsContent value="whatsapp">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <MessageCircle className="h-6 w-6 text-green-600 mr-3" />
+                WhatsApp Settings
+              </CardTitle>
+              <CardDescription>
+                Configure WhatsApp contact settings and default messages
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="whatsapp-number">WhatsApp Number</Label>
+                <Input
+                  id="whatsapp-number"
+                  type="text"
+                  value={whatsappNumberSetting?.value || ''}
+                  onChange={(e) => updateSetting('whatsapp_number', e.target.value)}
+                  placeholder="+1234567890"
+                />
+                <p className="text-sm text-muted-foreground">
+                  WhatsApp number with country code (e.g., +201234567890)
+                </p>
+              </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Default WhatsApp Message
-              </label>
-              <textarea
-                value={whatsappMessageSetting?.value || ''}
-                onChange={(e) => updateSetting('whatsapp_message', e.target.value)}
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-                placeholder="Hello! I would like to get more information about your services."
-              />
-              <p className="text-sm text-gray-500 mt-1">
-                Default message that will be pre-filled when users click WhatsApp contact
-              </p>
-            </div>
-          </div>
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="whatsapp-message">Default WhatsApp Message</Label>
+                <Textarea
+                  id="whatsapp-message"
+                  value={whatsappMessageSetting?.value || ''}
+                  onChange={(e) => updateSetting('whatsapp_message', e.target.value)}
+                  rows={3}
+                  placeholder="Hello! I would like to get more information about your services."
+                />
+                <p className="text-sm text-muted-foreground">
+                  Default message that will be pre-filled when users click WhatsApp contact
+                </p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="show-whatsapp-float">Show Floating WhatsApp Button</Label>
+                <Select
+                  value={showWhatsappFloatSetting?.value || 'true'}
+                  onValueChange={(value) => updateSetting('show_whatsapp_float', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select option" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="true">Yes, show floating button</SelectItem>
+                    <SelectItem value="false">No, hide floating button</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-sm text-muted-foreground">
+                  Display floating WhatsApp contact button on all pages
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         {/* Footer Settings */}
-        <div className="bg-white shadow rounded-lg p-6">
-          <div className="flex items-center mb-6">
-            <SettingsIcon className="h-6 w-6 text-purple-600 mr-3" />
-            <h2 className="text-xl font-semibold text-gray-900">Footer Settings</h2>
-          </div>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Show Branches in Footer
-              </label>
-              <select
-                value={showBranchesInFooterSetting?.value || 'true'}
-                onChange={(e) => updateSetting('show_branches_in_footer', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-              >
-                <option value="true">Yes, show branches</option>
-                <option value="false">No, hide branches</option>
-              </select>
-              <p className="text-sm text-gray-500 mt-1">
-                Display branch contact information in the website footer
-              </p>
-            </div>
+        <TabsContent value="footer">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <SettingsIcon className="h-6 w-6 text-purple-600 mr-3" />
+                Footer Settings
+              </CardTitle>
+              <CardDescription>
+                Configure footer display options and floating elements
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="show-branches">Show Branches in Footer</Label>
+                <Select
+                  value={showBranchesInFooterSetting?.value || 'true'}
+                  onValueChange={(value) => updateSetting('show_branches_in_footer', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select option" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="true">Yes, show branches</SelectItem>
+                    <SelectItem value="false">No, hide branches</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-sm text-muted-foreground">
+                  Display branch contact information in the website footer
+                </p>
+              </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Footer Branches Section Title
-              </label>
-              <input
-                type="text"
-                value={footerBranchesTitleSetting?.value || 'Our Branches'}
-                onChange={(e) => updateSetting('footer_branches_title', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-                placeholder="Our Branches"
-              />
-              <p className="text-sm text-gray-500 mt-1">
-                Title displayed above the branches section in footer
-              </p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Show Floating WhatsApp Button
-              </label>
-              <select
-                value={showWhatsappFloatSetting?.value || 'true'}
-                onChange={(e) => updateSetting('show_whatsapp_float', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-              >
-                <option value="true">Yes, show floating button</option>
-                <option value="false">No, hide floating button</option>
-              </select>
-              <p className="text-sm text-gray-500 mt-1">
-                Display floating WhatsApp contact button on all pages
-              </p>
-            </div>
-          </div>
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="footer-branches-title">Footer Branches Section Title</Label>
+                <Input
+                  id="footer-branches-title"
+                  type="text"
+                  value={footerBranchesTitleSetting?.value || 'Our Branches'}
+                  onChange={(e) => updateSetting('footer_branches_title', e.target.value)}
+                  placeholder="Our Branches"
+                />
+                <p className="text-sm text-muted-foreground">
+                  Title displayed above the branches section in footer
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         {/* Support & Info Settings */}
-        <div className="bg-white shadow rounded-lg p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center">
-              <SettingsIcon className="h-6 w-6 text-orange-600 mr-3" />
-              <h2 className="text-xl font-semibold text-gray-900">Support & Info Section</h2>
-            </div>
-            <button
-              onClick={addSupportItem}
-              className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center space-x-2"
-            >
-              <Plus className="h-4 w-4" />
-              <span>Add Item</span>
-            </button>
-          </div>
-          
-          <div className="space-y-4 mb-6">
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Section Title
-                </label>
-                <input
-                  type="text"
-                  value={supportSectionTitleSetting?.value || 'Support'}
-                  onChange={(e) => updateSetting('support_section_title', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-                  placeholder="Support"
-                />
+        <TabsContent value="support">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center">
+                    <SettingsIcon className="h-6 w-6 text-orange-600 mr-3" />
+                    Support & Info Section
+                  </CardTitle>
+                  <CardDescription>
+                    Configure support section settings and manage support items
+                  </CardDescription>
+                </div>
+                <Button onClick={addSupportItem} className="flex items-center space-x-2">
+                  <Plus className="h-4 w-4" />
+                  <span>Add Item</span>
+                </Button>
               </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Show Support Section
-                </label>
-                <select
-                  value={supportSectionEnabledSetting?.value || 'true'}
-                  onChange={(e) => updateSetting('support_section_enabled', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-                >
-                  <option value="true">Yes, show section</option>
-                  <option value="false">No, hide section</option>
-                </select>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="support-section-title">Section Title</Label>
+                  <Input
+                    id="support-section-title"
+                    type="text"
+                    value={supportSectionTitleSetting?.value || 'Support'}
+                    onChange={(e) => updateSetting('support_section_title', e.target.value)}
+                    placeholder="Support"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="show-support-section">Show Support Section</Label>
+                  <Select
+                    value={supportSectionEnabledSetting?.value || 'true'}
+                    onValueChange={(value) => updateSetting('support_section_enabled', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select option" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="true">Yes, show section</SelectItem>
+                      <SelectItem value="false">No, hide section</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-            </div>
-          </div>
 
-          {/* Support Items List */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium text-gray-900">Support Items</h3>
-            
-            {supportItems.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                <SettingsIcon className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                <p>No support items configured</p>
-                <button
-                  onClick={addSupportItem}
-                  className="mt-2 text-cyan-600 hover:text-cyan-700"
-                >
-                  Add your first item
-                </button>
+              <Separator />
+              
+              {/* Support Items List */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Support Items</h3>
+                
+                {supportItems.length === 0 ? (
+                  <Alert>
+                    <SettingsIcon className="h-4 w-4" />
+                    <AlertDescription>
+                      No support items configured. 
+                      <Button 
+                        variant="link" 
+                        className="p-0 h-auto ml-1" 
+                        onClick={addSupportItem}
+                      >
+                        Add your first item
+                      </Button>
+                    </AlertDescription>
+                  </Alert>
+                ) : (
+                  <div className="grid gap-4">
+                    {supportItems.map((item) => {
+                      const IconComponent = getIconComponent(item.icon);
+                      return (
+                        <Card key={item.id}>
+                          <CardContent className="p-4">
+                            {editingItem?.id === item.id ? (
+                              // Edit Form
+                              <div className="space-y-4">
+                                <div className="grid md:grid-cols-2 gap-4">
+                                  <div className="space-y-2">
+                                    <Label htmlFor={`title-${item.id}`}>Title</Label>
+                                    <Input
+                                      id={`title-${item.id}`}
+                                      type="text"
+                                      value={item.title}
+                                      onChange={(e) => updateSupportItem(item.id, { title: e.target.value })}
+                                    />
+                                  </div>
+                                  
+                                  <div className="space-y-2">
+                                    <Label htmlFor={`icon-${item.id}`}>Icon</Label>
+                                    <Select
+                                      value={item.icon}
+                                      onValueChange={(value) => updateSupportItem(item.id, { icon: value })}
+                                    >
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Select icon" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="Clock">Clock (Working Hours)</SelectItem>
+                                        <SelectItem value="Globe">Globe (Languages)</SelectItem>
+                                        <SelectItem value="Shield">Shield (Certification)</SelectItem>
+                                        <SelectItem value="Award">Award (Awards)</SelectItem>
+                                        <SelectItem value="Users">Users (Team)</SelectItem>
+                                        <SelectItem value="Zap">Zap (Fast Service)</SelectItem>
+                                        <SelectItem value="Settings">Settings (General)</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                </div>
+                                
+                                <div className="space-y-2">
+                                  <Label htmlFor={`subtitle-${item.id}`}>Subtitle/Description</Label>
+                                  <Input
+                                    id={`subtitle-${item.id}`}
+                                    type="text"
+                                    value={item.subtitle}
+                                    onChange={(e) => updateSupportItem(item.id, { subtitle: e.target.value })}
+                                  />
+                                </div>
+                                
+                                <div className="flex justify-end space-x-2">
+                                  <Button
+                                    variant="outline"
+                                    onClick={() => setEditingItem(null)}
+                                  >
+                                    Cancel
+                                  </Button>
+                                  <Button
+                                    onClick={() => setEditingItem(null)}
+                                  >
+                                    Save
+                                  </Button>
+                                </div>
+                              </div>
+                            ) : (
+                              // Display Mode
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-4">
+                                  <div className={`p-2 rounded-lg ${item.enabled ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
+                                    <IconComponent className="h-5 w-5" />
+                                  </div>
+                                  <div>
+                                    <h4 className={`font-medium ${item.enabled ? '' : 'text-muted-foreground'}`}>
+                                      {item.title}
+                                    </h4>
+                                    <p className={`text-sm ${item.enabled ? 'text-muted-foreground' : 'text-muted-foreground/60'}`}>
+                                      {item.subtitle}
+                                    </p>
+                                  </div>
+                                </div>
+                                
+                                <div className="flex items-center space-x-2">
+                                  <Badge 
+                                    variant={item.enabled ? "default" : "secondary"}
+                                    className="cursor-pointer"
+                                    onClick={() => toggleSupportItem(item.id)}
+                                  >
+                                    {item.enabled ? 'Enabled' : 'Disabled'}
+                                  </Badge>
+                                  
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => setEditingItem(item)}
+                                  >
+                                    <Edit3 className="h-4 w-4" />
+                                  </Button>
+                                  
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => deleteSupportItem(item.id)}
+                                    className="text-destructive hover:text-destructive"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                            )}
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
-            ) : (
-              <div className="grid gap-4">
-                {supportItems.map((item) => {
-                  const IconComponent = getIconComponent(item.icon);
-                  return (
-                    <div key={item.id} className="border border-gray-200 rounded-lg p-4">
-                      {editingItem?.id === item.id ? (
-                        // Edit Form
-                        <div className="space-y-4">
-                          <div className="grid md:grid-cols-2 gap-4">
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Title
-                              </label>
-                              <input
-                                type="text"
-                                value={item.title}
-                                onChange={(e) => updateSupportItem(item.id, { title: e.target.value })}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-                              />
-                            </div>
-                            
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Icon
-                              </label>
-                              <select
-                                value={item.icon}
-                                onChange={(e) => updateSupportItem(item.id, { icon: e.target.value })}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-                              >
-                                <option value="Clock">Clock (Working Hours)</option>
-                                <option value="Globe">Globe (Languages)</option>
-                                <option value="Shield">Shield (Certification)</option>
-                                <option value="Award">Award (Awards)</option>
-                                <option value="Users">Users (Team)</option>
-                                <option value="Zap">Zap (Fast Service)</option>
-                                <option value="Settings">Settings (General)</option>
-                              </select>
-                            </div>
-                          </div>
-                          
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Subtitle/Description
-                            </label>
-                            <input
-                              type="text"
-                              value={item.subtitle}
-                              onChange={(e) => updateSupportItem(item.id, { subtitle: e.target.value })}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-                            />
-                          </div>
-                          
-                          <div className="flex justify-end space-x-2">
-                            <button
-                              onClick={() => setEditingItem(null)}
-                              className="px-4 py-2 text-gray-600 hover:text-gray-800"
-                            >
-                              Cancel
-                            </button>
-                            <button
-                              onClick={() => setEditingItem(null)}
-                              className="bg-cyan-600 text-white px-4 py-2 rounded-md hover:bg-cyan-700"
-                            >
-                              Save
-                            </button>
-                          </div>
-                        </div>
-                      ) : (
-                        // Display Mode
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-4">
-                            <div className={`p-2 rounded-lg ${item.enabled ? 'bg-cyan-100 text-cyan-600' : 'bg-gray-100 text-gray-400'}`}>
-                              <IconComponent className="h-5 w-5" />
-                            </div>
-                            <div>
-                              <h4 className={`font-medium ${item.enabled ? 'text-gray-900' : 'text-gray-500'}`}>
-                                {item.title}
-                              </h4>
-                              <p className={`text-sm ${item.enabled ? 'text-gray-600' : 'text-gray-400'}`}>
-                                {item.subtitle}
-                              </p>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-center space-x-2">
-                            <button
-                              onClick={() => toggleSupportItem(item.id)}
-                              className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                item.enabled 
-                                  ? 'bg-green-100 text-green-800' 
-                                  : 'bg-gray-100 text-gray-600'
-                              }`}
-                            >
-                              {item.enabled ? 'Enabled' : 'Disabled'}
-                            </button>
-                            
-                            <button
-                              onClick={() => setEditingItem(item)}
-                              className="p-2 text-gray-400 hover:text-cyan-600"
-                            >
-                              <Edit3 className="h-4 w-4" />
-                            </button>
-                            
-                            <button
-                              onClick={() => deleteSupportItem(item.id)}
-                              className="p-2 text-gray-400 hover:text-red-600"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         {/* Preview Section */}
-        <div className="bg-gray-50 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Preview</h3>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Email Preview */}
-            <div className="bg-white rounded-lg p-4 border border-gray-200">
-              <h4 className="font-medium text-gray-900 mb-2">Contact Form Email</h4>
-              <p className="text-sm text-gray-600">
-                Form submissions will be sent to:
-              </p>
-              <p className="text-sm font-medium text-blue-600">
-                {contactEmailSetting?.value || 'Not configured'}
-              </p>
-            </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Settings Preview</CardTitle>
+            <CardDescription>
+              Preview of your current configuration settings
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* Email Preview */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base flex items-center">
+                    <Mail className="h-4 w-4 mr-2 text-blue-600" />
+                    Contact Form Email
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <p className="text-sm text-muted-foreground mb-1">
+                    Form submissions will be sent to:
+                  </p>
+                  <Badge variant="outline" className="text-blue-600">
+                    {contactEmailSetting?.value || 'Not configured'}
+                  </Badge>
+                </CardContent>
+              </Card>
 
-            {/* WhatsApp Preview */}
-            <div className="bg-white rounded-lg p-4 border border-gray-200">
-              <h4 className="font-medium text-gray-900 mb-2">WhatsApp Contact</h4>
-              <p className="text-sm text-gray-600 mb-1">
-                Number: <span className="font-medium text-green-600">
-                  {whatsappNumberSetting?.value || 'Not configured'}
-                </span>
-              </p>
-              <p className="text-sm text-gray-600">
-                Default message: <span className="italic">
-                  "{whatsappMessageSetting?.value || 'Not configured'}"
-                </span>
-              </p>
-            </div>
+              {/* WhatsApp Preview */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base flex items-center">
+                    <MessageCircle className="h-4 w-4 mr-2 text-green-600" />
+                    WhatsApp Contact
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0 space-y-2">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Number:</p>
+                    <Badge variant="outline" className="text-green-600">
+                      {whatsappNumberSetting?.value || 'Not configured'}
+                    </Badge>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Default message:</p>
+                    <p className="text-xs italic text-muted-foreground">
+                      "{whatsappMessageSetting?.value || 'Not configured'}"
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
 
-            {/* Footer & Float Preview */}
-            <div className="bg-white rounded-lg p-4 border border-gray-200">
-              <h4 className="font-medium text-gray-900 mb-2">Footer & Float Settings</h4>
-              <div className="space-y-2 text-sm text-gray-600">
-                <p>
-                  Branches in footer: <span className="font-medium text-purple-600">
-                    {showBranchesInFooterSetting?.value === 'true' ? 'Enabled' : 'Disabled'}
-                  </span>
-                </p>
-                <p>
-                  Branches title: <span className="font-medium">
-                    "{footerBranchesTitleSetting?.value || 'Our Branches'}"
-                  </span>
-                </p>
-                <p>
-                  WhatsApp float: <span className="font-medium text-green-600">
-                    {showWhatsappFloatSetting?.value === 'true' ? 'Enabled' : 'Disabled'}
-                  </span>
-                </p>
-              </div>
-            </div>
+              {/* Footer & Float Preview */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base flex items-center">
+                    <SettingsIcon className="h-4 w-4 mr-2 text-purple-600" />
+                    Footer & Float
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0 space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Branches:</span>
+                    <Badge variant={showBranchesInFooterSetting?.value === 'true' ? 'default' : 'secondary'}>
+                      {showBranchesInFooterSetting?.value === 'true' ? 'Enabled' : 'Disabled'}
+                    </Badge>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Title:</p>
+                    <p className="text-xs font-medium">
+                      "{footerBranchesTitleSetting?.value || 'Our Branches'}"
+                    </p>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">WhatsApp float:</span>
+                    <Badge variant={showWhatsappFloatSetting?.value === 'true' ? 'default' : 'secondary'}>
+                      {showWhatsappFloatSetting?.value === 'true' ? 'Enabled' : 'Disabled'}
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
 
-            {/* Support Section Preview */}
-            <div className="bg-white rounded-lg p-4 border border-gray-200">
-              <h4 className="font-medium text-gray-900 mb-2">Support Section</h4>
-              <div className="space-y-2 text-sm text-gray-600">
-                <p>
-                  Section: <span className="font-medium text-orange-600">
-                    {supportSectionEnabledSetting?.value === 'true' ? 'Enabled' : 'Disabled'}
-                  </span>
-                </p>
-                <p>
-                  Title: <span className="font-medium">
-                    "{supportSectionTitleSetting?.value || 'Support'}"
-                  </span>
-                </p>
-                <p>
-                  Items: <span className="font-medium text-cyan-600">
-                    {supportItems.filter(item => item.enabled).length} active
-                  </span>
-                </p>
-              </div>
+              {/* Support Section Preview */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base flex items-center">
+                    <SettingsIcon className="h-4 w-4 mr-2 text-orange-600" />
+                    Support Section
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0 space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Section:</span>
+                    <Badge variant={supportSectionEnabledSetting?.value === 'true' ? 'default' : 'secondary'}>
+                      {supportSectionEnabledSetting?.value === 'true' ? 'Enabled' : 'Disabled'}
+                    </Badge>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Title:</p>
+                    <p className="text-xs font-medium">
+                      "{supportSectionTitleSetting?.value || 'Support'}"
+                    </p>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Active items:</span>
+                    <Badge variant="outline" className="text-primary">
+                      {supportItems.filter(item => item.enabled).length}
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
-          </div>
-        </div>
-      </div>
+          </CardContent>
+        </Card>
+      </Tabs>
     </div>
   );
 }

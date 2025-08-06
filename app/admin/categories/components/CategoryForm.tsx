@@ -2,6 +2,12 @@
 
 import { useState } from 'react';
 import FolderExplorerSingle from '../../../components/admin/FolderExplorerSingle';
+import { Button } from '@/app/components/ui/button';
+import { Input } from '@/app/components/ui/input';
+import { Label } from '@/app/components/ui/label';
+import { Textarea } from '@/app/components/ui/textarea';
+import { Switch } from '@/app/components/ui/switch';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 
 interface CategoryFormProps {
   initialData?: any;
@@ -36,7 +42,15 @@ export default function CategoryForm({ initialData, onSubmit, loading }: Categor
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 bg-white shadow rounded-lg p-6">
+    <Card>
+      <CardHeader>
+        <CardTitle>Category Information</CardTitle>
+        <CardDescription>
+          Fill in the details for the product category
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-6">
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Category Name
@@ -101,35 +115,32 @@ export default function CategoryForm({ initialData, onSubmit, loading }: Categor
         />
       </div>
 
-      <div className="flex items-center">
-        <input
-          type="checkbox"
-          id="is_active"
-          className="h-4 w-4 text-cyan-600 focus:ring-cyan-500 border-gray-300 rounded"
-          checked={formData.is_active}
-          onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-        />
-        <label htmlFor="is_active" className="ml-2 block text-sm text-gray-900">
-          Category is active
-        </label>
-      </div>
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="is_active"
+              checked={formData.is_active}
+              onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
+            />
+            <Label htmlFor="is_active">Category is active</Label>
+          </div>
 
-      <div className="flex justify-end space-x-4">
-        <button
-          type="button"
-          onClick={() => window.history.back()}
-          className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          disabled={loading}
-          className="px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700 transition-colors disabled:opacity-50"
-        >
-          {loading ? 'Saving...' : 'Save'}
-        </button>
-      </div>
-    </form>
+          <div className="flex justify-end space-x-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => window.history.back()}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? 'Saving...' : 'Save'}
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 }

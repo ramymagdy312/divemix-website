@@ -2,10 +2,34 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Plus, Edit, Trash2, Search, AlertCircle } from 'lucide-react';
+import { Plus, Edit, Trash2, Search, AlertCircle, Package } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
+import { Button } from '@/app/components/ui/button';
+import { Input } from '@/app/components/ui/input';
+import { Badge } from '@/app/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/app/components/ui/alert';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/app/components/ui/table';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/app/components/ui/alert-dialog';
 
 interface Product {
   id: string;
@@ -158,173 +182,187 @@ export default function ProductsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-cyan-600"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
       </div>
     );
   }
 
   return (
-    <div>
+    <div className="space-y-6">
       {/* Error/Demo Mode Banner */}
       {(usingFallback || error) && (
-        <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <div className="flex items-center">
-            <AlertCircle className="h-5 w-5 text-yellow-400 mr-3" />
-            <div className="flex-1">
-              <h3 className="text-sm font-medium text-yellow-800">
-                {error ? 'Database Connection Issue' : 'Demo Mode Active'}
-              </h3>
-              <p className="text-sm text-yellow-700 mt-1">
-                {error ? (
-                  <>Database error: {error}. Showing sample products.</>
-                ) : (
-                  <>Showing sample products. Database not configured.</>
-                )}
-                <Link href="/check-products-database" className="underline ml-2">
-                  Set up database →
-                </Link>
-              </p>
-            </div>
-          </div>
-        </div>
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>
+            {error ? 'Database Connection Issue' : 'Demo Mode Active'}
+          </AlertTitle>
+          <AlertDescription>
+            {error ? (
+              <>Database error: {error}. Showing sample products.</>
+            ) : (
+              <>Showing sample products. Database not configured.</>
+            )}
+            <Link href="/check-products-database" className="underline ml-2">
+              Set up database →
+            </Link>
+          </AlertDescription>
+        </Alert>
       )}
 
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Product Management</h1>
-          <p className="mt-2 text-gray-600">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight">Product Management</h1>
+          <p className="text-muted-foreground">
             {usingFallback ? 'Managing sample products (Demo Mode)' : 'Managing all company products'}
           </p>
         </div>
-        <div className="flex space-x-3">
-          
-          <Link
-            href="/admin/products/new"
-            className={`inline-flex items-center px-4 py-2 rounded-md transition-colors ${
-              usingFallback 
-                ? 'bg-gray-400 text-white cursor-not-allowed' 
-                : 'bg-cyan-600 text-white hover:bg-cyan-700'
-            }`}
-            onClick={(e) => {
-              if (usingFallback) {
-                e.preventDefault();
-                toast.error('Set up database first to add real products');
-              }
-            }}
-          >
-            <Plus className="h-5 w-5 mr-2" />
-            Add New Product
-          </Link>
-        </div>
-      </div>
-
-      <div className="mb-6">
-        <div className="relative">
-          <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search products..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-      </div>
-
-      <div className="bg-white shadow overflow-hidden sm:rounded-md">
-        <ul className="divide-y divide-gray-200">
-          {filteredProducts.map((product) => (
-            <li key={product.id}>
-              <div className="px-4 py-4 flex items-center justify-between">
-                <div className="flex items-center">
-                  {product.image_url && (
-                    <Image
-                      src={product.image_url}
-                      alt={product.name}
-                      width={64}
-                      height={64}
-                      className="h-16 w-16 object-cover rounded-md mr-4"
-                    />
-                  )}
-                  <div>
-                    <h3 className="text-lg font-medium text-gray-900">
-                      {product.name}
-                    </h3>
-                    <p className="text-sm text-gray-500">
-                      {product.product_categories?.name}
-                    </p>
-                    <p className="text-sm text-gray-600 mt-1 max-w-md truncate">
-                      {product.description}
-                    </p>
-                    <div className="flex items-center mt-2 space-x-4">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        product.is_active 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-red-100 text-red-800'
-                      }`}>
-                        {product.is_active ? 'Active' : 'Inactive'}
-                      </span>
-                      {product.features && product.features.length > 0 && (
-                        <span className="text-xs text-gray-500">
-                          {product.features.length} features
-                        </span>
-                      )}
-                    </div>
-                    {usingFallback && (
-                      <span className="inline-block bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full mt-1">
-                        Demo Product
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Link
-                    href={`/admin/products/${product.id}/edit`}
-                    className={`p-2 transition-colors ${
-                      usingFallback 
-                        ? 'text-gray-300 cursor-not-allowed' 
-                        : 'text-gray-400 hover:text-gray-600'
-                    }`}
-                    onClick={(e) => {
-                      if (usingFallback) {
-                        e.preventDefault();
-                        toast.error('Set up database first to edit products');
-                      }
-                    }}
-                  >
-                    <Edit className="h-5 w-5" />
-                  </Link>
-                  <button
-                    onClick={() => deleteProduct(product.id)}
-                    className={`p-2 transition-colors ${
-                      usingFallback 
-                        ? 'text-gray-300 cursor-not-allowed' 
-                        : 'text-red-400 hover:text-red-600'
-                    }`}
-                  >
-                    <Trash2 className="h-5 w-5" />
-                  </button>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {filteredProducts.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-gray-500">No products found</p>
-          {!usingFallback && (
-            <Link
-              href="/admin/products/new"
-              className="mt-4 inline-flex items-center px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700 transition-colors"
-            >
-              <Plus className="h-5 w-5 mr-2" />
-              Add Your First Product
+        <div className="flex items-center space-x-2">
+          <Badge variant={usingFallback ? "destructive" : "secondary"}>
+            <Package className="h-3 w-3 mr-1" />
+            {usingFallback ? "Demo Mode" : "Live"}
+          </Badge>
+          <Button asChild disabled={usingFallback}>
+            <Link href="/admin/products/new">
+              <Plus className="h-4 w-4 mr-2" />
+              Add New Product
             </Link>
-          )}
+          </Button>
         </div>
-      )}
+      </div>
+
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Search products..."
+          className="pl-10"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+
+      {/* Products Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Products</CardTitle>
+          <CardDescription>
+            {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''} found
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Product</TableHead>
+                <TableHead>Category</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Features</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredProducts.map((product) => (
+                <TableRow key={product.id}>
+                  <TableCell>
+                    <div className="flex items-center space-x-3">
+                      {product.image_url && (
+                        <Image
+                          src={product.image_url}
+                          alt={product.name}
+                          width={48}
+                          height={48}
+                          className="h-12 w-12 object-cover rounded-md"
+                        />
+                      )}
+                      <div>
+                        <div className="font-medium">{product.name}</div>
+                        <div className="text-sm text-muted-foreground max-w-md truncate">
+                          {product.description}
+                        </div>
+                        {usingFallback && (
+                          <Badge variant="outline" className="mt-1">
+                            Demo Product
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="secondary">
+                      {product.product_categories?.name || 'No Category'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={product.is_active ? "default" : "destructive"}>
+                      {product.is_active ? 'Active' : 'Inactive'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {product.features && product.features.length > 0 ? (
+                      <span className="text-sm text-muted-foreground">
+                        {product.features.length} feature{product.features.length !== 1 ? 's' : ''}
+                      </span>
+                    ) : (
+                      <span className="text-sm text-muted-foreground">No features</span>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end space-x-2">
+                      <Button variant="ghost" size="sm" asChild disabled={usingFallback}>
+                        <Link href={`/admin/products/${product.id}/edit`}>
+                          <Edit className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="ghost" size="sm" disabled={usingFallback}>
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will permanently delete the product "{product.name}".
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => deleteProduct(product.id)}>
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          
+          {filteredProducts.length === 0 && (
+            <div className="text-center py-12">
+              <Package className="mx-auto h-12 w-12 text-muted-foreground" />
+              <h3 className="mt-2 text-sm font-semibold">No products found</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {searchTerm ? 'Try adjusting your search terms.' : 'Get started by creating a new product.'}
+              </p>
+              {!usingFallback && !searchTerm && (
+                <div className="mt-6">
+                  <Button asChild>
+                    <Link href="/admin/products/new">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Your First Product
+                    </Link>
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

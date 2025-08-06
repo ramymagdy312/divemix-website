@@ -1,11 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Save, X, Edit } from "lucide-react";
+import { Save, X, Edit, FileText } from "lucide-react";
 import FolderExplorerSingle from "../components/admin/FolderExplorerSingle";
 import Image from "next/image";
 import toast from "react-hot-toast";
 import Breadcrumb from "../components/admin/Breadcrumb";
+import { Button } from '@/app/components/ui/button';
+import { Input } from '@/app/components/ui/input';
+import { Label } from '@/app/components/ui/label';
+import { Textarea } from '@/app/components/ui/textarea';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 
 interface PageData {
   id?: string;
@@ -50,117 +55,132 @@ export default function PageEditor({
       <Breadcrumb items={[{ name: "Pages" }, { name: breadcrumb }]} />
 
       <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">{title} Management</h1>
-          <p className="mt-2 text-gray-600">Manage the content of your {title.toLowerCase()}</p>
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight flex items-center">
+            <FileText className="h-8 w-8 mr-3 text-primary" />
+            {title} Management
+          </h1>
+          <p className="text-muted-foreground">Manage the content of your {title.toLowerCase()}</p>
         </div>
-        <div className="flex space-x-4">
+        <div className="flex space-x-2">
           {editing ? (
             <>
-              <button onClick={() => setEditing(false)} className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-800">
-                <X className="h-4 w-4" />
-                <span>Cancel</span>
-              </button>
-              <button onClick={handleSave} disabled={saving} className="flex items-center space-x-2 px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700 disabled:opacity-50">
-                <Save className="h-4 w-4" />
-                <span>{saving ? "Saving..." : "Save Changes"}</span>
-              </button>
+              <Button variant="outline" onClick={() => setEditing(false)}>
+                <X className="h-4 w-4 mr-2" />
+                Cancel
+              </Button>
+              <Button onClick={handleSave} disabled={saving}>
+                <Save className="h-4 w-4 mr-2" />
+                {saving ? "Saving..." : "Save Changes"}
+              </Button>
             </>
           ) : (
-            <button onClick={() => setEditing(true)} className="flex items-center space-x-2 px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700">
-              <Edit className="h-4 w-4" />
-              <span>Edit Page</span>
-            </button>
+            <Button onClick={() => setEditing(true)}>
+              <Edit className="h-4 w-4 mr-2" />
+              Edit Page
+            </Button>
           )}
         </div>
       </div>
 
       <div className="space-y-8">
         {/* Basic Info */}
-        <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">Basic Information</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Page Title</label>
+        <Card>
+          <CardHeader>
+            <CardTitle>Basic Information</CardTitle>
+            <CardDescription>
+              Configure the main content and hero section of the page
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                <Label htmlFor="page-title">Page Title</Label>
+                {editing ? (
+                  <Input
+                    id="page-title"
+                    type="text"
+                    value={data.title}
+                    onChange={(e) => setData({ ...data, title: e.target.value })}
+                  />
+                ) : (
+                  <p className="text-sm font-medium">{data.title}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label>Hero Image</Label>
+                {editing ? (
+                  <FolderExplorerSingle
+                    image={data.hero_image}
+                    onImageChange={(url) => setData({ ...data, hero_image: url })}
+                    label="Hero Image"
+                  />
+                ) : (
+                  <div>
+                    {data.hero_image ? (
+                      <div className="relative w-full h-32 rounded-lg overflow-hidden border">
+                        <Image src={data.hero_image} alt="Hero image" fill className="object-cover" />
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground italic">No image uploaded</p>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="description">Description</Label>
               {editing ? (
-                <input
-                  type="text"
-                  value={data.title}
-                  onChange={(e) => setData({ ...data, title: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                <Textarea
+                  id="description"
+                  value={data.description}
+                  onChange={(e) => setData({ ...data, description: e.target.value })}
+                  rows={3}
                 />
               ) : (
-                <p className="text-gray-900">{data.title}</p>
+                <p className="text-sm">{data.description}</p>
               )}
             </div>
-            <div>
-              {editing ? (
-                <FolderExplorerSingle
-                  image={data.hero_image}
-                  onImageChange={(url) => setData({ ...data, hero_image: url })}
-                  label="Hero Image"
-                />
-              ) : (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Hero Image</label>
-                  {data.hero_image ? (
-                    <div className="relative w-full h-32 rounded-lg overflow-hidden border border-gray-300">
-                      <Image src={data.hero_image} alt="Hero image" fill className="object-cover" />
-                    </div>
-                  ) : (
-                    <p className="text-gray-500 italic">No image uploaded</p>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-          <div className="mt-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-            {editing ? (
-              <textarea
-                value={data.description}
-                onChange={(e) => setData({ ...data, description: e.target.value })}
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
-              />
-            ) : (
-              <p className="text-gray-900">{data.description}</p>
-            )}
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Intro Section */}
-        <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">Introduction Section</h2>
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Intro Title</label>
+        <Card>
+          <CardHeader>
+            <CardTitle>Introduction Section</CardTitle>
+            <CardDescription>
+              Configure the introduction content that appears below the hero section
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="intro-title">Intro Title</Label>
               {editing ? (
-                <input
+                <Input
+                  id="intro-title"
                   type="text"
                   value={data.intro_title}
                   onChange={(e) => setData({ ...data, intro_title: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                 />
               ) : (
-                <p className="text-gray-900">{data.intro_title}</p>
+                <p className="text-sm font-medium">{data.intro_title}</p>
               )}
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Intro Description</label>
+            <div className="space-y-2">
+              <Label htmlFor="intro-description">Intro Description</Label>
               {editing ? (
-                <textarea
+                <Textarea
+                  id="intro-description"
                   value={data.intro_description}
                   onChange={(e) => setData({ ...data, intro_description: e.target.value })}
                   rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                 />
               ) : (
-                <p className="text-gray-900">{data.intro_description}</p>
+                <p className="text-sm">{data.intro_description}</p>
               )}
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

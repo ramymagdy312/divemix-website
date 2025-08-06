@@ -4,6 +4,12 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { Plus, Edit, Trash2, Search, User, Mail, Calendar } from 'lucide-react';
 import { User as SupabaseUser } from '@supabase/supabase-js';
+import { Button } from '@/app/components/ui/button';
+import { Input } from '@/app/components/ui/input';
+import { Badge } from '@/app/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/app/components/ui/avatar';
+import { Alert, AlertDescription } from '@/app/components/ui/alert';
 
 interface User {
   id: string;
@@ -51,73 +57,99 @@ export default function UsersPage() {
   }
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
-          <p className="mt-2 text-gray-600">View and manage system users</p>
-        </div>
-      </div>
-
-      <div className="mb-6">
-        <div className="relative">
-          <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search users..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-      </div>
-
-      <div className="bg-white shadow overflow-hidden sm:rounded-md">
-        <ul className="divide-y divide-gray-200">
-          {filteredUsers.map((user) => (
-            <li key={user.id}>
-              <div className="px-4 py-4 flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="h-12 w-12 bg-cyan-100 rounded-full mr-4 flex items-center justify-center">
-                    <User className="h-6 w-6 text-cyan-600" />
-                  </div>
-                  <div>
-                    <div className="flex items-center">
-                      <Mail className="h-4 w-4 text-gray-400 mr-2" />
-                      <span className="text-lg font-medium text-gray-900">
-                        {user.email}
-                      </span>
-                    </div>
-                    <div className="flex items-center text-sm text-gray-500 mt-1">
-                      <Calendar className="h-4 w-4 mr-1" />
-                      Joined: {new Date(user.created_at).toLocaleDateString('en-US')}
-                    </div>
-                    {user.last_sign_in_at && (
-                      <div className="text-xs text-gray-400 mt-1">
-                        Last login: {new Date(user.last_sign_in_at).toLocaleDateString('en-US')}
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div className="flex items-center">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    Active
-                  </span>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {filteredUsers.length === 0 && (
-        <div className="text-center py-12">
-          <User className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-500">
-            {users.length === 0 ? 'Unable to access user data' : 'No search results found'}
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight flex items-center">
+            <User className="h-8 w-8 mr-3 text-primary" />
+            User Management
+          </h1>
+          <p className="text-muted-foreground">
+            View and manage system users
           </p>
         </div>
-      )}
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Search Users</CardTitle>
+          <CardDescription>
+            Find users by email address
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="relative">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search users..."
+              className="pl-10"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Users ({filteredUsers.length})</CardTitle>
+          <CardDescription>
+            All registered users in the system
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {filteredUsers.length === 0 ? (
+            <Alert>
+              <User className="h-4 w-4" />
+              <AlertDescription>
+                {users.length === 0 ? 'Unable to access user data. Admin privileges may be required.' : 'No users found matching your search criteria.'}
+              </AlertDescription>
+            </Alert>
+          ) : (
+            <div className="space-y-4">
+              {filteredUsers.map((user) => (
+                <Card key={user.id}>
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4">
+                        <Avatar className="h-12 w-12">
+                          <AvatarImage src={user.user_metadata?.avatar_url} />
+                          <AvatarFallback>
+                            {user.email?.charAt(0).toUpperCase() || 'U'}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="space-y-1">
+                          <div className="flex items-center space-x-2">
+                            <Mail className="h-4 w-4 text-muted-foreground" />
+                            <span className="font-medium">
+                              {user.email}
+                            </span>
+                          </div>
+                          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                            <Calendar className="h-4 w-4" />
+                            <span>Joined: {new Date(user.created_at).toLocaleDateString('en-US')}</span>
+                          </div>
+                          {user.last_sign_in_at && (
+                            <div className="text-xs text-muted-foreground">
+                              Last login: {new Date(user.last_sign_in_at).toLocaleDateString('en-US')}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Badge variant="default">
+                          Active
+                        </Badge>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

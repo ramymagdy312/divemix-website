@@ -2,9 +2,32 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Plus, Edit, Trash2, Search } from 'lucide-react';
+import { Plus, Edit, Trash2, Search, Wrench } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
+import { Button } from '@/app/components/ui/button';
+import { Input } from '@/app/components/ui/input';
+import { Badge } from '@/app/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/app/components/ui/table';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/app/components/ui/alert-dialog';
 
 interface Service {
   id: string;
@@ -69,89 +92,138 @@ export default function ServicesPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-cyan-600"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
       </div>
     );
   }
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Services Management</h1>
-          <p className="mt-2 text-gray-600">Manage all company services</p>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight">Services Management</h1>
+          <p className="text-muted-foreground">Manage all company services</p>
         </div>
-        <Link
-          href="/admin/services/new"
-          className="inline-flex items-center px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700 transition-colors"
-        >
-          <Plus className="h-5 w-5 mr-2" />
-          Add New Service
-        </Link>
+        <Button asChild>
+          <Link href="/admin/services/new">
+            <Plus className="h-4 w-4 mr-2" />
+            Add New Service
+          </Link>
+        </Button>
       </div>
 
-      <div className="mb-6">
-        <div className="relative">
-          <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search services..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Search services..."
+          className="pl-10"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </div>
 
-      <div className="bg-white shadow overflow-hidden sm:rounded-md">
-        <ul className="divide-y divide-gray-200">
-          {filteredServices.map((service) => (
-            <li key={service.id}>
-              <div className="px-4 py-4 flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="h-16 w-16 bg-cyan-100 rounded-md mr-4 flex items-center justify-center">
-                    <span className="text-cyan-600 font-semibold">{service.icon}</span>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-medium text-gray-900">
-                      {service.name}
-                    </h3>
-                    <p className="text-sm text-gray-600 mt-1 max-w-md truncate">
-                      {service.description}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {service.features.length} features
-                      <span className={`ml-2 px-2 py-1 text-xs rounded ${service.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                        {service.is_active ? 'Active' : 'Inactive'}
-                      </span>
-                    </p>
-                  </div>
+      {/* Services Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Services</CardTitle>
+          <CardDescription>
+            {filteredServices.length} service{filteredServices.length !== 1 ? 's' : ''} found
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Service</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Features</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredServices.map((service) => (
+                <TableRow key={service.id}>
+                  <TableCell>
+                    <div className="flex items-center space-x-3">
+                      <div className="h-12 w-12 bg-primary/10 rounded-md flex items-center justify-center">
+                        <span className="text-primary font-semibold text-lg">{service.icon}</span>
+                      </div>
+                      <div>
+                        <div className="font-medium">{service.name}</div>
+                        <div className="text-sm text-muted-foreground max-w-md truncate">
+                          {service.description}
+                        </div>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={service.is_active ? "default" : "destructive"}>
+                      {service.is_active ? 'Active' : 'Inactive'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <span className="text-sm text-muted-foreground">
+                      {service.features.length} feature{service.features.length !== 1 ? 's' : ''}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end space-x-2">
+                      <Button variant="ghost" size="sm" asChild>
+                        <Link href={`/admin/services/${service.id}/edit`}>
+                          <Edit className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="ghost" size="sm">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will permanently delete the service "{service.name}".
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => deleteService(service.id)}>
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          
+          {filteredServices.length === 0 && (
+            <div className="text-center py-12">
+              <Wrench className="mx-auto h-12 w-12 text-muted-foreground" />
+              <h3 className="mt-2 text-sm font-semibold">No services found</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {searchTerm ? 'Try adjusting your search terms.' : 'Get started by creating a new service.'}
+              </p>
+              {!searchTerm && (
+                <div className="mt-6">
+                  <Button asChild>
+                    <Link href="/admin/services/new">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Your First Service
+                    </Link>
+                  </Button>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Link
-                    href={`/admin/services/${service.id}/edit`}
-                    className="p-2 text-gray-400 hover:text-gray-600"
-                  >
-                    <Edit className="h-5 w-5" />
-                  </Link>
-                  <button
-                    onClick={() => deleteService(service.id)}
-                    className="p-2 text-red-400 hover:text-red-600"
-                  >
-                    <Trash2 className="h-5 w-5" />
-                  </button>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {filteredServices.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-gray-500">No services found</p>
-        </div>
-      )}
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
