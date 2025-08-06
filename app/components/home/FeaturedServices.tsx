@@ -88,7 +88,7 @@ const FeaturedServices = () => {
             needs
           </motion.p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
           {services.map((service, index) => (
             <ServiceCard
               key={service.id}

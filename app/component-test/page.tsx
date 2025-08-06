@@ -2,9 +2,6 @@
 
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
-
-// Import all major components to test
-import CategoryListDB from '../components/products/CategoryListDB';
 import ServiceGridDB from '../components/services/ServiceGridDB';
 import ApplicationGridDB from '../components/applications/ApplicationGridDB';
 import GalleryGridDB from '../components/gallery/GalleryGridDB';
@@ -14,12 +11,6 @@ export default function ComponentTest() {
   const [testResults, setTestResults] = useState<{[key: string]: any}>({});
 
   const components = [
-    {
-      name: 'CategoryListDB',
-      component: CategoryListDB,
-      description: 'Product categories from database',
-      table: 'product_categories'
-    },
     {
       name: 'ServiceGridDB', 
       component: ServiceGridDB,

@@ -8,7 +8,6 @@ import { useSearch } from "../../hooks/useSearch";
 import AnimatedElement from "../common/AnimatedElement";
 import EnhancedLoader from "../common/EnhancedLoader";
 import StatsCounter from "../common/StatsCounter";
-import FilterTabs from "../common/FilterTabs";
 import QuickNavigation from "../common/QuickNavigation";
 import ProductModal from "./ProductModal";
 import ProductFilters from "./ProductFilters";

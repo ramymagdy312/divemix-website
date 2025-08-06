@@ -5,13 +5,13 @@ import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
-import DatabaseApplicationCard from "../../components/applications/DatabaseApplicationCard";
+import ApplicationCard from "../../components/applications/ApplicationCard";
 
 interface Application {
   id: string;
   name: string;
   description: string;
-  image_url?: string;
+  image_url: string;
   use_cases?: string[];
   benefits?: string[];
   is_active: boolean;
@@ -80,9 +80,9 @@ const FeaturedApplications = () => {
             Discover how our solutions serve diverse industries
           </motion.p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
           {applications.map((app, index) => (
-            <DatabaseApplicationCard 
+            <ApplicationCard 
               key={app.id} 
               application={app} 
               index={index} 

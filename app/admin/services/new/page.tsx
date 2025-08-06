@@ -3,8 +3,17 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabase';
-import { Plus, X } from 'lucide-react';
+import { Plus, X, ArrowLeft, Save, Trash2, Wrench } from 'lucide-react';
+import Link from 'next/link';
 import toast from 'react-hot-toast';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import { Button } from '@/app/components/ui/button';
+import { Input } from '@/app/components/ui/input';
+import { Textarea } from '@/app/components/ui/textarea';
+import { Label } from '@/app/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
+import { Badge } from '@/app/components/ui/badge';
+import { Separator } from '@/app/components/ui/separator';
 
 export default function NewServicePage() {
   const router = useRouter();
@@ -38,7 +47,7 @@ export default function NewServicePage() {
       router.push('/admin/services');
     } catch (error) {
       console.error('Error creating service:', error);
-      toast.error('حدث خطأ أثناء إنشاء الخدمة');
+      toast.error('An error occurred while creating the service.');
     } finally {
       setLoading(false);
     }
@@ -68,139 +77,184 @@ export default function NewServicePage() {
   };
 
   return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Add a new service</h1>
-        <p className="mt-2 text-gray-600">Add a new service to the database</p>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <div className="flex items-center space-x-2">
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/admin/services">
+                <ArrowLeft className="h-4 w-4 mr-1" />
+                Back to Services
+              </Link>
+            </Button>
+          </div>
+          <h1 className="text-3xl font-bold tracking-tight">Add New Service</h1>
+          <p className="text-muted-foreground">
+            Add a new service to the database
+          </p>
+        </div>
+        <Badge variant="secondary">
+          <Wrench className="h-3 w-3 mr-1" />
+          New Service
+        </Badge>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white shadow rounded-lg p-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Service Name</label>
-          <input
-            type="text"
-            required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Description
-          </label>
-          <textarea
-            required
-            rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Icon
-          </label>
-          <select
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-            value={formData.icon}
-            onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-          >
-            <option value="🔧">🔧 Installation</option>
-            <option value="⚙️">⚙️ Maintenance</option>
-            <option value="🔍">🔍 Testing</option>
-            <option value="🛢️">🛢️ Cylinder Services</option>
-            <option value="Settings">Settings</option>
-            <option value="Wrench">Wrench</option>
-            <option value="Droplets">Droplets</option>
-            <option value="FireExtinguisher">FireExtinguisher</option>
-          </select>
-        </div>
-
-        <div>
-          <div className="flex justify-between items-center mb-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Features
-            </label>
-            <button
-              type="button"
-              onClick={addFeature}
-              className="inline-flex items-center px-3 py-1 text-sm bg-cyan-600 text-white rounded-md hover:bg-cyan-700"
-            >
-              <Plus className="h-4 w-4 mr-1" />Add Feature
-            </button>
-          </div>
-          <div className="space-y-2">
-            {formData.features.map((feature, index) => (
-              <div key={index} className="flex items-center space-x-2">
-                <input
-                  type="text"
-                  placeholder="Service Feature"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-                  value={feature}
-                  onChange={(e) => updateFeature(index, e.target.value)}
+      {/* Main Form */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Service Information</CardTitle>
+          <CardDescription>
+            Enter the details for the new service
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid gap-6 md:grid-cols-2">
+              {/* Service Name */}
+              <div className="space-y-2">
+                <Label htmlFor="name">Service Name *</Label>
+                <Input
+                  id="name"
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="Enter service name"
                 />
-                {formData.features.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeFeature(index)}
-                    className="p-2 text-red-600 hover:text-red-800"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                )}
               </div>
-            ))}
-          </div>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Display Order
-            </label>
-            <input
-              type="number"
-              min="1"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-              value={formData.display_order}
-              onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 1 })}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Status
-            </label>
-            <select
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-              value={formData.is_active ? 'active' : 'inactive'}
-              onChange={(e) => setFormData({ ...formData, is_active: e.target.value === 'active' })}
-            >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
-          </div>
-        </div>
+              {/* Icon */}
+              <div className="space-y-2">
+                <Label htmlFor="icon">Icon</Label>
+                <Select
+                  value={formData.icon}
+                  onValueChange={(value) => setFormData({ ...formData, icon: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select an icon" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="🔧">🔧 Installation</SelectItem>
+                    <SelectItem value="⚙️">⚙️ Maintenance</SelectItem>
+                    <SelectItem value="🔍">🔍 Testing</SelectItem>
+                    <SelectItem value="🛢️">🛢️ Cylinder Services</SelectItem>
+                    <SelectItem value="Settings">Settings</SelectItem>
+                    <SelectItem value="Wrench">Wrench</SelectItem>
+                    <SelectItem value="Droplets">Droplets</SelectItem>
+                    <SelectItem value="FireExtinguisher">FireExtinguisher</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
 
-        <div className="flex justify-end space-x-4">
-          <button
-            type="button"
-            onClick={() => router.push('/admin/services')}
-            className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={loading}
-            className="px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700 transition-colors disabled:opacity-50"
-          >
-            {loading ? 'Saving...' : 'Save'}
-          </button>
-        </div>
-      </form>
+            {/* Description */}
+            <div className="space-y-2">
+              <Label htmlFor="description">Description *</Label>
+              <Textarea
+                id="description"
+                required
+                rows={4}
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder="Detailed service description"
+              />
+            </div>
+
+            <Separator />
+
+            {/* Features */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label>Service Features</Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={addFeature}
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add Feature
+                </Button>
+              </div>
+              <div className="space-y-2">
+                {formData.features.map((feature, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <Input
+                      value={feature}
+                      onChange={(e) => updateFeature(index, e.target.value)}
+                      placeholder={`Feature ${index + 1}`}
+                      className="flex-1"
+                    />
+                    {formData.features.length > 1 && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => removeFeature(index)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2">
+              {/* Display Order */}
+              <div className="space-y-2">
+                <Label htmlFor="display_order">Display Order</Label>
+                <Input
+                  id="display_order"
+                  type="number"
+                  min="1"
+                  value={formData.display_order}
+                  onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 1 })}
+                />
+              </div>
+
+              {/* Status */}
+              <div className="space-y-2">
+                <Label htmlFor="status">Status</Label>
+                <Select
+                  value={formData.is_active ? 'active' : 'inactive'}
+                  onValueChange={(value) => setFormData({ ...formData, is_active: value === 'active' })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* Submit Buttons */}
+            <div className="flex justify-end space-x-3">
+              <Button variant="outline" asChild>
+                <Link href="/admin/services">
+                  <X className="h-4 w-4 mr-1" />
+                  Cancel
+                </Link>
+              </Button>
+              <Button type="submit" disabled={loading}>
+                {loading ? (
+                  <>Saving...</>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-1" />
+                    Save Service
+                  </>
+                )}
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -6,7 +6,6 @@ import { supabase } from '../../lib/supabase';
 
 import PageHeader from '../common/PageHeader';
 import Timeline from './Timeline';
-import CompanyOverview from './CompanyOverview';
 import AnimatedElement from '../common/AnimatedElement';
 
 interface AboutPageData {

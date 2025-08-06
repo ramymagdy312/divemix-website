@@ -3,10 +3,19 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabase';
-import { AlertCircle, ArrowLeft } from 'lucide-react';
+import { AlertCircle, ArrowLeft, Plus, Trash2, Save, X } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import FolderExplorer from '../../../components/admin/FolderExplorer';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import { Button } from '@/app/components/ui/button';
+import { Input } from '@/app/components/ui/input';
+import { Textarea } from '@/app/components/ui/textarea';
+import { Label } from '@/app/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
+import { Alert, AlertDescription, AlertTitle } from '@/app/components/ui/alert';
+import { Badge } from '@/app/components/ui/badge';
+import { Separator } from '@/app/components/ui/separator';
 
 interface Category {
   id: string;
@@ -131,249 +140,264 @@ export default function NewProductPage() {
   };
 
   return (
-    <div>
+    <div className="space-y-6">
       {/* Error/Demo Mode Banner */}
       {(usingFallback || error) && (
-        <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <div className="flex items-center">
-            <AlertCircle className="h-5 w-5 text-yellow-400 mr-3" />
-            <div className="flex-1">
-              <h3 className="text-sm font-medium text-yellow-800">
-                {error ? 'Database Connection Issue' : 'Demo Mode Active'}
-              </h3>
-              <p className="text-sm text-yellow-700 mt-1">
-                {error ? (
-                  <>Database error: {error}. Cannot add products.</>
-                ) : (
-                  <>Cannot add products in demo mode. Database not configured.</>
-                )}
-                <Link href="/check-products-database" className="underline ml-2">
-                  Set up database →
-                </Link>
-              </p>
-            </div>
-          </div>
-        </div>
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>
+            {error ? 'Database Connection Issue' : 'Demo Mode Active'}
+          </AlertTitle>
+          <AlertDescription>
+            {error ? (
+              <>Database error: {error}. Cannot add products.</>
+            ) : (
+              <>Cannot add products in demo mode. Database not configured.</>
+            )}
+            <Link href="/check-products-database" className="underline ml-2">
+              Set up database →
+            </Link>
+          </AlertDescription>
+        </Alert>
       )}
 
-      <div className="mb-8">
-        <div className="flex items-center mb-4">
-          <Link
-            href="/admin/products"
-            className="inline-flex items-center text-gray-600 hover:text-gray-900 mr-4"
-          >
-            <ArrowLeft className="h-4 w-4 mr-1" />
-            Back to Products
-          </Link>
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <div className="flex items-center space-x-2">
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/admin/products">
+                <ArrowLeft className="h-4 w-4 mr-1" />
+                Back to Products
+              </Link>
+            </Button>
+          </div>
+          <h1 className="text-3xl font-bold tracking-tight">Add New Product</h1>
+          <p className="text-muted-foreground">
+            {usingFallback ? 'Demo mode - Set up database to add real products' : 'Add a new product to the database'}
+          </p>
         </div>
-        <h1 className="text-3xl font-bold text-gray-900">Add New Product</h1>
-        <p className="mt-2 text-gray-600">
-          {usingFallback ? 'Demo mode - Set up database to add real products' : 'Add a new product to the database'}
-        </p>
+        <Badge variant={usingFallback ? "destructive" : "secondary"}>
+          {usingFallback ? "Demo Mode" : "Live"}
+        </Badge>
       </div>
 
-      <div className="bg-white shadow rounded-lg">
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* Product Name */}
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-              Product Name *
-            </label>
-            <input
-              type="text"
-              id="name"
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Enter product name"
-            />
-          </div>
+      {/* Main Form */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Product Information</CardTitle>
+          <CardDescription>
+            Enter the basic information for the new product
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid gap-6 md:grid-cols-2">
+              {/* Product Name */}
+              <div className="space-y-2">
+                <Label htmlFor="name">Product Name *</Label>
+                <Input
+                  id="name"
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="Enter product name"
+                />
+              </div>
 
-          {/* Short Description */}
-          <div>
-            <label htmlFor="short_description" className="block text-sm font-medium text-gray-700 mb-2">
-              Short Description
-            </label>
-            <input
-              type="text"
-              id="short_description"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-              value={formData.short_description}
-              onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
-              placeholder="Brief product description"
-            />
-          </div>
-
-          {/* Description */}
-          <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-              Full Description *
-            </label>
-            <textarea
-              id="description"
-              required
-              rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Detailed product description"
-            />
-          </div>
-
-          {/* Category */}
-          <div>
-            <label htmlFor="category_id" className="block text-sm font-medium text-gray-700 mb-2">
-              Category *
-            </label>
-            <select
-              id="category_id"
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-              value={formData.category_id}
-              onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
-            >
-              <option value="">Select a category</option>
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-            {usingFallback && (
-              <p className="text-sm text-yellow-600 mt-1">
-                Using sample categories. Set up database for real categories.
-              </p>
-            )}
-          </div>
-          {/* Image Upload */}
-          <div>
-            <FolderExplorer
-              images={formData.images.length > 0 ? formData.images : (formData.image_url ? [formData.image_url] : [])}
-              onImagesChange={(images) => setFormData({ 
-                ...formData, 
-                images: images,
-                image_url: images.length > 0 ? images[0] : ''
-              })}
-              label="Product Images"
-              
-              maxImages={10}
-            />
-            <p className="text-sm text-gray-500 mt-2">
-              Upload multiple images for this product. The first image will be used as the main image.
-            </p>
-          </div>
-
-          {/* Features */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Product Features
-            </label>
-            <div className="space-y-2">
-              {formData.features.map((feature, index) => (
-                <div key={index} className="flex items-center space-x-2">
-                  <input
-                    type="text"
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-                    value={feature}
-                    onChange={(e) => updateFeature(index, e.target.value)}
-                    placeholder={`Feature ${index + 1}`}
-                  />
-                  {formData.features.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removeFeature(index)}
-                      className="p-2 text-red-600 hover:text-red-800"
-                    >
-                      ×
-                    </button>
-                  )}
-                </div>
-              ))}
-              <button
-                type="button"
-                onClick={addFeature}
-                className="text-sm text-cyan-600 hover:text-cyan-800"
-              >
-                + Add Feature
-              </button>
+              {/* Category */}
+              <div className="space-y-2">
+                <Label htmlFor="category_id">Category *</Label>
+                <Select
+                  value={formData.category_id}
+                  onValueChange={(value) => setFormData({ ...formData, category_id: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {usingFallback && (
+                  <p className="text-sm text-muted-foreground">
+                    Using sample categories. Set up database for real categories.
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
 
-          {/* Display Order */}
-          <div>
-            <label htmlFor="display_order" className="block text-sm font-medium text-gray-700 mb-2">
-              Display Order
-            </label>
-            <input
-              type="number"
-              id="display_order"
-              min="1"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-              value={formData.display_order}
-              onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 1 })}
-            />
-          </div>
+            {/* Short Description */}
+            <div className="space-y-2">
+              <Label htmlFor="short_description">Short Description</Label>
+              <Input
+                id="short_description"
+                value={formData.short_description}
+                onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
+                placeholder="Brief product description"
+              />
+            </div>
 
-          {/* Active Status */}
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="is_active"
-              className="h-4 w-4 text-cyan-600 focus:ring-cyan-500 border-gray-300 rounded"
-              checked={formData.is_active}
-              onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-            />
-            <label htmlFor="is_active" className="ml-2 block text-sm text-gray-900">
-              Product is active
-            </label>
-          </div>
+            {/* Description */}
+            <div className="space-y-2">
+              <Label htmlFor="description">Full Description *</Label>
+              <Textarea
+                id="description"
+                required
+                rows={4}
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder="Detailed product description"
+              />
+            </div>
+            <Separator />
 
-          {/* Submit Buttons */}
-          <div className="flex justify-end space-x-3 pt-6 border-t">
-            <Link
-              href="/admin/products"
-              className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-            >
-              Cancel
-            </Link>
-            <button
-              type="submit"
-              disabled={loading || usingFallback}
-              className={`px-4 py-2 rounded-md transition-colors ${
-                loading || usingFallback
-                  ? 'bg-gray-400 text-white cursor-not-allowed'
-                  : 'bg-cyan-600 text-white hover:bg-cyan-700'
-              }`}
-            >
-              {loading ? 'Creating...' : usingFallback ? 'Database Required' : 'Create Product'}
-            </button>
-          </div>
-        </form>
-      </div>
+            {/* Image Upload */}
+            <div className="space-y-2">
+              <Label>Product Images</Label>
+              <FolderExplorer
+                images={formData.images.length > 0 ? formData.images : (formData.image_url ? [formData.image_url] : [])}
+                onImagesChange={(images) => setFormData({ 
+                  ...formData, 
+                  images: images,
+                  image_url: images.length > 0 ? images[0] : ''
+                })}
+                label="Product Images"
+                maxImages={10}
+              />
+              <p className="text-sm text-muted-foreground">
+                Upload multiple images for this product. The first image will be used as the main image.
+              </p>
+            </div>
+
+            <Separator />
+
+            {/* Features */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label>Product Features</Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={addFeature}
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add Feature
+                </Button>
+              </div>
+              <div className="space-y-2">
+                {formData.features.map((feature, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <Input
+                      value={feature}
+                      onChange={(e) => updateFeature(index, e.target.value)}
+                      placeholder={`Feature ${index + 1}`}
+                      className="flex-1"
+                    />
+                    {formData.features.length > 1 && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => removeFeature(index)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2">
+              {/* Display Order */}
+              <div className="space-y-2">
+                <Label htmlFor="display_order">Display Order</Label>
+                <Input
+                  id="display_order"
+                  type="number"
+                  min="1"
+                  value={formData.display_order}
+                  onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 1 })}
+                />
+              </div>
+
+              {/* Active Status */}
+              <div className="flex items-center space-x-2 pt-6">
+                <input
+                  type="checkbox"
+                  id="is_active"
+                  className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
+                  checked={formData.is_active}
+                  onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                />
+                <Label htmlFor="is_active">Product is active</Label>
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* Submit Buttons */}
+            <div className="flex justify-end space-x-3">
+              <Button variant="outline" asChild>
+                <Link href="/admin/products">
+                  <X className="h-4 w-4 mr-1" />
+                  Cancel
+                </Link>
+              </Button>
+              <Button
+                type="submit"
+                disabled={loading || usingFallback}
+              >
+                {loading ? (
+                  <>Creating...</>
+                ) : usingFallback ? (
+                  <>Database Required</>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-1" />
+                    Create Product
+                  </>
+                )}
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
 
       {/* Help Section */}
       {usingFallback && (
-        <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-blue-800 mb-4">🚀 To Add Real Products</h3>
-          <div className="text-sm text-blue-700 space-y-2">
-            <p><strong>You need to set up the database first:</strong></p>
-            <ol className="space-y-1 ml-4">
-              <li>1. Create product_categories table</li>
-              <li>2. Create products table</li>
-              <li>3. Add product categories</li>
-              <li>4. Then you can add products</li>
-            </ol>
-            <div className="mt-4">
-              <Link
-                href="/check-products-database"
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-              >
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              🚀 To Add Real Products
+            </CardTitle>
+            <CardDescription>
+              Set up the database to start adding real products
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <p className="font-medium mb-2">You need to set up the database first:</p>
+              <ol className="space-y-1 ml-4 text-sm text-muted-foreground">
+                <li>1. Create product_categories table</li>
+                <li>2. Create products table</li>
+                <li>3. Add product categories</li>
+                <li>4. Then you can add products</li>
+              </ol>
+            </div>
+            <Button asChild>
+              <Link href="/check-products-database">
                 Set Up Database Now →
               </Link>
-            </div>
-          </div>
-        </div>
+            </Button>
+          </CardContent>
+        </Card>
       )}
     </div>
   );

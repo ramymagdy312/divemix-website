@@ -106,7 +106,7 @@ const ServiceGridDB: React.FC = () => {
 
       {/* Services Grid */}
       <AnimatedElement animation="fadeIn" delay={0.1}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 grid-stagger">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 grid-stagger items-stretch">
           {services.map((service, index) => (
             <ServiceCard
               key={service.id}

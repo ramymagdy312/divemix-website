@@ -3,10 +3,15 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../../lib/supabase';
-import { AlertCircle, ArrowLeft } from 'lucide-react';
+import { AlertCircle, ArrowLeft, Edit, Save } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import ProductForm from '../../components/ProductForm';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import { Button } from '@/app/components/ui/button';
+import { Alert, AlertDescription, AlertTitle } from '@/app/components/ui/alert';
+import { Badge } from '@/app/components/ui/badge';
+import { Skeleton } from '@/app/components/ui/skeleton';
 
 interface Product {
   id: string;
@@ -127,84 +132,110 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
 
   if (fetchLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-cyan-600"></div>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-4 w-96" />
+          </div>
+          <Skeleton className="h-6 w-20" />
+        </div>
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-40" />
+            <Skeleton className="h-4 w-64" />
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-24 w-full" />
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   if (!initialData) {
     return (
-      <div className="text-center py-12">
-        <div className="mb-4">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Product Not Found</h1>
-          <p className="text-gray-500">The requested product could not be found.</p>
-        </div>
-        <div className="space-x-4">
-          <Link
-            href="/admin/products"
-            className="inline-flex items-center px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Products
-          </Link>
-          <Link
-            href="/check-products-database"
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-          >
-            <AlertCircle className="h-4 w-4 mr-2" />
-            Check Database
-          </Link>
-        </div>
+      <div className="flex flex-col items-center justify-center py-12 space-y-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle>Product Not Found</CardTitle>
+            <CardDescription>
+              The requested product could not be found.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col space-y-2">
+            <Button asChild>
+              <Link href="/admin/products">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Products
+              </Link>
+            </Button>
+            <Button variant="outline" asChild>
+              <Link href="/check-products-database">
+                <AlertCircle className="h-4 w-4 mr-2" />
+                Check Database
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div>
+    <div className="space-y-6">
       {/* Error/Demo Mode Banner */}
       {(usingFallback || error) && (
-        <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <div className="flex items-center">
-            <AlertCircle className="h-5 w-5 text-yellow-400 mr-3" />
-            <div className="flex-1">
-              <h3 className="text-sm font-medium text-yellow-800">
-                {error ? 'Database Connection Issue' : 'Demo Mode Active'}
-              </h3>
-              <p className="text-sm text-yellow-700 mt-1">
-                {error ? (
-                  <>Database error: {error}. Showing sample product data.</>
-                ) : (
-                  <>Editing sample product. Database not configured.</>
-                )}
-                <Link href="/check-products-database" className="underline ml-2">
-                  Set up database →
-                </Link>
-              </p>
-            </div>
-          </div>
-        </div>
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>
+            {error ? 'Database Connection Issue' : 'Demo Mode Active'}
+          </AlertTitle>
+          <AlertDescription>
+            {error ? (
+              <>Database error: {error}. Showing sample product data.</>
+            ) : (
+              <>Editing sample product. Database not configured.</>
+            )}
+            <Link href="/check-products-database" className="underline ml-2">
+              Set up database →
+            </Link>
+          </AlertDescription>
+        </Alert>
       )}
 
-      <div className="mb-8">
-        <div className="flex items-center mb-4">
-          <Link
-            href="/admin/products"
-            className="inline-flex items-center text-gray-600 hover:text-gray-900 mr-4"
-          >
-            <ArrowLeft className="h-4 w-4 mr-1" />
-            Back to Products
-          </Link>
-        </div>
-        <h1 className="text-3xl font-bold text-gray-900">Edit Product</h1>
-        <p className="mt-2 text-gray-600">
-          {usingFallback ? 'Editing sample product (Demo Mode)' : 'Edit product data'}
-        </p>
-        {initialData && (
-          <div className="mt-2 text-sm text-gray-500">
-            Product ID: {initialData.id} • {initialData.name}
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <div className="flex items-center space-x-2">
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/admin/products">
+                <ArrowLeft className="h-4 w-4 mr-1" />
+                Back to Products
+              </Link>
+            </Button>
           </div>
-        )}
+          <h1 className="text-3xl font-bold tracking-tight">Edit Product</h1>
+          <p className="text-muted-foreground">
+            {usingFallback ? 'Editing sample product (Demo Mode)' : 'Edit product data'}
+          </p>
+          {initialData && (
+            <div className="text-sm text-muted-foreground">
+              Product ID: {initialData.id} • {initialData.name}
+            </div>
+          )}
+        </div>
+        <div className="flex items-center space-x-2">
+          <Badge variant={usingFallback ? "destructive" : "secondary"}>
+            {usingFallback ? "Demo Mode" : "Live"}
+          </Badge>
+          <Badge variant="outline">
+            <Edit className="h-3 w-3 mr-1" />
+            Editing
+          </Badge>
+        </div>
       </div>
 
       <ProductForm 

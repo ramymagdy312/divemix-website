@@ -1,10 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { Send, User, Mail, Phone, MessageSquare, MapPin, CheckCircle, AlertCircle, Loader } from 'lucide-react';
+import React, { useState } from 'react';
+import { Send, User, Mail, Phone, MessageSquare, CheckCircle, AlertCircle, Loader } from 'lucide-react';
 import AnimatedElement from '../common/AnimatedElement';
-import { supabase } from '../../lib/supabase';
-import toast from 'react-hot-toast';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import { Button } from '@/app/components/ui/button';
+import { Input } from '@/app/components/ui/input';
+import { Textarea } from '@/app/components/ui/textarea';
+import { Label } from '@/app/components/ui/label';
+import { Alert, AlertDescription } from '@/app/components/ui/alert';
 
 interface Branch {
   id: string;
@@ -37,200 +41,253 @@ interface FormErrors {
   message?: string;
 }
 
-const ContactForm = () => {
+const ContactForm: React.FC<ContactFormProps> = ({
+  branches,
+  selectedBranchId,
+  onBranchSelect,
+  className = ""
+}) => {
   const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
     phone: '',
     subject: '',
     message: '',
-    branchId: ''
+    branchId: selectedBranchId || (branches.length > 0 ? branches[0].id : '')
   });
-  const [loading, setLoading] = useState(false);
-  const [contactEmail, setContactEmail] = useState('ramy.magdy@rockettravelsystem.com');
 
-  useEffect(() => {
-    fetchContactEmail();
-  }, []);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [submitMessage, setSubmitMessage] = useState('');
 
-  const fetchContactEmail = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('settings')
-        .select('value')
-        .eq('key', 'contact_email')
-        .single();
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
 
-      if (data && !error) {
-        setContactEmail(data.value);
-      }
-    } catch (error) {
-      console.error('Error fetching contact email:', error);
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required';
     }
+
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Invalid email format';
+    }
+
+    if (!formData.subject.trim()) {
+      newErrors.subject = 'Subject is required';
+    }
+
+    if (!formData.message.trim()) {
+      newErrors.message = 'Message is required';
+    } else if (formData.message.trim().length < 10) {
+      newErrors.message = 'Message must be at least 10 characters long';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+  const handleInputChange = (field: keyof FormData, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    if (errors[field as keyof FormErrors]) {
+      setErrors(prev => ({ ...prev, [field]: undefined }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
 
     try {
-      // Save contact form submission to database
-      const { error: dbError } = await supabase
-        .from('contact_submissions')
-        .insert([{
-          name: formData.name,
-          email: formData.email,
-          subject: formData.subject,
-          message: formData.message,
-          status: 'new'
-        }]);
-
-      if (dbError) {
-        console.error('Database error:', dbError);
-      }
-
-      // Send email using API route
-      const response = await fetch('/api/send-contact-email', {
+      const response = await fetch('/api/contact', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...formData,
-          to: contactEmail
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
       });
 
+      const result = await response.json();
+
       if (response.ok) {
-        toast.success('Message sent successfully! We\'ll get back to you soon.');
+        setSubmitStatus('success');
+        setSubmitMessage(result.message || 'Your message has been sent successfully!');
         setFormData({
           name: '',
           email: '',
           phone: '',
           subject: '',
           message: '',
-          branchId: ''
+          branchId: selectedBranchId || (branches.length > 0 ? branches[0].id : '')
         });
       } else {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to send message');
+        setSubmitStatus('error');
+        setSubmitMessage(result.error || 'An error occurred while sending the message.');
       }
     } catch (error) {
-      console.error('Error sending message:', error);
-      toast.error('Failed to send message. Please try again or contact us directly.');
+      console.error('Submit error:', error);
+      setSubmitStatus('error');
+      setSubmitMessage('A connection error occurred. Please try again.');
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-8">
-      <div className="flex items-center mb-6">
-        <MessageSquare className="h-6 w-6 text-cyan-600 mr-3" />
-        <h3 className="text-2xl font-semibold text-gray-900">Send us a Message</h3>
-      </div>
-      
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid md:grid-cols-2 gap-6">
+    <Card className={className}>
+      {/* Header */}
+      <CardHeader>
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+            <MessageSquare className="w-6 h-6 text-primary" />
+          </div>
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-              Name *
-            </label>
-            <input
+            <CardTitle className="text-xl">Contact Us</CardTitle>
+            <CardDescription>
+              We're here to answer all your inquiries
+            </CardDescription>
+          </div>
+        </div>
+      </CardHeader>
+
+      {/* Form */}
+      <CardContent className="p-6">
+        {submitStatus !== 'idle' && (
+          <AnimatedElement animation="slideUp">
+            <Alert className={`mb-6 ${
+              submitStatus === 'success' 
+                ? 'border-green-200 bg-green-50 text-green-800' 
+                : 'border-destructive/50 bg-destructive/10 text-destructive'
+            }`}>
+              {submitStatus === 'success' ? (
+                <CheckCircle className="h-4 w-4" />
+              ) : (
+                <AlertCircle className="h-4 w-4" />
+              )}
+              <AlertDescription>
+                {submitMessage}
+              </AlertDescription>
+            </Alert>
+          </AnimatedElement>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Name and Email */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="name" className="flex items-center space-x-1">
+                <User className="w-4 h-4" />
+                <span>Full Name *</span>
+              </Label>
+              <Input
+                id="name"
+                type="text"
+                value={formData.name}
+                onChange={(e) => handleInputChange('name', e.target.value)}
+                placeholder="Enter your full name"
+                className={errors.name ? 'border-destructive focus:border-destructive' : ''}
+              />
+              {errors.name && (
+                <p className="text-sm text-destructive">{errors.name}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="email" className="flex items-center space-x-1">
+                <Mail className="w-4 h-4" />
+                <span>Email *</span>
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => handleInputChange('email', e.target.value)}
+                placeholder="example@email.com"
+                className={errors.email ? 'border-destructive focus:border-destructive' : ''}
+              />
+              {errors.email && (
+                <p className="text-sm text-destructive">{errors.email}</p>
+              )}
+            </div>
+          </div>
+
+          {/* Phone */}
+          <div className="space-y-2">
+            <Label htmlFor="phone" className="flex items-center space-x-1">
+              <Phone className="w-4 h-4" />
+              <span>Phone Number (optional)</span>
+            </Label>
+            <Input
+              id="phone"
+              type="tel"
+              value={formData.phone}
+              onChange={(e) => handleInputChange('phone', e.target.value)}
+              placeholder="+20 123 456 7890"
+            />
+          </div>
+
+          {/* Subject */}
+          <div className="space-y-2">
+            <Label htmlFor="subject">Subject *</Label>
+            <Input
+              id="subject"
               type="text"
-              id="name"
-              name="name"
-              required
-              value={formData.name}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500 transition-colors"
-              placeholder="Your full name"
+              value={formData.subject}
+              onChange={(e) => handleInputChange('subject', e.target.value)}
+              placeholder="What is your message about?"
+              className={errors.subject ? 'border-destructive focus:border-destructive' : ''}
             />
+            {errors.subject && (
+              <p className="text-sm text-destructive">{errors.subject}</p>
+            )}
           </div>
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email *
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              required
-              value={formData.email}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500 transition-colors"
-              placeholder="your.email@example.com"
+
+          {/* Message */}
+          <div className="space-y-2">
+            <Label htmlFor="message">Message *</Label>
+            <Textarea
+              id="message"
+              value={formData.message}
+              onChange={(e) => handleInputChange('message', e.target.value)}
+              placeholder="Write your message here... (Minimum 10 characters)"
+              rows={5}
+              className={`resize-none ${errors.message ? 'border-destructive focus:border-destructive' : ''}`}
             />
+            {errors.message && (
+              <p className="text-sm text-destructive">{errors.message}</p>
+            )}
+            <p className="text-xs text-muted-foreground">
+              {formData.message.length} / 1000 characters
+            </p>
           </div>
-        </div>
 
-        <div>
-          <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
-            Subject *
-          </label>
-          <input
-            type="text"
-            id="subject"
-            name="subject"
-            required
-            value={formData.subject}
-            onChange={handleInputChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500 transition-colors"
-            placeholder="What is this about?"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-            Message *
-          </label>
-          <textarea
-            id="message"
-            name="message"
-            required
-            rows={4}
-            value={formData.message}
-            onChange={handleInputChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500 transition-colors resize-vertical"
-            placeholder="Tell us more about your inquiry..."
-          ></textarea>
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-cyan-600 text-white py-3 px-4 rounded-md hover:bg-cyan-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium flex items-center justify-center"
-        >
-          {loading ? (
-            <>
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-              Sending...
-            </>
-          ) : (
-            <>
-              <Send className="h-4 w-4 mr-2" />
-              Send Message
-            </>
-          )}
-        </button>
-      </form>
-
-      <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-        <p className="text-sm text-gray-600">
-          <strong>Note:</strong> Your message will be sent to our team at{' '}
-          <span className="text-cyan-600 font-medium">{contactEmail}</span>. 
-          We typically respond within 24 hours during business days.
-        </p>
-      </div>
-    </div>
+          {/* Submit Button */}
+          <div className="pt-4">
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full"
+              size="lg"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader className="w-5 h-5 animate-spin mr-2" />
+                  Sending...
+                </>
+              ) : (
+                <>
+                  <Send className="w-5 h-5 mr-2" />
+                  Send Message
+                </>
+              )}
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 };
 

@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { Plus, X, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
-import toast from 'react-hot-toast';
 import FolderExplorer from '../../../components/admin/FolderExplorer';
 
 interface Category {
