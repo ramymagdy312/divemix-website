@@ -94,17 +94,17 @@ const ApplicationGridDB: React.FC = () => {
 
       {/* Applications Grid */}
       <AnimatedElement animation="fadeIn" delay={0.1}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 grid-stagger">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 grid-stagger items-stretch">
           {applications.map((application, index) => (
             <ApplicationCard 
               key={application.id} 
               application={{
                 id: application.id,
                 name: application.name,
-                desc: application.description,
+                description: application.description,
                 use_cases: application.use_cases || [],
                 benefits: application.benefits || [],
-                images: [application.image_url]
+                image_url: application.image_url ||  ''
               }}
               index={index}
             />

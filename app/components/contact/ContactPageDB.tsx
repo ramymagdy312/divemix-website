@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import ContactHero from './ContactHero';
 import ContactIntro from './ContactIntro';
-import EnhancedContactForm from './EnhancedContactForm';
-import BranchMap from './BranchMap';
+import ContactForm from './ContactForm';
+import BranchList from './BranchList';
 import AnimatedElement from '../common/AnimatedElement';
 import EnhancedLoader from '../common/EnhancedLoader';
+import PageHeader from '../common/PageHeader';
 
 interface Branch {
   id: string;
@@ -102,7 +102,7 @@ export default function ContactPageDB() {
   };
 
   if (loading) {
-    return <EnhancedLoader message="جاري تحميل صفحة الاتصال..." variant="dots" size="lg" />;
+    return <EnhancedLoader message="Loading contact page..." variant="dots" size="lg" />;
   }
 
   return (
@@ -110,44 +110,42 @@ export default function ContactPageDB() {
       <div>
         {/* Hero Section */}
         {data && (
-          <ContactHero 
-            title={data.title || "تواصل معنا"}
-            description={data.description || "نحن هنا لخدمتك"}
-            backgroundImage={data.hero_image}
-          />
+          <PageHeader
+          title={data.title}
+          description={data.description}
+          backgroundImage={data.hero_image}
+        />
         )}
 
         {/* Main Content */}
-        <div className="py-16 bg-gray-50">
+        <div className="py-16 bg-background">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Intro Section */}
             {data && (
-              <div className="mb-16">
-                <ContactIntro 
-                  title={data.intro_title || "كيف يمكننا مساعدتك؟"}
-                  description={data.intro_description || "تواصل معنا عبر النموذج أدناه أو زر أحد فروعنا"}
-                />
+              <div className="mb-16 text-center">
+                <AnimatedElement animation="fadeIn" delay={0.1}>
+                  <ContactIntro 
+                    title={data.intro_title || "How can we help you?"}
+                    description={data.intro_description || "Get in touch with us using the form below and we'll get back to you as soon as possible"}
+                  />
+                </AnimatedElement>
               </div>
             )}
 
-            {/* Contact Form and Map */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+            {/* Contact Form and Branches */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
               {/* Contact Form */}
               <AnimatedElement animation="slideIn" delay={0.2}>
-                <EnhancedContactForm 
+                <ContactForm 
                   branches={branches}
                   selectedBranchId={selectedBranchId}
                   onBranchSelect={handleBranchSelect}
                 />
               </AnimatedElement>
 
-              {/* Interactive Map */}
+              {/* Branch List */}
               <AnimatedElement animation="slideIn" delay={0.4}>
-                <BranchMap 
-                  branches={branches}
-                  selectedBranchId={selectedBranchId}
-                  onBranchSelect={handleBranchSelect}
-                />
+                <BranchList branches={branches} />
               </AnimatedElement>
             </div>
           </div>

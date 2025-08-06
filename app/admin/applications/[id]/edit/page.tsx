@@ -3,15 +3,32 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../../lib/supabase';
-import { Plus, X } from 'lucide-react';
+import { Plus, X, ArrowLeft, Save, Trash2, Target, Edit } from 'lucide-react';
+import Link from 'next/link';
 import FolderExplorerSingle from '../../../../components/admin/FolderExplorerSingle';
 import toast from 'react-hot-toast';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import { Button } from '@/app/components/ui/button';
+import { Badge } from '@/app/components/ui/badge';
+import { Skeleton } from '@/app/components/ui/skeleton';
+
+interface Application {
+  id: string;
+  name: string;
+  description: string;
+  image_url: string;
+  use_cases: string[];
+  benefits: string[];
+  is_active: boolean;
+  display_order: number;
+}
 
 export default function EditApplicationPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [initialData, setInitialData] = useState(null);
+  const [initialData, setInitialData] = useState<Application | null>(null);
   const [fetchLoading, setFetchLoading] = useState(true);
+  
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -139,189 +156,248 @@ export default function EditApplicationPage({ params }: { params: { id: string }
 
   if (fetchLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-cyan-600"></div>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-4 w-96" />
+          </div>
+          <Skeleton className="h-6 w-20" />
+        </div>
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-40" />
+            <Skeleton className="h-4 w-64" />
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-24 w-full" />
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   if (!initialData) {
     return (
-      <div className="text-center py-12">
-        <p className="text-gray-500">Application not found</p>
-        <button
-          onClick={() => router.push('/admin/applications')}
-          className="mt-4 px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700"
-        >
-          Back to Applications
-        </button>
+      <div className="flex flex-col items-center justify-center py-12 space-y-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle>Application Not Found</CardTitle>
+            <CardDescription>
+              The requested application could not be found.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button asChild className="w-full">
+              <Link href="/admin/applications">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Applications
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Edit Application</h1>
-        <p className="mt-2 text-gray-600">Edit application data</p>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <div className="flex items-center space-x-2">
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/admin/applications">
+                <ArrowLeft className="h-4 w-4 mr-1" />
+                Back to Applications
+              </Link>
+            </Button>
+          </div>
+          <h1 className="text-3xl font-bold tracking-tight">Edit Application</h1>
+          <p className="text-muted-foreground">Edit application data</p>
+          {initialData && (
+            <div className="text-sm text-muted-foreground">
+              Application ID: {initialData.id} • {initialData.name}
+            </div>
+          )}
+        </div>
+        <div className="flex items-center space-x-2">
+          <Badge variant="secondary">Live</Badge>
+          <Badge variant="outline">
+            <Edit className="h-3 w-3 mr-1" />
+            Editing
+          </Badge>
+        </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white shadow rounded-lg p-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Application Name
-          </label>
-          <input
-            type="text"
-            required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          />
-        </div>
+      {/* Main Form */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Application Information</CardTitle>
+          <CardDescription>
+            Update the application details
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Application Name
+              </label>
+              <input
+                type="text"
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              />
+            </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Description
-          </label>
-          <textarea
-            required
-            rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          />
-        </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Description
+              </label>
+              <textarea
+                required
+                rows={4}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              />
+            </div>
 
-        <div>
-          <FolderExplorerSingle
-            image={formData.image_url}
-            onImageChange={(image) => setFormData({ ...formData, image_url: image })}
-            label="Application Image"
-          />
-        </div>
+            <div>
+              <FolderExplorerSingle
+                image={formData.image_url}
+                onImageChange={(image) => setFormData({ ...formData, image_url: image })}
+                label="Application Image"
+              />
+            </div>
 
-        <div>
-          <div className="flex justify-between items-center mb-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Use Cases
-            </label>
-            <button
-              type="button"
-              onClick={addUseCase}
-              className="inline-flex items-center px-3 py-1 text-sm bg-cyan-600 text-white rounded-md hover:bg-cyan-700"
-            >
-              <Plus className="h-4 w-4 mr-1" />
-              Add Use Case
-            </button>
-          </div>
-          <div className="space-y-2">
-            {formData.use_cases.map((useCase, index) => (
-              <div key={index} className="flex items-center space-x-2">
-                <input
-                  type="text"
-                  placeholder="Use case description"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-                  value={useCase}
-                  onChange={(e) => updateUseCase(index, e.target.value)}
-                />
-                {formData.use_cases.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeUseCase(index)}
-                    className="p-2 text-red-600 hover:text-red-800"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                )}
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Use Cases
+                </label>
+                <button
+                  type="button"
+                  onClick={addUseCase}
+                  className="inline-flex items-center px-3 py-1 text-sm bg-cyan-600 text-white rounded-md hover:bg-cyan-700"
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add Use Case
+                </button>
               </div>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <div className="flex justify-between items-center mb-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Benefits
-            </label>
-            <button
-              type="button"
-              onClick={addBenefit}
-              className="inline-flex items-center px-3 py-1 text-sm bg-cyan-600 text-white rounded-md hover:bg-cyan-700"
-            >
-              <Plus className="h-4 w-4 mr-1" />
-              Add Benefit
-            </button>
-          </div>
-          <div className="space-y-2">
-            {formData.benefits.map((benefit, index) => (
-              <div key={index} className="flex items-center space-x-2">
-                <input
-                  type="text"
-                  placeholder="Benefit description"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-                  value={benefit}
-                  onChange={(e) => updateBenefit(index, e.target.value)}
-                />
-                {formData.benefits.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeBenefit(index)}
-                    className="p-2 text-red-600 hover:text-red-800"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                )}
+              <div className="space-y-2">
+                {formData.use_cases.map((useCase, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <input
+                      type="text"
+                      placeholder="Use case description"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
+                      value={useCase}
+                      onChange={(e) => updateUseCase(index, e.target.value)}
+                    />
+                    {formData.use_cases.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeUseCase(index)}
+                        className="p-2 text-red-600 hover:text-red-800"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Display Order
-            </label>
-            <input
-              type="number"
-              min="1"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-              value={formData.display_order}
-              onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 1 })}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Status
-            </label>
-            <select
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-              value={formData.is_active ? 'active' : 'inactive'}
-              onChange={(e) => setFormData({ ...formData, is_active: e.target.value === 'active' })}
-            >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
-          </div>
-        </div>
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Benefits
+                </label>
+                <button
+                  type="button"
+                  onClick={addBenefit}
+                  className="inline-flex items-center px-3 py-1 text-sm bg-cyan-600 text-white rounded-md hover:bg-cyan-700"
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add Benefit
+                </button>
+              </div>
+              <div className="space-y-2">
+                {formData.benefits.map((benefit, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <input
+                      type="text"
+                      placeholder="Benefit description"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
+                      value={benefit}
+                      onChange={(e) => updateBenefit(index, e.target.value)}
+                    />
+                    {formData.benefits.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeBenefit(index)}
+                        className="p-2 text-red-600 hover:text-red-800"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
 
-        <div className="flex justify-end space-x-4">
-          <button
-            type="button"
-            onClick={() => router.push('/admin/applications')}
-            className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={loading}
-            className="px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700 transition-colors disabled:opacity-50"
-          >
-            {loading ? 'Saving...' : 'Save'}
-          </button>
-        </div>
-      </form>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Display Order
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
+                  value={formData.display_order}
+                  onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 1 })}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Status
+                </label>
+                <select
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
+                  value={formData.is_active ? 'active' : 'inactive'}
+                  onChange={(e) => setFormData({ ...formData, is_active: e.target.value === 'active' })}
+                >
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-4">
+              <button
+                type="button"
+                onClick={() => router.push('/admin/applications')}
+                className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700 transition-colors disabled:opacity-50"
+              >
+                {loading ? 'Saving...' : 'Save'}
+              </button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

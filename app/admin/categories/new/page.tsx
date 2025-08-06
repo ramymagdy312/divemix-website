@@ -3,10 +3,13 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabase';
-import { AlertCircle, ArrowLeft } from 'lucide-react';
+import { AlertCircle, ArrowLeft, Package, Plus } from 'lucide-react';
 import Link from 'next/link';
 import CategoryForm from '../components/CategoryForm';
 import toast from 'react-hot-toast';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import { Button } from '@/app/components/ui/button';
+import { Badge } from '@/app/components/ui/badge';
 
 export default function NewCategoryPage() {
   const router = useRouter();
@@ -34,19 +37,27 @@ export default function NewCategoryPage() {
   };
 
   return (
-    <div>
-      <div className="mb-8">
-        <div className="flex items-center mb-4">
-          <Link
-            href="/admin/categories"
-            className="inline-flex items-center text-gray-600 hover:text-gray-900 mr-4"
-          >
-            <ArrowLeft className="h-4 w-4 mr-1" />
-            Back to Categories
-          </Link>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <div className="flex items-center space-x-2">
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/admin/categories">
+                <ArrowLeft className="h-4 w-4 mr-1" />
+                Back to Categories
+              </Link>
+            </Button>
+          </div>
+          <h1 className="text-3xl font-bold tracking-tight">Add New Category</h1>
+          <p className="text-muted-foreground">
+            Add a new category for products
+          </p>
         </div>
-        <h1 className="text-3xl font-bold text-gray-900">Add New Category</h1>
-        <p className="mt-2 text-gray-600">Add a new category for products</p>
+        <Badge variant="secondary">
+          <Package className="h-3 w-3 mr-1" />
+          New Category
+        </Badge>
       </div>
 
       <CategoryForm onSubmit={handleSubmit} loading={loading} />

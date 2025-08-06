@@ -3,9 +3,17 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabase';
-import { Plus, X } from 'lucide-react';
+import { Plus, X, ArrowLeft, Save, Trash2, Target } from 'lucide-react';
+import Link from 'next/link';
 import FolderExplorerSingle from '../../../components/admin/FolderExplorerSingle';
 import toast from 'react-hot-toast';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import { Button } from '@/app/components/ui/button';
+import { Input } from '@/app/components/ui/input';
+import { Textarea } from '@/app/components/ui/textarea';
+import { Label } from '@/app/components/ui/label';
+import { Badge } from '@/app/components/ui/badge';
+import { Separator } from '@/app/components/ui/separator';
 
 export default function NewApplicationPage() {
   const router = useRouter();
@@ -93,169 +101,204 @@ export default function NewApplicationPage() {
   };
 
   return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Add New Application</h1>
-        <p className="mt-2 text-gray-600">Add a new application to the database</p>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <div className="flex items-center space-x-2">
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/admin/applications">
+                <ArrowLeft className="h-4 w-4 mr-1" />
+                Back to Applications
+              </Link>
+            </Button>
+          </div>
+          <h1 className="text-3xl font-bold tracking-tight">Add New Application</h1>
+          <p className="text-muted-foreground">
+            Add a new application to the database
+          </p>
+        </div>
+        <Badge variant="secondary">
+          <Target className="h-3 w-3 mr-1" />
+          New Application
+        </Badge>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white shadow rounded-lg p-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Application Name
-          </label>
-          <input
-            type="text"
-            required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          />
-        </div>
+      {/* Main Form */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Application Information</CardTitle>
+          <CardDescription>
+            Enter the details for the new application
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Application Name */}
+            <div className="space-y-2">
+              <Label htmlFor="name">Application Name *</Label>
+              <Input
+                id="name"
+                required
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="Enter application name"
+              />
+            </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Description
-          </label>
-          <textarea
-            required
-            rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          />
-        </div>
+            {/* Description */}
+            <div className="space-y-2">
+              <Label htmlFor="description">Description *</Label>
+              <Textarea
+                id="description"
+                required
+                rows={4}
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder="Detailed application description"
+              />
+            </div>
 
-        <div>
-          <FolderExplorerSingle
-            image={formData.image_url}
-            onImageChange={(image) => setFormData({ ...formData, image_url: image })}
-            label="Application Image"
-            
-          />
-        </div>
+            <Separator />
 
-        <div>
-          <div className="flex justify-between items-center mb-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Use Cases
-            </label>
-            <button
-              type="button"
-              onClick={addUseCase}
-              className="inline-flex items-center px-3 py-1 text-sm bg-cyan-600 text-white rounded-md hover:bg-cyan-700"
-            >
-              <Plus className="h-4 w-4 mr-1" />
-              Add Use Case
-            </button>
-          </div>
-          <div className="space-y-2">
-            {formData.use_cases.map((useCase, index) => (
-              <div key={index} className="flex items-center space-x-2">
-                <input
-                  type="text"
-                  placeholder="Use case description"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-                  value={useCase}
-                  onChange={(e) => updateUseCase(index, e.target.value)}
-                />
-                {formData.use_cases.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeUseCase(index)}
-                    className="p-2 text-red-600 hover:text-red-800"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                )}
+            {/* Image Upload */}
+            <div className="space-y-2">
+              <Label>Application Image</Label>
+              <FolderExplorerSingle
+                image={formData.image_url}
+                onImageChange={(image) => setFormData({ ...formData, image_url: image })}
+                label="Application Image"
+              />
+            </div>
+
+            <Separator />
+
+            {/* Use Cases */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label>Use Cases</Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={addUseCase}
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add Use Case
+                </Button>
               </div>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <div className="flex justify-between items-center mb-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Benefits
-            </label>
-            <button
-              type="button"
-              onClick={addBenefit}
-              className="inline-flex items-center px-3 py-1 text-sm bg-cyan-600 text-white rounded-md hover:bg-cyan-700"
-            >
-              <Plus className="h-4 w-4 mr-1" />
-              Add Benefit
-            </button>
-          </div>
-          <div className="space-y-2">
-            {formData.benefits.map((benefit, index) => (
-              <div key={index} className="flex items-center space-x-2">
-                <input
-                  type="text"
-                  placeholder="Benefit description"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-                  value={benefit}
-                  onChange={(e) => updateBenefit(index, e.target.value)}
-                />
-                {formData.benefits.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeBenefit(index)}
-                    className="p-2 text-red-600 hover:text-red-800"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                )}
+              <div className="space-y-2">
+                {formData.use_cases.map((useCase, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <Input
+                      value={useCase}
+                      onChange={(e) => updateUseCase(index, e.target.value)}
+                      placeholder={`Use case ${index + 1}`}
+                      className="flex-1"
+                    />
+                    {formData.use_cases.length > 1 && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => removeUseCase(index)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Display Order
-            </label>
-            <input
-              type="number"
-              min="1"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-              value={formData.display_order}
-              onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 1 })}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Status
-            </label>
-            <select
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-              value={formData.is_active ? 'active' : 'inactive'}
-              onChange={(e) => setFormData({ ...formData, is_active: e.target.value === 'active' })}
-            >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
-          </div>
-        </div>
+            {/* Benefits */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label>Benefits</Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={addBenefit}
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add Benefit
+                </Button>
+              </div>
+              <div className="space-y-2">
+                {formData.benefits.map((benefit, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <Input
+                      value={benefit}
+                      onChange={(e) => updateBenefit(index, e.target.value)}
+                      placeholder={`Benefit ${index + 1}`}
+                      className="flex-1"
+                    />
+                    {formData.benefits.length > 1 && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => removeBenefit(index)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
 
-        <div className="flex justify-end space-x-4">
-          <button
-            type="button"
-            onClick={() => router.push('/admin/applications')}
-            className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={loading}
-            className="px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700 transition-colors disabled:opacity-50"
-          >
-            {loading ? 'Saving...' : 'Save'}
-          </button>
-        </div>
-      </form>
+            <div className="grid gap-6 md:grid-cols-2">
+              {/* Display Order */}
+              <div className="space-y-2">
+                <Label htmlFor="display_order">Display Order</Label>
+                <Input
+                  id="display_order"
+                  type="number"
+                  min="1"
+                  value={formData.display_order}
+                  onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 1 })}
+                />
+              </div>
+
+              {/* Status */}
+              <div className="flex items-center space-x-2 pt-6">
+                <input
+                  type="checkbox"
+                  id="is_active"
+                  className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
+                  checked={formData.is_active}
+                  onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                />
+                <Label htmlFor="is_active">Application is active</Label>
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* Submit Buttons */}
+            <div className="flex justify-end space-x-3">
+              <Button variant="outline" asChild>
+                <Link href="/admin/applications">
+                  <X className="h-4 w-4 mr-1" />
+                  Cancel
+                </Link>
+              </Button>
+              <Button type="submit" disabled={loading}>
+                {loading ? (
+                  <>Saving...</>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-1" />
+                    Save Application
+                  </>
+                )}
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

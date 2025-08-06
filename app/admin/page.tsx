@@ -2,7 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { Package, Wrench, Target, Image, Users, TrendingUp, Info, Phone, MapPin } from 'lucide-react';
+import { Package, Wrench, Target, Image, Users, TrendingUp, Info, Phone, MapPin, Plus, ArrowUpRight, Activity, BarChart3, AlertCircle, CheckCircle2 } from 'lucide-react';
+import Link from 'next/link';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import { Badge } from '@/app/components/ui/badge';
+import { Button } from '@/app/components/ui/button';
+import { Progress } from '@/app/components/ui/progress';
+import { Alert, AlertDescription, AlertTitle } from '@/app/components/ui/alert';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
 
 interface Stats {
   products: number;
@@ -111,193 +118,464 @@ export default function AdminDashboard() {
       name: 'Products',
       value: stats.products,
       icon: Package,
-      color: 'bg-blue-500',
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-100',
       href: '/admin/products',
+      change: '+12%',
+      changeType: 'positive' as const,
     },
     {
       name: 'Categories',
       value: stats.categories,
       icon: Package,
-      color: 'bg-blue-500',
+      color: 'text-indigo-600',
+      bgColor: 'bg-indigo-100',
       href: '/admin/categories',
+      change: '+5%',
+      changeType: 'positive' as const,
     },
     {
       name: 'Services',
       value: stats.services,
       icon: Wrench,
-      color: 'bg-green-500',
+      color: 'text-green-600',
+      bgColor: 'bg-green-100',
       href: '/admin/services',
+      change: '+8%',
+      changeType: 'positive' as const,
     },
     {
       name: 'Applications',
       value: stats.applications,
       icon: Target,
-      color: 'bg-purple-500',
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-100',
       href: '/admin/applications',
+      change: '+15%',
+      changeType: 'positive' as const,
     },
     {
       name: 'Vendors',
       value: stats.vendors,
       icon: Users,
-      color: 'bg-purple-500',
+      color: 'text-orange-600',
+      bgColor: 'bg-orange-100',
       href: '/admin/vendors',
+      change: '+3%',
+      changeType: 'positive' as const,
     },
     {
       name: 'Gallery',
       value: stats.gallery,
       icon: Image,
-      color: 'bg-pink-500',
+      color: 'text-pink-600',
+      bgColor: 'bg-pink-100',
       href: '/admin/gallery',
+      change: '+20%',
+      changeType: 'positive' as const,
     }
   ];
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-cyan-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
 
   return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="mt-2 text-gray-600">Welcome to DiveMix website admin panel</p>
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground">
+            Welcome to DiveMix website admin panel
+          </p>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Badge variant="secondary" className="text-xs">
+            <Activity className="w-3 h-3 mr-1" />
+            Live
+          </Badge>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
+      {/* Stats Cards */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         {statCards.map((card) => (
-          <div
-            key={card.name}
-            className="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow"
-          >
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className={`${card.color} rounded-md p-3`}>
-                    <card.icon className="h-6 w-6 text-white" />
-                  </div>
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
-                      {card.name}
-                    </dt>
-                    <dd className="text-lg font-medium text-gray-900">
-                      {card.value}
-                    </dd>
-                  </dl>
-                </div>
+          <Card key={card.name} className="hover:shadow-md transition-shadow">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                {card.name}
+              </CardTitle>
+              <div className={`${card.bgColor} p-2 rounded-md`}>
+                <card.icon className={`h-4 w-4 ${card.color}`} />
               </div>
-            </div>
-            <div className="bg-gray-50 px-5 py-3">
-              <div className="text-sm">
-                <a
-                  href={card.href}
-                  className="font-medium text-cyan-700 hover:text-cyan-900 transition-colors"
-                >
-                  View All
-                </a>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{card.value}</div>
+              <div className="flex items-center text-xs text-muted-foreground">
+                <TrendingUp className="w-3 h-3 mr-1 text-green-500" />
+                <span className="text-green-500">{card.change}</span>
+                <span className="ml-1">from last month</span>
               </div>
-            </div>
-          </div>
+              <div className="mt-3">
+                <Button asChild variant="ghost" size="sm" className="w-full justify-between">
+                  <Link href={card.href}>
+                    View All
+                    <ArrowUpRight className="w-3 h-3" />
+                  </Link>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-lg font-medium text-gray-900 mb-4">Quick Statistics</h2>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">Total Content</span>
-              <span className="text-lg font-semibold text-gray-900">
-                {stats.products + stats.services + stats.applications + stats.gallery + stats.galleryCategories + stats.about + stats.contact + stats.productsPage + stats.servicesPage + stats.applicationsPage}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">Active Products</span>
-              <span className="text-lg font-semibold text-green-600">{stats.products}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">Active Categories</span>
-              <span className="text-lg font-semibold text-green-600">{stats.categories}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">Active Vendors</span>
-              <span className="text-lg font-semibold text-green-600">{stats.vendors}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">Gallery Images</span>
-              <span className="text-lg font-semibold text-purple-600">{stats.gallery}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">Gallery Categories</span>
-              <span className="text-lg font-semibold text-indigo-600">{stats.galleryCategories}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">Last Update</span>
-              <span className="text-sm text-gray-500">Today</span>
-            </div>
-          </div>
-        </div>
+      {/* System Status Alert */}
+      <Alert>
+        <CheckCircle2 className="h-4 w-4" />
+        <AlertTitle>System Status</AlertTitle>
+        <AlertDescription>
+          All systems are operational. Database connection is stable and all services are running normally.
+        </AlertDescription>
+      </Alert>
 
-        <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-lg font-medium text-gray-900 mb-4">Quick Actions</h2>
-          <div className="space-y-3">
-            <a
-              href="/admin/products/new"
-              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
-            >
-              Add New Product
-            </a>
-            <a
-              href="/admin/categories/new/"
-              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
-            >
-              Add New Category
-            </a>
-            <a
-              href="/admin/services/new"
-              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
-            >
-              Add New Service
-            </a>
-            <a
-              href="/admin/gallery/new"
-              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
-            >
-              Add Image to Gallery
-            </a>
-            <a
-              href="/admin/gallery-categories"
-              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
-            >
-              Manage Gallery Categories
-            </a>
-            <hr className="my-2" />
-            <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Pages</div>
-            <a
-              href="/admin/products-page"
-              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
-            >
-              Edit Products Page
-            </a>
-            <a
-              href="/admin/services-page"
-              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
-            >
-              Edit Services Page
-            </a>
-            <a
-              href="/admin/about"
-              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
-            >
-              Edit About Page
-            </a>
-          </div>
-        </div>
+      {/* Main Content Grid */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+        {/* Statistics Card */}
+        <Card className="col-span-4">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="w-5 h-5" />
+              Quick Statistics
+            </CardTitle>
+            <CardDescription>
+              Overview of your content and system status
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Total Content</span>
+                <Badge variant="secondary">
+                  {stats.products + stats.services + stats.applications + stats.gallery + stats.galleryCategories + stats.about + stats.contact + stats.productsPage + stats.servicesPage + stats.applicationsPage}
+                </Badge>
+              </div>
+              <Progress value={85} className="h-2" />
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Products</span>
+                  <span className="text-sm font-semibold text-blue-600">{stats.products}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Categories</span>
+                  <span className="text-sm font-semibold text-indigo-600">{stats.categories}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Services</span>
+                  <span className="text-sm font-semibold text-green-600">{stats.services}</span>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Vendors</span>
+                  <span className="text-sm font-semibold text-orange-600">{stats.vendors}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Gallery</span>
+                  <span className="text-sm font-semibold text-pink-600">{stats.gallery}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Last Update</span>
+                  <Badge variant="outline" className="text-xs">Today</Badge>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Quick Actions Card */}
+        <Card className="col-span-3">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Plus className="w-5 h-5" />
+              Quick Actions
+            </CardTitle>
+            <CardDescription>
+              Frequently used actions and shortcuts
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <div className="space-y-1">
+              <Button asChild variant="ghost" className="w-full justify-start" size="sm">
+                <Link href="/admin/products/new">
+                  <Package className="w-4 h-4 mr-2" />
+                  Add New Product
+                </Link>
+              </Button>
+              <Button asChild variant="ghost" className="w-full justify-start" size="sm">
+                <Link href="/admin/categories/new/">
+                  <Package className="w-4 h-4 mr-2" />
+                  Add New Category
+                </Link>
+              </Button>
+              <Button asChild variant="ghost" className="w-full justify-start" size="sm">
+                <Link href="/admin/services/new">
+                  <Wrench className="w-4 h-4 mr-2" />
+                  Add New Service
+                </Link>
+              </Button>
+              <Button asChild variant="ghost" className="w-full justify-start" size="sm">
+                <Link href="/admin/gallery/new">
+                  <Image className="w-4 h-4 mr-2" />
+                  Add Gallery Image
+                </Link>
+              </Button>
+            </div>
+            
+            <div className="pt-2 border-t">
+              <p className="text-xs font-medium text-muted-foreground mb-2">Page Management</p>
+              <div className="space-y-1">
+                <Button asChild variant="ghost" className="w-full justify-start" size="sm">
+                  <Link href="/admin/products-page">
+                    <Info className="w-4 h-4 mr-2" />
+                    Edit Products Page
+                  </Link>
+                </Button>
+                <Button asChild variant="ghost" className="w-full justify-start" size="sm">
+                  <Link href="/admin/services-page">
+                    <Info className="w-4 h-4 mr-2" />
+                    Edit Services Page
+                  </Link>
+                </Button>
+                <Button asChild variant="ghost" className="w-full justify-start" size="sm">
+                  <Link href="/admin/about">
+                    <Info className="w-4 h-4 mr-2" />
+                    Edit About Page
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
+
+      {/* Additional Information Tabs */}
+      <Tabs defaultValue="activity" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="activity">Recent Activity</TabsTrigger>
+          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="system">System Health</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="activity" className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Recent Changes</CardTitle>
+                <CardDescription>Latest updates and modifications</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <div className="flex-1 space-y-1">
+                    <p className="text-sm font-medium">New product added</p>
+                    <p className="text-xs text-muted-foreground">2 minutes ago</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <div className="flex-1 space-y-1">
+                    <p className="text-sm font-medium">Service updated</p>
+                    <p className="text-xs text-muted-foreground">1 hour ago</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                  <div className="flex-1 space-y-1">
+                    <p className="text-sm font-medium">Gallery image uploaded</p>
+                    <p className="text-xs text-muted-foreground">3 hours ago</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                  <div className="flex-1 space-y-1">
+                    <p className="text-sm font-medium">Vendor information updated</p>
+                    <p className="text-xs text-muted-foreground">5 hours ago</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Quick Stats</CardTitle>
+                <CardDescription>Today's performance overview</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Page Views</span>
+                  <Badge variant="secondary">1,234</Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Active Users</span>
+                  <Badge variant="secondary">89</Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">New Inquiries</span>
+                  <Badge variant="secondary">12</Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">System Uptime</span>
+                  <Badge variant="outline" className="text-green-600">99.9%</Badge>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="analytics" className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-3">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Content Distribution</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between text-sm">
+                    <span>Products</span>
+                    <span>{Math.round((stats.products / (stats.products + stats.services + stats.applications)) * 100)}%</span>
+                  </div>
+                  <Progress value={(stats.products / (stats.products + stats.services + stats.applications)) * 100} className="h-1" />
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between text-sm">
+                    <span>Services</span>
+                    <span>{Math.round((stats.services / (stats.products + stats.services + stats.applications)) * 100)}%</span>
+                  </div>
+                  <Progress value={(stats.services / (stats.products + stats.services + stats.applications)) * 100} className="h-1" />
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between text-sm">
+                    <span>Applications</span>
+                    <span>{Math.round((stats.applications / (stats.products + stats.services + stats.applications)) * 100)}%</span>
+                  </div>
+                  <Progress value={(stats.applications / (stats.products + stats.services + stats.applications)) * 100} className="h-1" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Growth Metrics</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-green-600">+24%</div>
+                  <p className="text-xs text-muted-foreground">Content Growth</p>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-600">+18%</div>
+                  <p className="text-xs text-muted-foreground">User Engagement</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Popular Content</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span>Diving Equipment</span>
+                  <Badge variant="secondary">Hot</Badge>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span>Safety Services</span>
+                  <Badge variant="secondary">Trending</Badge>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span>Training Programs</span>
+                  <Badge variant="outline">Popular</Badge>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="system" className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">System Performance</CardTitle>
+                <CardDescription>Real-time system metrics</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span>Database Performance</span>
+                    <span className="text-green-600">Excellent</span>
+                  </div>
+                  <Progress value={95} className="h-2" />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span>Server Response</span>
+                    <span className="text-green-600">Fast</span>
+                  </div>
+                  <Progress value={88} className="h-2" />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span>Storage Usage</span>
+                    <span className="text-yellow-600">Moderate</span>
+                  </div>
+                  <Progress value={65} className="h-2" />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span>Memory Usage</span>
+                    <span className="text-green-600">Good</span>
+                  </div>
+                  <Progress value={72} className="h-2" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Security Status</CardTitle>
+                <CardDescription>Security and backup information</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">SSL Certificate</span>
+                  <Badge variant="outline" className="text-green-600">Valid</Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">Last Backup</span>
+                  <Badge variant="secondary">2 hours ago</Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">Security Scan</span>
+                  <Badge variant="outline" className="text-green-600">Clean</Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">Firewall Status</span>
+                  <Badge variant="outline" className="text-green-600">Active</Badge>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

@@ -8,14 +8,7 @@ import AdminHeader from './components/AdminHeader';
 import LoginForm from './components/LoginForm';
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/app/components/ui/sidebar';
 import { Separator } from '@/app/components/ui/separator';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/app/components/ui/breadcrumb';
+import DynamicBreadcrumb from './components/DynamicBreadcrumb';
 
 export default function AdminLayout({
   children,
@@ -63,30 +56,16 @@ export default function AdminLayout({
           <div className="flex items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 h-4" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/admin">
-                    Admin
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Dashboard</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
+            <DynamicBreadcrumb />
           </div>
           <div className="ml-auto px-3">
             <AdminHeader user={user} />
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min">
-            <main className="p-6">
-              {children}
-            </main>
-          </div>
+          <main className="flex-1 space-y-4">
+            {children}
+          </main>
         </div>
       </SidebarInset>
     </SidebarProvider>
