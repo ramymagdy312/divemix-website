@@ -51,47 +51,43 @@ export default function CategoryForm({ initialData, onSubmit, loading }: Categor
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Category Name
-        </label>
-        <input
-          type="text"
-          required
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-        />
-      </div>
+            <div className="space-y-2">
+              <Label htmlFor="category-name">Category Name *</Label>
+              <Input
+                id="category-name"
+                type="text"
+                required
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="Enter category name"
+              />
+            </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Description
-        </label>
-        <textarea
-          required
-          rows={4}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-          value={formData.description}
-          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-        />
-      </div>
+            <div className="space-y-2">
+              <Label htmlFor="description">Description *</Label>
+              <Textarea
+                id="description"
+                required
+                rows={4}
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder="Enter category description"
+              />
+            </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Slug (URL-friendly name)
-        </label>
-        <input
-          type="text"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-          value={formData.slug}
-          onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-          placeholder="Auto-generated from name if empty"
-        />
-        <p className="text-sm text-gray-500 mt-1">
-          Leave empty to auto-generate from category name
-        </p>
-      </div>
+            <div className="space-y-2">
+              <Label htmlFor="slug">Slug (URL-friendly name)</Label>
+              <Input
+                id="slug"
+                type="text"
+                value={formData.slug}
+                onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                placeholder="Auto-generated from name if empty"
+              />
+              <p className="text-sm text-muted-foreground">
+                Leave empty to auto-generate from category name
+              </p>
+            </div>
 
       <div>
         <FolderExplorerSingle
@@ -102,18 +98,16 @@ export default function CategoryForm({ initialData, onSubmit, loading }: Categor
         />
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Display Order
-        </label>
-        <input
-          type="number"
-          min="1"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-          value={formData.display_order}
-          onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 1 })}
-        />
-      </div>
+            <div className="space-y-2">
+              <Label htmlFor="display-order">Display Order</Label>
+              <Input
+                id="display-order"
+                type="number"
+                min="1"
+                value={formData.display_order}
+                onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 1 })}
+              />
+            </div>
 
           <div className="flex items-center space-x-2">
             <Switch

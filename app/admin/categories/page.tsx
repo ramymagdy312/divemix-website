@@ -150,8 +150,6 @@ export default function CategoriesPage() {
       return;
     }
 
-    if (!confirm('Are you sure you want to delete this category?')) return;
-
     try {
       const { error } = await supabase
         .from('product_categories')

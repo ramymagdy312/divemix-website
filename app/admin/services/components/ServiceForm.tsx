@@ -2,6 +2,13 @@
 
 import { useState } from 'react';
 import { Plus, X } from 'lucide-react';
+import { Button } from '@/app/components/ui/button';
+import { Input } from '@/app/components/ui/input';
+import { Label } from '@/app/components/ui/label';
+import { Textarea } from '@/app/components/ui/textarea';
+import { Switch } from '@/app/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 
 interface ServiceFormProps {
   initialData?: any;
@@ -55,146 +62,129 @@ export default function ServiceForm({ initialData, onSubmit, loading }: ServiceF
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 bg-white shadow rounded-lg p-6">
-      {/* Service Name */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Service Name *
-        </label>
-        <input
-          type="text"
-          required
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          placeholder="Enter service name"
-        />
-      </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Service Information</CardTitle>
+        <CardDescription>Enter the service details below</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Service Name */}
+          <div className="space-y-2">
+            <Label htmlFor="service-name">Service Name *</Label>
+            <Input
+              id="service-name"
+              type="text"
+              required
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder="Enter service name"
+            />
+          </div>
 
-      {/* Icon */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Icon
-        </label>
-        <select
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-          value={formData.icon}
-          onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-        >
-          <option value="🔧">🔧 Installation</option>
-          <option value="⚙️">⚙️ Maintenance</option>
-          <option value="🔍">🔍 Testing</option>
-          <option value="🛢️">🛢️ Cylinder Services</option>
-          <option value="Settings">Settings</option>
-          <option value="Wrench">Wrench</option>
-          <option value="Droplets">Droplets</option>
-          <option value="FireExtinguisher">FireExtinguisher</option>
-        </select>
-      </div>
+          {/* Icon */}
+          <div className="space-y-2">
+            <Label htmlFor="icon">Icon</Label>
+            <Select
+              value={formData.icon}
+              onValueChange={(value) => setFormData({ ...formData, icon: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select an icon" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="🔧">🔧 Installation</SelectItem>
+                <SelectItem value="⚙️">⚙️ Maintenance</SelectItem>
+                <SelectItem value="🔍">🔍 Testing</SelectItem>
+                <SelectItem value="🛢️">🛢️ Cylinder Services</SelectItem>
+                <SelectItem value="Settings">Settings</SelectItem>
+                <SelectItem value="Wrench">Wrench</SelectItem>
+                <SelectItem value="Droplets">Droplets</SelectItem>
+                <SelectItem value="FireExtinguisher">FireExtinguisher</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-      {/* Description */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Description *
-        </label>
-        <textarea
-          required
-          rows={4}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-          value={formData.description}
-          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          placeholder="Detailed service description"
-        />
-      </div>
+          {/* Description */}
+          <div className="space-y-2">
+            <Label htmlFor="description">Description *</Label>
+            <Textarea
+              id="description"
+              required
+              rows={4}
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              placeholder="Enter service description"
+            />
+          </div>
 
-      {/* Features */}
-      <div>
-        <div className="flex justify-between items-center mb-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Service Features
-          </label>
-          <button
-            type="button"
-            onClick={addFeature}
-            className="inline-flex items-center px-3 py-1 text-sm bg-cyan-600 text-white rounded-md hover:bg-cyan-700"
-          >
-            <Plus className="h-4 w-4 mr-1" />
-            Add Feature
-          </button>
-        </div>
-        <div className="space-y-2">
-          {formData.features.map((feature: string, index: number) => (
-            <div key={index} className="flex items-center space-x-2">
-              <input
-                type="text"
-                placeholder={`Feature ${index + 1}`}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-                value={feature}
-                onChange={(e) => updateFeature(index, e.target.value)}
-              />
-              {formData.features.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeFeature(index)}
-                  className="p-2 text-red-600 hover:text-red-800"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              )}
+          {/* Features Section */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <Label>Service Features</Label>
+              <Button type="button" variant="outline" size="sm" onClick={addFeature}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Feature
+              </Button>
             </div>
-          ))}
-        </div>
-      </div>
+            
+            <div className="space-y-2">
+              {formData.features.map((feature: string, index: number) => (
+                <div key={index} className="flex gap-2">
+                  <Input
+                    value={feature}
+                    onChange={(e) => updateFeature(index, e.target.value)}
+                    placeholder={`Feature ${index + 1}`}
+                  />
+                  {formData.features.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => removeFeature(index)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
 
-      {/* Display Order */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Display Order
-        </label>
-        <input
-          type="number"
-          min="1"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-          value={formData.display_order}
-          onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 1 })}
-        />
-      </div>
+          {/* Settings */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="display-order">Display Order</Label>
+              <Input
+                id="display-order"
+                type="number"
+                min="1"
+                value={formData.display_order}
+                onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 1 })}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label>Status</Label>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="is_active"
+                  checked={formData.is_active}
+                  onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
+                />
+                <Label htmlFor="is_active">Active</Label>
+              </div>
+            </div>
+          </div>
 
-      {/* Active Status */}
-      <div className="flex items-center">
-        <input
-          type="checkbox"
-          id="is_active"
-          className="h-4 w-4 text-cyan-600 focus:ring-cyan-500 border-gray-300 rounded"
-          checked={formData.is_active}
-          onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-        />
-        <label htmlFor="is_active" className="ml-2 block text-sm text-gray-900">
-          Service is active
-        </label>
-      </div>
-
-      {/* Submit Buttons */}
-      <div className="flex justify-end space-x-4 pt-6 border-t">
-        <button
-          type="button"
-          onClick={() => window.history.back()}
-          className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          disabled={loading}
-          className={`px-4 py-2 rounded-md transition-colors ${
-            loading
-              ? 'bg-gray-400 text-white cursor-not-allowed'
-              : 'bg-cyan-600 text-white hover:bg-cyan-700'
-          }`}
-        >
-          {loading ? 'Saving...' : 'Save Service'}
-        </button>
-      </div>
-    </form>
+          {/* Submit Button */}
+          <div className="flex justify-end space-x-4">
+            <Button type="submit" disabled={loading}>
+              {loading ? 'Saving...' : initialData ? 'Update Service' : 'Create Service'}
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 }

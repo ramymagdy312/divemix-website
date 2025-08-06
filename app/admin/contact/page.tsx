@@ -322,11 +322,10 @@ export default function ContactAdmin() {
               Description
             </label>
             {editing ? (
-              <textarea
+              <Textarea
                 value={data?.description}
                 onChange={(e) => setData({ ...data!, description: e.target.value })}
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
               />
             ) : (
               <p className="text-gray-900">{data?.description}</p>
@@ -413,35 +412,28 @@ export default function ContactAdmin() {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Branch Name
-                    </label>
+                    <Label>Branch Name</Label>
                     {editing ? (
-                      <input
+                      <Input
                         type="text"
                         value={branch.name}
                         onChange={(e) => updateBranch(index, 'name', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                       />
                     ) : (
                       <p className="text-gray-900">{branch.name}</p>
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Show in Footer
-                    </label>
+                    <Label>Show in Footer</Label>
                     {editing ? (
-                      <div className="flex items-center mt-2">
-                        <input
-                          type="checkbox"
+                      <div className="flex items-center space-x-2 mt-2">
+                        <Switch
                           checked={branch.show_in_footer || false}
-                          onChange={(e) => updateBranch(index, 'show_in_footer', e.target.checked)}
-                          className="h-4 w-4 text-cyan-600 focus:ring-cyan-500 border-gray-300 rounded"
+                          onCheckedChange={(checked) => updateBranch(index, 'show_in_footer', checked)}
                         />
-                        <label className="ml-2 text-sm text-gray-700">
+                        <Label className="text-sm">
                           Display this branch in the website footer
-                        </label>
+                        </Label>
                       </div>
                     ) : (
                       <p className="text-gray-900">
@@ -458,45 +450,36 @@ export default function ContactAdmin() {
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Phone
-                    </label>
+                    <Label>Phone</Label>
                     {editing ? (
-                      <input
+                      <Input
                         type="tel"
                         value={branch.phone}
                         onChange={(e) => updateBranch(index, 'phone', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                       />
                     ) : (
                       <p className="text-gray-900">{branch.phone}</p>
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Email
-                    </label>
+                    <Label>Email</Label>
                     {editing ? (
-                      <input
+                      <Input
                         type="email"
                         value={branch.email}
                         onChange={(e) => updateBranch(index, 'email', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                       />
                     ) : (
                       <p className="text-gray-900">{branch.email}</p>
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Address
-                    </label>
+                    <Label>Address</Label>
                     {editing ? (
-                      <textarea
+                      <Textarea
                         value={branch.address}
                         onChange={(e) => updateBranch(index, 'address', e.target.value)}
                         rows={2}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                       />
                     ) : (
                       <p className="text-gray-900">{branch.address}</p>
@@ -505,19 +488,16 @@ export default function ContactAdmin() {
                 </div>
                 
                 <div className="mt-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Google Maps Link
-                  </label>
+                  <Label>Google Maps Link</Label>
                   {editing ? (
-                    <div>
-                      <input
+                    <div className="space-y-2">
+                      <Input
                         type="url"
                         value={branch.map_url || ''}
                         onChange={(e) => updateBranch(index, 'map_url', e.target.value)}
                         placeholder="https://www.google.com/maps/place/..."
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                       />
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-muted-foreground">
                         Paste the Google Maps link here. Coordinates will be extracted automatically.
                       </p>
                     </div>
@@ -540,33 +520,29 @@ export default function ContactAdmin() {
                 </div>
                 
                 <div className="mt-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Coordinates (for map display)
-                  </label>
+                  <Label>Coordinates (for map display)</Label>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs text-gray-500 mb-1">Latitude</label>
+                      <Label className="text-xs text-muted-foreground">Latitude</Label>
                       {editing ? (
-                        <input
+                        <Input
                           type="number"
                           step="any"
                           value={branch.coordinates.lat}
                           onChange={(e) => updateBranch(index, 'lat', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                         />
                       ) : (
                         <p className="text-gray-900">{branch.coordinates.lat}</p>
                       )}
                     </div>
                     <div>
-                      <label className="block text-xs text-gray-500 mb-1">Longitude</label>
+                      <Label className="text-xs text-muted-foreground">Longitude</Label>
                       {editing ? (
-                        <input
+                        <Input
                           type="number"
                           step="any"
                           value={branch.coordinates.lng}
                           onChange={(e) => updateBranch(index, 'lng', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                         />
                       ) : (
                         <p className="text-gray-900">{branch.coordinates.lng}</p>

@@ -190,15 +190,12 @@ export default function AboutAdmin() {
           <h2 className="text-xl font-semibold mb-4">Basic Information</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Page Title
-              </label>
+              <Label>Page Title</Label>
               {editing ? (
-                <input
+                <Input
                   type="text"
                   value={data?.title || ''}
                   onChange={(e) => data && setData({ ...data!, title: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                 />
               ) : (
                 <p className="text-gray-900">{data?.title}</p>
@@ -233,15 +230,12 @@ export default function AboutAdmin() {
             </div>
           </div>
           <div className="mt-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Description
-            </label>
+            <Label>Description</Label>
             {editing ? (
-              <textarea
+              <Textarea
                 value={data?.description}
                 onChange={(e) => setData({ ...data!, description: e.target.value })}
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
               />
             ) : (
               <p className="text-gray-900">{data?.description}</p>
@@ -254,30 +248,24 @@ export default function AboutAdmin() {
           <h2 className="text-xl font-semibold mb-4">Vision & Mission</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Vision
-              </label>
+              <Label>Vision</Label>
               {editing ? (
-                <textarea
+                <Textarea
                   value={data?.vision}
                   onChange={(e) => setData({ ...data!, vision: e.target.value })}
                   rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                 />
               ) : (
                 <p className="text-gray-900">{data?.vision}</p>
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Mission
-              </label>
+              <Label>Mission</Label>
               {editing ? (
-                <textarea
+                <Textarea
                   value={data?.mission}
                   onChange={(e) => setData({ ...data!, mission: e.target.value })}
                   rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                 />
               ) : (
                 <p className="text-gray-900">{data?.mission}</p>
@@ -287,19 +275,22 @@ export default function AboutAdmin() {
         </div>
 
         {/* Company Overview */}
-        <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">Company Overview</h2>
-          {editing ? (
-            <textarea
-              value={data?.company_overview}
-              onChange={(e) => setData({ ...data!, company_overview: e.target.value })}
-              rows={6}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
-            />
-          ) : (
-            <p className="text-gray-900">{data?.company_overview}</p>
-          )}
-        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Company Overview</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {editing ? (
+              <Textarea
+                value={data?.company_overview}
+                onChange={(e) => setData({ ...data!, company_overview: e.target.value })}
+                rows={6}
+              />
+            ) : (
+              <p className="text-gray-900">{data?.company_overview}</p>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Values */}
         <div className="bg-white shadow rounded-lg p-6">

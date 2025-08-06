@@ -3,6 +3,12 @@
 import { useState } from 'react';
 import { Plus, X } from 'lucide-react';
 import FolderExplorerSingle from '../../../components/admin/FolderExplorerSingle';
+import { Button } from '@/app/components/ui/button';
+import { Input } from '@/app/components/ui/input';
+import { Label } from '@/app/components/ui/label';
+import { Textarea } from '@/app/components/ui/textarea';
+import { Switch } from '@/app/components/ui/switch';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 
 interface ApplicationFormProps {
   initialData?: any;
@@ -82,173 +88,149 @@ export default function ApplicationForm({ initialData, onSubmit, loading }: Appl
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 bg-white shadow rounded-lg p-6">
-      {/* Application Name */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Application Name *
-        </label>
-        <input
-          type="text"
-          required
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          placeholder="Enter application name"
-        />
-      </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Application Information</CardTitle>
+        <CardDescription>Enter the application details below</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Application Name */}
+          <div className="space-y-2">
+            <Label htmlFor="application-name">Application Name *</Label>
+            <Input
+              id="application-name"
+              type="text"
+              required
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder="Enter application name"
+            />
+          </div>
 
-      {/* Description */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Description *
-        </label>
-        <textarea
-          required
-          rows={4}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-          value={formData.description}
-          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          placeholder="Detailed application description"
-        />
-      </div>
+          {/* Description */}
+          <div className="space-y-2">
+            <Label htmlFor="description">Description *</Label>
+            <Textarea
+              id="description"
+              required
+              rows={4}
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              placeholder="Enter application description"
+            />
+          </div>
 
-      {/* Application Image */}
-      <div>
-        <FolderExplorerSingle
-          image={formData.image_url}
-          onImageChange={(image_url) => setFormData({ ...formData, image_url })}
-          label="Application Image"
-        />
-      </div>
+          {/* Image */}
+          <div className="space-y-2">
+            <Label>Application Image</Label>
+            <FolderExplorerSingle
+              image={formData.image_url}
+              onImageChange={(image_url) => setFormData({ ...formData, image_url })}
+              label="Application Image"
+            />
+          </div>
 
-      {/* Use Cases */}
-      <div>
-        <div className="flex justify-between items-center mb-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Use Cases
-          </label>
-          <button
-            type="button"
-            onClick={addUseCase}
-            className="inline-flex items-center px-3 py-1 text-sm bg-cyan-600 text-white rounded-md hover:bg-cyan-700"
-          >
-            <Plus className="h-4 w-4 mr-1" />
-            Add Use Case
-          </button>
-        </div>
-        <div className="space-y-2">
-          {formData.use_cases.map((useCase: string, index: number) => (
-            <div key={index} className="flex items-center space-x-2">
-              <input
-                type="text"
-                placeholder={`Use case ${index + 1}`}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-                value={useCase}
-                onChange={(e) => updateUseCase(index, e.target.value)}
-              />
-              {formData.use_cases.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeUseCase(index)}
-                  className="p-2 text-red-600 hover:text-red-800"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              )}
+          {/* Use Cases Section */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <Label>Use Cases</Label>
+              <Button type="button" variant="outline" size="sm" onClick={addUseCase}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Use Case
+              </Button>
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Benefits */}
-      <div>
-        <div className="flex justify-between items-center mb-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Benefits
-          </label>
-          <button
-            type="button"
-            onClick={addBenefit}
-            className="inline-flex items-center px-3 py-1 text-sm bg-cyan-600 text-white rounded-md hover:bg-cyan-700"
-          >
-            <Plus className="h-4 w-4 mr-1" />
-            Add Benefit
-          </button>
-        </div>
-        <div className="space-y-2">
-          {formData.benefits.map((benefit: string, index: number) => (
-            <div key={index} className="flex items-center space-x-2">
-              <input
-                type="text"
-                placeholder={`Benefit ${index + 1}`}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-                value={benefit}
-                onChange={(e) => updateBenefit(index, e.target.value)}
-              />
-              {formData.benefits.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeBenefit(index)}
-                  className="p-2 text-red-600 hover:text-red-800"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              )}
+            
+            <div className="space-y-2">
+              {formData.use_cases.map((useCase: string, index: number) => (
+                <div key={index} className="flex gap-2">
+                  <Input
+                    value={useCase}
+                    onChange={(e) => updateUseCase(index, e.target.value)}
+                    placeholder={`Use Case ${index + 1}`}
+                  />
+                  {formData.use_cases.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => removeUseCase(index)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
 
-      {/* Display Order */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Display Order
-        </label>
-        <input
-          type="number"
-          min="1"
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-          value={formData.display_order}
-          onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 1 })}
-        />
-      </div>
+          {/* Benefits Section */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <Label>Benefits</Label>
+              <Button type="button" variant="outline" size="sm" onClick={addBenefit}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Benefit
+              </Button>
+            </div>
+            
+            <div className="space-y-2">
+              {formData.benefits.map((benefit: string, index: number) => (
+                <div key={index} className="flex gap-2">
+                  <Input
+                    value={benefit}
+                    onChange={(e) => updateBenefit(index, e.target.value)}
+                    placeholder={`Benefit ${index + 1}`}
+                  />
+                  {formData.benefits.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => removeBenefit(index)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
 
-      {/* Active Status */}
-      <div className="flex items-center">
-        <input
-          type="checkbox"
-          id="is_active"
-          className="h-4 w-4 text-cyan-600 focus:ring-cyan-500 border-gray-300 rounded"
-          checked={formData.is_active}
-          onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-        />
-        <label htmlFor="is_active" className="ml-2 block text-sm text-gray-900">
-          Application is active
-        </label>
-      </div>
+          {/* Settings */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="display-order">Display Order</Label>
+              <Input
+                id="display-order"
+                type="number"
+                min="1"
+                value={formData.display_order}
+                onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 1 })}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label>Status</Label>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="is_active"
+                  checked={formData.is_active}
+                  onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
+                />
+                <Label htmlFor="is_active">Active</Label>
+              </div>
+            </div>
+          </div>
 
-      {/* Submit Buttons */}
-      <div className="flex justify-end space-x-4 pt-6 border-t">
-        <button
-          type="button"
-          onClick={() => window.history.back()}
-          className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          disabled={loading}
-          className={`px-4 py-2 rounded-md transition-colors ${
-            loading
-              ? 'bg-gray-400 text-white cursor-not-allowed'
-              : 'bg-cyan-600 text-white hover:bg-cyan-700'
-          }`}
-        >
-          {loading ? 'Saving...' : 'Save Application'}
-        </button>
-      </div>
-    </form>
+          {/* Submit Button */}
+          <div className="flex justify-end space-x-4">
+            <Button type="submit" disabled={loading}>
+              {loading ? 'Saving...' : initialData ? 'Update Application' : 'Create Application'}
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 }

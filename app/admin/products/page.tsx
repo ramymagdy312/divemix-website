@@ -155,9 +155,6 @@ export default function ProductsPage() {
     if (usingFallback) {
       return;
     }
-
-    if (!confirm('Are you sure you want to delete this product?')) return;
-
     try {
       const { error } = await supabase
         .from('products')

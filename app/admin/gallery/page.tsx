@@ -56,8 +56,6 @@ export default function GalleryPage() {
   };
 
   const deleteImage = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this image?')) return;
-
     try {
       const { error } = await supabase
         .from('gallery_images')
@@ -150,7 +148,7 @@ export default function GalleryPage() {
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button variant="ghost" size="sm">
-                      <Trash2 className="h-4 w-4 text-destructive" />
+                      <Trash2 className="h-4 w-4"  />
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>

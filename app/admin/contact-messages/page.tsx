@@ -100,10 +100,6 @@ export default function ContactMessagesPage() {
   };
 
   const deleteMessage = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this message? This action cannot be undone.')) {
-      return;
-    }
-
     try {
       const { error } = await supabase
         .from('contact_submissions')
