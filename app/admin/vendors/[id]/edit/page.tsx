@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { supabase } from '../../../../lib/supabase';
 import { ArrowLeft, Save, Users } from 'lucide-react';
@@ -42,15 +42,7 @@ export default function EditVendorPage() {
     is_active: true
   });
   
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    if (vendorId) {
-      fetchVendor();
-    }
-  }, [vendorId]);
-
-
-  const fetchVendor = async () => {
+  const fetchVendor = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('vendors')
@@ -81,7 +73,13 @@ export default function EditVendorPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [vendorId, router]);
+
+  useEffect(() => {
+    if (vendorId) {
+      fetchVendor();
+    }
+  }, [vendorId, fetchVendor]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

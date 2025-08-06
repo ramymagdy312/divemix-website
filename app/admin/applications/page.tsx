@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Plus, Edit, Trash2, Search, Target } from 'lucide-react';
+import { Plus, Edit, Trash2, Search, AlertCircle, Package } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
@@ -100,89 +100,151 @@ export default function ApplicationsPage() {
   }
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Applications Management</h1>
-          <p className="mt-2 text-gray-600">Manage all company applications</p>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight">Application Management</h1>
+          
         </div>
-        <Link
-          href="/admin/applications/new"
-          className="inline-flex items-center px-4 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-700 transition-colors"
-        >
-          <Plus className="h-5 w-5 mr-2" />
-          Add New Application
-        </Link>
-      </div>
-
-      <div className="mb-6">
-        <div className="relative">
-          <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search applications..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+        <div className="flex items-center space-x-2">
+          <Badge variant={"secondary"}>
+            <Package className="h-3 w-3 mr-1" />
+            Live
+          </Badge>
+          <Button asChild>
+            <Link href="/admin/applications/new">
+              <Plus className="h-4 w-4 mr-2" />
+              Add New Application
+            </Link>
+          </Button>
         </div>
       </div>
 
-      <div className="bg-white shadow overflow-hidden sm:rounded-md">
-        <ul className="divide-y divide-gray-200">
-          {filteredApplications.map((app) => (
-            <li key={app.id}>
-              <div className="px-4 py-4 flex items-center justify-between">
-                <div className="flex items-center">
-                  {app.image_url && (
-                    <Image
-                      src={app.image_url}
-                      alt={app.name}
-                      width={64}
-                      height={64}
-                      className="h-16 w-16 object-cover rounded-md mr-4"
-                    />
-                  )}
-                  <div>
-                    <h3 className="text-lg font-medium text-gray-900">
-                      {app.name}
-                    </h3>
-                    <p className="text-sm text-gray-600 mt-1 max-w-md truncate">
-                      {app.description}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {(app.use_cases || []).length} use cases • {(app.benefits || []).length} benefits
-                      <span className={`ml-2 px-2 py-1 text-xs rounded ${app.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                        {app.is_active ? 'Active' : 'Inactive'}
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Search categories..."
+          className="pl-10"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+      {/* Categories Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Applications</CardTitle>
+          <CardDescription>
+            {filteredApplications.length} application{filteredApplications.length !== 1 ? 's' : ''} found
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Application</TableHead>
+                <TableHead>Use Cases</TableHead>
+                <TableHead>Benefits</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Order</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredApplications.map((application) => (
+                <TableRow key={application.id}>
+                  <TableCell>
+                    <div className="flex items-center space-x-3">
+                      {application.image_url && (
+                        <Image
+                          src={application.image_url}
+                          alt={application.name}
+                          width={48}
+                          height={48}
+                          className="h-12 w-12 object-cover rounded-md"
+                        />
+                      )}
+                      <div>
+                        <div className="font-medium">{application.name}</div>
+                        <div className="text-sm text-muted-foreground max-w-md truncate">
+                          {application.description}
+                        </div>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {application.use_cases && application.use_cases.length > 0 ? (
+                      <span className="text-sm text-muted-foreground">
+                        {application.use_cases.length} Use Case{application.use_cases.length !== 1 ? 's' : ''}
                       </span>
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Link
-                    href={`/admin/applications/${app.id}/edit`}
-                    className="p-2 text-gray-400 hover:text-gray-600"
-                  >
-                    <Edit className="h-5 w-5" />
-                  </Link>
-                  <button
-                    onClick={() => deleteApplication(app.id)}
-                    className="p-2 text-red-400 hover:text-red-600"
-                  >
-                    <Trash2 className="h-5 w-5" />
-                  </button>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
+                    ) : (
+                      <span className="text-sm text-muted-foreground">No Use Cases</span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={application.is_active ? "default" : "destructive"}>
+                      {application.is_active ? 'Active' : 'Inactive'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {application.display_order}
+                  </TableCell>
+                  <TableCell>
+                    {application.benefits && application.benefits.length > 0 ? (
+                      <span className="text-sm text-muted-foreground">
+                        {application.benefits.length} Benefit{application.benefits.length !== 1 ? 's' : ''}
+                      </span>
+                    ) : (
+                      <span className="text-sm text-muted-foreground">No benefits</span>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end space-x-2">
+                      <Button variant="ghost" size="sm" asChild>
+                        <Link href={`/admin/applications/${application.id}/edit`}>
+                          <Edit className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="ghost" size="sm">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will permanently delete the application "{application.name}".
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => deleteApplication(application.id)}>
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
 
-      {filteredApplications.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-gray-500">No applications found</p>
-        </div>
-      )}
+          {filteredApplications.length === 0 && (
+            <div className="text-center py-12">
+              <Package className="mx-auto h-12 w-12 text-muted-foreground" />
+              <h3 className="mt-2 text-sm font-semibold">No applications found</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {searchTerm ? 'Try adjusting your search terms.' : 'Get started by creating a new category.'}
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

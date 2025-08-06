@@ -6,7 +6,6 @@ import { supabase } from '../../../lib/supabase';
 import { ArrowLeft, Wrench } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Button } from '@/app/components/ui/button';
 import { Badge } from '@/app/components/ui/badge';
 import ServiceForm from '../components/ServiceForm';
