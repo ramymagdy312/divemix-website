@@ -8,9 +8,9 @@ const Logo: React.FC = () => {
       <Image 
         src="/img/logoWhite.png" 
         alt="DiveMix Logo" 
-        width={160}
-        height={64}
-        className="h-16 w-auto" // Increased from h-12 to h-16
+        width={200}
+        height={80}
+        className="h-16 sm:h-20 w-auto transition-all duration-200" // Responsive sizing
       />
     </Link>
   );

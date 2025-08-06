@@ -50,9 +50,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
   if (viewMode === 'grid') {
     return (
       <AnimatedElement animation="slideUp" delay={index * 0.1}>
-        <div className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-cyan-200 relative card-enhanced">
+        <div className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-cyan-200 relative card-enhanced h-full flex flex-col">
           {/* Image Section */}
-          <div className="aspect-[4/3] relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+          <div className="aspect-[4/3] relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 flex-shrink-0">
             <ProductImageGallery images={product.images} alt={product.name} />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             
@@ -90,46 +90,57 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
           </div>
 
           {/* Content Section */}
-          <div className="p-6 space-y-4">
-            <h3 className="text-xl font-bold text-gray-900 group-hover:text-cyan-700 transition-colors duration-300 line-clamp-2">
-              {product.name}
-            </h3>
+          <div className="p-6 space-y-4 flex-grow flex flex-col">
+            {/* Title */}
+            <div className="flex-shrink-0">
+              <h3 className="text-xl font-bold text-gray-900 group-hover:text-cyan-700 transition-colors duration-300 line-clamp-2">
+                {product.name}
+              </h3>
+            </div>
             
-            <p className="text-gray-600 leading-relaxed line-clamp-3">
-              {product.short_description}
-            </p>
+            {/* Description */}
+            <div className="flex-shrink-0">
+              <p className="text-gray-600 leading-relaxed line-clamp-3">
+                {product.short_description}
+              </p>
+            </div>
 
-            {/* Features Preview */}
-            {product.features.length > 0 && (
-              <div className="space-y-2">
-                <h4 className="text-sm font-semibold text-gray-800 flex items-center">
-                  <Star className="w-4 h-4 mr-2 text-cyan-600" />
-                  Key Features
-                </h4>
-                <ul className="space-y-1">
-                  {product.features.slice(0, 3).map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-start text-sm">
-                      <div className="w-2 h-2 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full mt-1.5 mr-3 flex-shrink-0" />
-                      <span className="text-gray-700 line-clamp-1">{feature}</span>
-                    </li>
-                  ))}
-                  {product.features.length > 3 && (
-                    <li className="text-sm text-cyan-600 font-medium">
-                      +{product.features.length - 3} more features
-                    </li>
-                  )}
-                </ul>
-              </div>
-            )}
+            {/* Content that grows to fill space */}
+            <div className="flex-grow space-y-4">
+              {/* Features Preview */}
+              {product.features.length > 0 && (
+                <div className="space-y-2">
+                  <h4 className="text-sm font-semibold text-gray-800 flex items-center">
+                    <Star className="w-4 h-4 mr-2 text-cyan-600" />
+                    Key Features
+                  </h4>
+                  <ul className="space-y-1">
+                    {product.features.slice(0, 3).map((feature, featureIndex) => (
+                      <li key={featureIndex} className="flex items-start text-sm">
+                        <div className="w-2 h-2 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full mt-1.5 mr-3 flex-shrink-0" />
+                        <span className="text-gray-700 line-clamp-1">{feature}</span>
+                      </li>
+                    ))}
+                    {product.features.length > 3 && (
+                      <li className="text-sm text-cyan-600 font-medium">
+                        +{product.features.length - 3} more features
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              )}
+            </div>
 
-            {/* View Details Button */}
-            <button
-              onClick={() => onViewDetails?.(product)}
-              className="w-full mt-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white py-3 rounded-lg font-medium hover:from-cyan-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2"
-            >
-              <Eye className="w-4 h-4" />
-              <span>View Details</span>
-            </button>
+            {/* View Details Button - Always at bottom */}
+            <div className="flex-shrink-0 pt-4">
+              <button
+                onClick={() => onViewDetails?.(product)}
+                className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white py-3 rounded-lg font-medium hover:from-cyan-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2"
+              >
+                <Eye className="w-4 h-4" />
+                <span>View Details</span>
+              </button>
+            </div>
           </div>
 
           {/* Decorative Elements */}

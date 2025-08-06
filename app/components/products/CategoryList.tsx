@@ -105,7 +105,7 @@ const CategoryList = () => {
       {/* Categories Grid */}
       <AnimatedElement animation="fadeIn" delay={0.2}>
         {filteredItems.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 grid-stagger">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 grid-stagger items-stretch">
             {filteredItems.map((category, index) => (
               <CategoryCard
                 key={category.id}
