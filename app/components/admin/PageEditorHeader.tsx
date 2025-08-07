@@ -1,6 +1,6 @@
 // components/PageHeader.tsx
 import { FileText, Edit, Save, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/app/components/ui/button";
 
 interface PageEditorHeaderProps {
   title: string;
