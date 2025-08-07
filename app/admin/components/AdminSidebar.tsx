@@ -1,8 +1,8 @@
 "use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
 import {
   LayoutDashboard,
   Package,
@@ -16,7 +16,7 @@ import {
   ChevronRight,
   MessageCircle,
   Mail,
-} from 'lucide-react';
+} from "lucide-react";
 
 import {
   Sidebar,
@@ -32,33 +32,36 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from '@/app/components/ui/sidebar';
+} from "@/app/components/ui/sidebar";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@/app/components/ui/collapsible';
+} from "@/app/components/ui/collapsible";
 
 const navigation = [
-  { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-  { name: 'Products', href: '/admin/products', icon: Package },
-  { name: 'Product Categories', href: '/admin/categories', icon: Settings },
-  { name: 'Services', href: '/admin/services', icon: Wrench },
-  { name: 'Applications', href: '/admin/applications', icon: Target },
-  { name: 'Gallery', href: '/admin/gallery', icon: Image },
-  { name: 'Gallery Categories', href: '/admin/gallery-categories', icon: Settings },
-  { name: 'Vendors', href: '/admin/vendors', icon: Users },
-  { name: 'Contact Messages', href: '/admin/contact-messages', icon: MessageCircle },
-  { name: 'Settings', href: '/admin/settings', icon: Mail },
-  { name: 'Users', href: '/admin/users', icon: Users },
+  { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { name: "Products", href: "/admin/products", icon: Package },
+  { name: "Product Categories", href: "/admin/categories", icon: Settings },
+  { name: "Services", href: "/admin/services", icon: Wrench },
+  { name: "Applications", href: "/admin/applications", icon: Target },
+  { name: "Gallery", href: "/admin/gallery", icon: Image },
+  {
+    name: "Gallery Categories",
+    href: "/admin/gallery-categories",
+    icon: Settings,
+  },
+  { name: "Vendors", href: "/admin/vendors", icon: Users },
+  { name: "Settings", href: "/admin/settings", icon: Mail },
+  // { name: "Users", href: "/admin/users", icon: Users },
 ];
 
 const pagesNavigation = [
-  { name: 'Products Page', href: '/admin/products-page', icon: Package },
-  { name: 'Services Page', href: '/admin/services-page', icon: Wrench },
-  { name: 'Applications Page', href: '/admin/applications-page', icon: Target },
-  { name: 'About Page', href: '/admin/about', icon: FileText },
-  { name: 'Contact Page', href: '/admin/contact', icon: FileText },
+  { name: "Products Page", href: "/admin/products-page", icon: Package },
+  { name: "Services Page", href: "/admin/services-page", icon: Wrench },
+  { name: "Applications Page", href: "/admin/applications-page", icon: Target },
+  { name: "About Page", href: "/admin/about", icon: FileText },
+  { name: "Contact Page", href: "/admin/contact", icon: FileText },
 ];
 
 export default function AdminSidebar() {
@@ -66,7 +69,7 @@ export default function AdminSidebar() {
   const [pagesExpanded, setPagesExpanded] = useState(false);
 
   // Check if any pages route is active
-  const isPagesActive = pagesNavigation.some(item => pathname === item.href);
+  const isPagesActive = pagesNavigation.some((item) => pathname === item.href);
 
   // Auto-expand if any pages route is active
   useEffect(() => {
@@ -84,11 +87,13 @@ export default function AdminSidebar() {
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight">
             <span className="truncate font-semibold">Admin Panel</span>
-            <span className="truncate text-xs text-muted-foreground">Divemix Website</span>
+            <span className="truncate text-xs text-muted-foreground">
+              Divemix Website
+            </span>
           </div>
         </div>
       </SidebarHeader>
-      
+
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Main Navigation</SidebarGroupLabel>
@@ -98,8 +103,8 @@ export default function AdminSidebar() {
                 const isActive = pathname === item.href;
                 return (
                   <SidebarMenuItem key={item.name}>
-                    <SidebarMenuButton 
-                      asChild 
+                    <SidebarMenuButton
+                      asChild
                       isActive={isActive}
                       tooltip={item.name}
                     >
@@ -138,7 +143,7 @@ export default function AdminSidebar() {
                       <ChevronRight className="h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
-                  
+
                   <CollapsibleContent>
                     <SidebarMenuSub>
                       {pagesNavigation.map((item) => {
@@ -162,7 +167,7 @@ export default function AdminSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      
+
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -172,7 +177,9 @@ export default function AdminSidebar() {
               </div>
               <div className="grid flex-1 text-left text-xs leading-tight">
                 <span className="truncate font-medium">DiveMix</span>
-                <span className="truncate text-xs text-muted-foreground">Admin v1.0</span>
+                <span className="truncate text-xs text-muted-foreground">
+                  Admin v1.0
+                </span>
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>

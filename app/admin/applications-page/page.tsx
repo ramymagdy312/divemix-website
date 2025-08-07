@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import PageEditor from "../../components/PageEditor";
+import PageEditor from "../../components/admin/PageEditor";
 import { supabase } from "../../lib/supabase";
 
 export default function ProductsPageAdmin() {
@@ -9,14 +9,20 @@ export default function ProductsPageAdmin() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.from("applications_page").select("*").single().then(({ data, error }) => {
-      if (data) setData(data);
-      setLoading(false);
-    });
+    supabase
+      .from("applications_page")
+      .select("*")
+      .single()
+      .then(({ data, error }) => {
+        if (data) setData(data);
+        setLoading(false);
+      });
   }, []);
 
   const handleSave = async (updatedData: any) => {
-    const { error } = await supabase.from("applications_page").upsert(updatedData);
+    const { error } = await supabase
+      .from("applications_page")
+      .upsert(updatedData);
     return !error;
   };
 
