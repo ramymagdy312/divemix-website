@@ -15,68 +15,60 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Save to database
-    const { data: contactMessage, error: dbError } = await supabase
-      .from('contact_messages')
-      .insert({
-        name,
-        email,
-        phone: phone || null,
-        subject,
-        message,
-        branch_id: branchId || null,
-        status: 'new'
-      })
-      .select()
-      .single();
-
-    if (dbError) {
-      console.error('Database error:', dbError);
-      return NextResponse.json(
-        { error: 'Failed to save message' },
-        { status: 500 }
-      );
-    }
-
-    // Get email settings from site settings
-    const { data: siteSettings } = await supabase
-      .from('site_settings')
-      .select('contact_email, smtp_host, smtp_port, smtp_user, smtp_password, smtp_from')
-      .single();
-
-    // Get branch info if provided
-    let branchInfo = null;
-    let branchName = 'الموقع الرئيسي';
-    
-    if (branchId) {
-      // Try to get branch from contact_page.branches first
-      const { data: contactPageData } = await supabase
-        .from('contact_page')
-        .select('branches')
+    // Save to database (optional - will continue if table doesn't exist)
+    let contactMessage = { id: `temp_${Date.now()}` };
+    try {
+      const { data, error: dbError } = await supabase
+        .from('contact_messages')
+        .insert({
+          name,
+          email,
+          phone: phone || null,
+          subject,
+          message,
+          branch_id: branchId || null,
+          status: 'new'
+        })
+        .select()
         .single();
-      
-      if (contactPageData?.branches) {
-        const branch = contactPageData.branches.find((b: any, index: number) => `branch-${index}` === branchId);
-        if (branch) {
-          branchInfo = { name: branch.name, email: branch.email };
-          branchName = branch.name;
-        }
+
+      if (!dbError && data) {
+        contactMessage = data;
+      } else {
+        console.log('Database save skipped (table may not exist):', dbError?.message);
       }
+    } catch (dbSaveError) {
+      console.log('Database save failed, continuing with email:', dbSaveError);
     }
+
+    // Get email settings from settings table
+    const { data: settingsData } = await supabase
+      .from('settings')
+      .select('key, value')
+      .in('key', ['contact_email', 'smtp_host', 'smtp_port', 'smtp_user', 'smtp_password', 'smtp_from']);
+
+    // Convert settings array to object for easier access
+    const siteSettings = settingsData?.reduce((acc: any, setting: any) => {
+      acc[setting.key] = setting.value;
+      return acc;
+    }, {}) || {};
 
     // Send email notification
     try {
       const transporter = nodemailer.createTransport({
-        host: siteSettings?.smtp_host || process.env.SMTP_HOST || 'smtp.gmail.com',
+        host: siteSettings?.smtp_host || process.env.SMTP_HOST,
         port: parseInt(siteSettings?.smtp_port || process.env.SMTP_PORT || '587'),
-        secure: false,
+        secure: parseInt(siteSettings?.smtp_port || process.env.SMTP_PORT || '587') === 465, // true for 465, false for other ports
         auth: {
           user: siteSettings?.smtp_user || process.env.SMTP_USER,
           pass: siteSettings?.smtp_password || process.env.SMTP_PASS,
         },
+        tls: {
+          rejectUnauthorized: false // Accept self-signed certificates
+        }
       });
 
-      const recipientEmail = siteSettings?.contact_email || branchInfo?.email || process.env.CONTACT_EMAIL || 'info@divemix.com';
+      const recipientEmail = siteSettings?.contact_email || process.env.CONTACT_EMAIL || 'info@divemix.com';
 
       await transporter.sendMail({
         from: siteSettings?.smtp_from || process.env.SMTP_FROM || process.env.SMTP_USER,
@@ -108,11 +100,6 @@ export async function POST(request: NextRequest) {
                   <span style="margin-right: 10px;">${phone}</span>
                 </div>
                 ` : ''}
-                
-                <div style="margin-bottom: 15px;">
-                  <strong style="color: #374151;">الفرع:</strong>
-                  <span style="margin-right: 10px;">${branchName}</span>
-                </div>
                 
                 <div style="margin-bottom: 15px;">
                   <strong style="color: #374151;">الموضوع:</strong>
@@ -156,13 +143,7 @@ export async function POST(request: NextRequest) {
                 <h3 style="color: #1e40af; margin-top: 0;">عزيزي/عزيزتي ${name}،</h3>
                 
                 <p>شكراً لك على تواصلك معنا. لقد تم استلام رسالتك بنجاح وسيقوم فريقنا بالرد عليك في أقرب وقت ممكن.</p>
-                
-                <div style="background: #f1f5f9; padding: 15px; border-radius: 6px; margin: 20px 0; border-right: 4px solid #0891b2;">
-                  <h4 style="margin-top: 0; color: #374151;">ملخص رسالتك:</h4>
-                  <p><strong>الموضوع:</strong> ${subject}</p>
-                  <p><strong>الفرع:</strong> ${branchName}</p>
-                </div>
-                
+                                
                 <p>إذا كانت رسالتك عاجلة، يمكنك التواصل معنا مباشرة عبر:</p>
                 <ul>
                   <li>الهاتف: +20123456789</li>
@@ -190,14 +171,14 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: 'تم إرسال رسالتك بنجاح. سنتواصل معك قريباً.',
+      message: 'Your message has been sent successfully. We will contact you soon.',
       id: contactMessage.id
     });
 
   } catch (error) {
     console.error('Contact form error:', error);
     return NextResponse.json(
-      { error: 'حدث خطأ أثناء إرسال الرسالة. يرجى المحاولة مرة أخرى.' },
+      { error: 'An error occurred while sending the message. Please try again.' },
       { status: 500 }
     );
   }
