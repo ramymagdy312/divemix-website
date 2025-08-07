@@ -1,99 +1,266 @@
-# Database Setup
+# DiveMix Database Setup Files
 
-This folder contains SQL scripts to set up the database tables for the DiveMix website.
+This directory contains SQL files for setting up the DiveMix Gas & Compressor Technologies website database. Choose the appropriate file based on your deployment needs.
 
-## Tables
+## 📁 Available Files
 
-### 1. about_page
-Contains content for the About page including:
-- Basic information (title, description, hero image)
-- Vision and mission statements
-- Company overview
-- Core values (stored as JSONB array)
-- Company timeline (stored as JSONB array)
+### 1. `complete_database_setup.sql` ⭐ **RECOMMENDED**
 
-### 2. contact_page
-Contains content for the Contact page including:
-- Basic information (title, description, hero image)
-- Introduction section
-- Branch locations with contact details and coordinates (stored as JSONB array)
+**Complete database setup with full features and sample data**
 
-### 3. products_page
-Contains content for the Products page including:
-- Basic information (title, description, hero image)
-- Introduction section (intro title and description)
+- **Use for:** Production deployment, full-featured development
+- **Contains:**
 
-### 4. services_page
-Contains content for the Services page including:
-- Basic information (title, description, hero image)
-- Introduction section (intro title and description)
+  - All database tables and relationships
+  - Complete RLS (Row Level Security) policies
+  - Comprehensive sample data
+  - All product categories and products
+  - Services, applications, and gallery content
+  - Page content management tables
+  - Settings and configuration
+  - Vendor management
+  - Contact form handling
+  - Branch locations
 
-### 5. applications_page
-Contains content for the Applications page including:
-- Basic information (title, description, hero image)
-- Introduction section (intro title and description)
+- **Size:** ~1000+ lines
+- **Setup time:** 2-3 minutes
+- **Best for:** Complete website functionality
 
-## Setup Instructions
+### 2. `quick_deploy.sql` ⚡ **FAST SETUP**
+
+**Minimal database setup for quick deployment**
+
+- **Use for:** Quick testing, minimal setup, production with custom content
+- **Contains:**
+
+  - Essential tables only
+  - Basic RLS policies
+  - Minimal sample data
+  - Core functionality
+
+- **Size:** ~200 lines
+- **Setup time:** 30 seconds
+- **Best for:** Fast deployment, custom content management
+
+### 3. `sample_data.sql` 🧪 **TESTING DATA**
+
+**Additional sample data for testing and demonstration**
+
+- **Use for:** Testing, development, demonstration
+- **Contains:**
+
+  - Extended sample data
+  - Additional vendors and partners
+  - More gallery images
+  - Test contact submissions
+  - Admin user management
+  - Reporting views
+
+- **Size:** ~400 lines
+- **Setup time:** 1 minute
+- **Best for:** Development and testing environments
+
+## 🚀 Quick Start Guide
+
+### Option 1: Complete Setup (Recommended)
+
+```sql
+-- Run this single file for complete setup
+\i complete_database_setup.sql
+```
+
+### Option 2: Minimal Setup + Custom Content
+
+```sql
+-- 1. Run minimal setup
+\i quick_deploy.sql
+
+-- 2. Add your own content through the admin panel
+-- 3. Optionally add sample data later
+\i sample_data.sql
+```
+
+### Option 3: Development Setup
+
+```sql
+-- 1. Complete setup
+\i complete_database_setup.sql
+
+-- 2. Add extra testing data
+\i sample_data.sql
+```
+
+## 🔧 Database Requirements
+
+### Supported Databases
+
+- **PostgreSQL 12+** ✅
+- **Supabase** ✅ (Recommended)
+- **Other PostgreSQL-compatible databases** ✅
+
+### Required Extensions
+
+- `uuid-ossp` (for UUID generation)
+- `pgcrypto` (for additional crypto functions)
+
+_These extensions are automatically enabled by the setup scripts._
+
+## 📊 Database Schema Overview
+
+### Core Tables
+
+- `settings` - Application configuration
+- `categories` - Product categories
+- `products` - Product catalog
+- `services` - Company services
+- `applications` - Industry applications
+- `contact_submissions` - Contact form data
+- `branches` - Company locations
+
+### Content Management Tables
+
+- `about_page` - About page content
+- `services_page` - Services page content
+- `products_page` - Products page content
+- `applications_page` - Applications page content
+- `contact_page` - Contact page content
+
+### Media & Gallery
+
+- `gallery_images` - Image gallery
+- `gallery_categories` - Gallery organization
+- `vendors` - Partner companies
+
+### Security Features
+
+- **Row Level Security (RLS)** enabled on all tables
+- **Public read access** for website content
+- **Authenticated access** for admin operations
+- **Secure contact form** submissions
+
+## 🔐 Security Configuration
+
+### RLS Policies
+
+All tables have appropriate RLS policies:
+
+- **Public users:** Read access to published content
+- **Authenticated users:** Full CRUD access for admin operations
+- **Contact forms:** Public insert, admin read/manage
+
+### Environment Variables Required
+
+```env
+# Database Connection
+DATABASE_URL=your_database_connection_string
+
+# Supabase (if using Supabase)
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+
+# Contact & WhatsApp
+NEXT_PUBLIC_WHATSAPP_NUMBER=+201010606967
+```
+
+## 📱 WhatsApp Integration
+
+The database includes WhatsApp integration settings:
+
+- **WhatsApp Number:** Stored in settings table
+- **Default Message:** Customizable through admin panel
+- **Contact Integration:** Seamless contact form to WhatsApp flow
+
+## 🛠️ Deployment Instructions
 
 ### For Supabase:
 
-1. Go to your Supabase project dashboard
-2. Navigate to the SQL Editor
-3. Run the following scripts in order:
-   - `about_page.sql`
-   - `contact_page.sql`
-   - `products_page.sql`
-   - `services_page.sql`
-   - `applications_page.sql`
-   - `gallery_categories.sql`
-   - `gallery_images.sql`
+1. Create a new Supabase project
+2. Go to SQL Editor
+3. Copy and paste the contents of `complete_database_setup.sql`
+4. Run the script
+5. Update your `.env.local` file with connection details
 
-### Environment Variables
+### For PostgreSQL:
 
-Make sure to set up your environment variables in `.env.local`:
+1. Connect to your PostgreSQL database
+2. Run: `psql -d your_database -f complete_database_setup.sql`
+3. Update your connection string in `.env.local`
 
-```env
-NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+### For Other Platforms:
+
+1. Use your platform's SQL console
+2. Execute the appropriate SQL file
+3. Configure environment variables
+
+## 🔍 Verification
+
+After running the setup, verify your installation:
+
+```sql
+-- Check table creation
+SELECT * FROM database_setup_status;
+
+-- Verify sample data
+SELECT COUNT(*) FROM categories;
+SELECT COUNT(*) FROM products;
+SELECT COUNT(*) FROM services;
+
+-- Test settings
+SELECT * FROM settings WHERE key IN ('whatsapp_number', 'contact_email');
 ```
 
-## Features
+## 📈 Performance Optimization
 
-- **Auto-updating timestamps**: Both tables have `updated_at` columns that automatically update when records are modified
-- **Default data**: Scripts include sample data to get you started
-- **JSONB storage**: Complex data structures (values, timeline, branches) are stored as JSONB for flexibility
-- **UUID primary keys**: All tables use UUID primary keys for better scalability
+The database includes several performance optimizations:
 
-## Admin Interface
+- **Indexes** on frequently queried columns
+- **Efficient queries** for product catalogs
+- **Optimized RLS policies**
+- **Proper foreign key relationships**
 
-Once the database is set up, you can manage the content through the admin interface:
+## 🆘 Troubleshooting
 
-- About Page: `/admin/about`
-- Contact Page: `/admin/contact`
-- Products Page: `/admin/products-page`
-- Services Page: `/admin/services-page`
-- Applications Page: `/admin/applications-page`
-- Gallery Categories: `/admin/gallery-categories`
+### Common Issues:
 
-The admin interface allows you to:
-- Edit all text content
-- Upload and manage hero images
-- Manage core values and timeline items (About page)
-- Update branch information and locations (Contact page)
-- Edit introduction sections for all pages
-- Create and manage gallery categories
-- Organize gallery images by categories
-- Default gallery categories: Installations, Maintenance, Testing, Facilities, Training
+1. **Extension not found:**
 
-## Development Mode
+   ```sql
+   -- Enable required extensions manually
+   CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+   ```
 
-If Supabase is not configured, the application will automatically use mock data from:
-- `app/data/aboutData.ts`
-- `app/data/contactData.ts`
-- `app/data/productsPageData.ts`
-- `app/data/servicesPageData.ts`
-- `app/data/applicationsPageData.ts`
-- `app/data/galleryCategoriesData.ts`
-- `app/data/galleryImages.ts`
+2. **Permission denied:**
 
-This allows for development without requiring a database connection.
+   - Ensure your database user has CREATE privileges
+   - For Supabase, use the SQL Editor with admin privileges
+
+3. **RLS blocking queries:**
+
+   - Check your authentication setup
+   - Verify RLS policies are correctly configured
+
+4. **Missing environment variables:**
+   - Ensure all required env vars are set
+   - Check `.env.local` file configuration
+
+## 📞 Support
+
+If you encounter any issues:
+
+1. Check the troubleshooting section above
+2. Verify your database permissions
+3. Ensure all environment variables are configured
+4. Test with the minimal `quick_deploy.sql` first
+
+## 🔄 Updates and Migrations
+
+For future updates:
+
+1. Backup your existing database
+2. Run new migration files
+3. Test thoroughly before production deployment
+
+---
+
+**Ready to deploy?** Start with `complete_database_setup.sql` for the full experience! 🚀
