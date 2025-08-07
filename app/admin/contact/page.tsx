@@ -15,11 +15,12 @@ import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
 import { Switch } from "@/app/components/ui/switch";
 import { Textarea } from "@/app/components/ui/textarea";
-import { Edit, MapPin, Plus, Save, Trash2, X } from "lucide-react";
-import Image from "next/image";
+import { MapPin, Plus, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
+import BasicInfoCard from "../../components/admin/BasicInfoCard";
 import Breadcrumb from "../../components/admin/Breadcrumb";
-import FolderExplorerSingle from "../../components/admin/FolderExplorerSingle";
+import PageEditorHeader from "../../components/admin/PageEditorHeader";
+import IntroductionCard from "../../components/IntroductionCard";
 
 export default function ContactAdmin() {
   const [data, setData] = useState<any>(null);
@@ -222,152 +223,20 @@ export default function ContactAdmin() {
     <div>
       <Breadcrumb items={[{ name: "Pages" }, { name: "Contact Page" }]} />
 
-      <div className="flex justify-between items-center mb-8">
-        <div className="space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight flex items-center">
-            <MapPin className="h-8 w-8 mr-3 text-primary" />
-            Contact Page Management
-          </h1>
-          <p className="text-muted-foreground">
-            Manage the content of your Contact page
-          </p>
-        </div>
-        <div className="flex space-x-2">
-          {editing ? (
-            <>
-              <Button variant="outline" onClick={() => setEditing(false)}>
-                <X className="h-4 w-4 mr-2" />
-                Cancel
-              </Button>
-              <Button onClick={handleSave} disabled={saving}>
-                <Save className="h-4 w-4 mr-2" />
-                {saving ? "Saving..." : "Save Changes"}
-              </Button>
-            </>
-          ) : (
-            <Button onClick={() => setEditing(true)}>
-              <Edit className="h-4 w-4 mr-2" />
-              Edit Page
-            </Button>
-          )}
-        </div>
-      </div>
+      <PageEditorHeader
+        title="Contact Page"
+        editing={editing}
+        setEditing={setEditing}
+        saving={saving}
+        handleSave={handleSave}
+      />
 
       <div className="space-y-8">
         {/* Basic Info */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Basic Information</CardTitle>
-            <CardDescription>
-              Configure the main content and hero section of the contact page
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="page-title">Page Title</Label>
-                {editing ? (
-                  <Input
-                    id="page-title"
-                    type="text"
-                    value={data?.title || ""}
-                    onChange={(e) =>
-                      setData({ ...data!, title: e.target.value })
-                    }
-                  />
-                ) : (
-                  <p className="text-sm font-medium">{data?.title}</p>
-                )}
-              </div>
-              <div>
-                {editing ? (
-                  <FolderExplorerSingle
-                    image={data?.hero_image || ""}
-                    onImageChange={(imageUrl) =>
-                      setData({ ...data!, hero_image: imageUrl })
-                    }
-                    label="Hero Image"
-                  />
-                ) : (
-                  <div>
-                    <Label>Hero Image</Label>
-                    {data?.hero_image ? (
-                      <div className="relative w-full h-32 rounded-lg overflow-hidden border border-gray-300">
-                        <Image
-                          src={data?.hero_image}
-                          alt="Hero image"
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                    ) : (
-                      <p className="text-gray-500 italic">No image uploaded</p>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="mt-6">
-              <Label htmlFor="description">Description</Label>
-              {editing ? (
-                <Textarea
-                  value={data?.description}
-                  onChange={(e) =>
-                    setData({ ...data!, description: e.target.value })
-                  }
-                  rows={3}
-                />
-              ) : (
-                <p className="leading-7 [&:not(:first-child)]:mt-6">
-                  {data?.description}
-                </p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+        <BasicInfoCard data={data} editing={editing} setData={setData} />
 
         {/* Intro Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Introduction Section</CardTitle>
-            <CardDescription>
-              Configure the introduction content that appears below the hero
-              section
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="intro-title">Intro Title</Label>
-              {editing ? (
-                <Input
-                  id="intro-title"
-                  type="text"
-                  value={data?.intro_title || ""}
-                  onChange={(e) =>
-                    setData({ ...data!, intro_title: e.target.value })
-                  }
-                />
-              ) : (
-                <p className="text-sm font-medium">{data?.intro_title}</p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="intro-description">Intro Description</Label>
-              {editing ? (
-                <Textarea
-                  id="intro-description"
-                  value={data?.intro_description || ""}
-                  onChange={(e) =>
-                    setData({ ...data!, intro_description: e.target.value })
-                  }
-                  rows={4}
-                />
-              ) : (
-                <p className="text-sm">{data?.intro_description}</p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+        <IntroductionCard editing={editing} data={data} setData={setData} />
 
         {/* Branches */}
         <Card>

@@ -1,18 +1,15 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { Toaster } from 'react-hot-toast';
-import toast from 'react-hot-toast';
-import { 
-  Trash2, 
-  Plus, 
-  RefreshCw, 
+import {
   AlertTriangle,
   CheckCircle,
-  XCircle,
   Folder,
-  Upload
-} from 'lucide-react';
+  Plus,
+  RefreshCw,
+  Trash2,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 
 interface FolderInfo {
   name: string;
@@ -27,14 +24,14 @@ interface FolderInfo {
 export default function TestDeletePage() {
   const [folders, setFolders] = useState<FolderInfo[]>([]);
   const [loading, setLoading] = useState(false);
-  const [newFolderName, setNewFolderName] = useState('');
+  const [newFolderName, setNewFolderName] = useState("");
   const [testResults, setTestResults] = useState<string[]>([]);
 
   // Load folders
   const loadFolders = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/upload/folders');
+      const response = await fetch("/api/upload/folders");
       if (response.ok) {
         const data = await response.json();
         setFolders(data.folders || []);
@@ -51,27 +48,30 @@ export default function TestDeletePage() {
 
   // Add test result
   const addTestResult = (message: string) => {
-    setTestResults(prev => [...prev, `${new Date().toLocaleTimeString()}: ${message}`]);
+    setTestResults((prev) => [
+      ...prev,
+      `${new Date().toLocaleTimeString()}: ${message}`,
+    ]);
   };
 
   // Create test folder
   const createTestFolder = async () => {
     if (!newFolderName.trim()) {
-      toast.error('Please enter a folder name');
+      toast.error("Please enter a folder name");
       return;
     }
 
     setLoading(true);
     addTestResult(`🔄 Creating folder: ${newFolderName}`);
-    
+
     try {
-      const response = await fetch('/api/upload/folders', {
-        method: 'POST',
+      const response = await fetch("/api/upload/folders", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 
-          folderName: newFolderName.trim()
+        body: JSON.stringify({
+          folderName: newFolderName.trim(),
         }),
       });
 
@@ -79,17 +79,17 @@ export default function TestDeletePage() {
       addTestResult(`📝 Create response: ${JSON.stringify(result)}`);
 
       if (response.ok) {
-        toast.success('Folder created successfully');
+        toast.success("Folder created successfully");
         addTestResult(`✅ Folder created: ${newFolderName}`);
-        setNewFolderName('');
+        setNewFolderName("");
         loadFolders();
       } else {
-        toast.error(result.error || 'Failed to create folder');
+        toast.error(result.error || "Failed to create folder");
         addTestResult(`❌ Create failed: ${result.error}`);
       }
     } catch (error) {
       addTestResult(`❌ Create error: ${error}`);
-      toast.error('Error creating folder');
+      toast.error("Error creating folder");
     } finally {
       setLoading(false);
     }
@@ -97,24 +97,35 @@ export default function TestDeletePage() {
 
   // Delete folder with detailed logging
   const deleteFolder = async (folder: FolderInfo) => {
-    addTestResult(`🔄 Starting deletion of folder: ${folder.name} (${folder.fullPath})`);
-    
+    addTestResult(
+      `🔄 Starting deletion of folder: ${folder.name} (${folder.fullPath})`
+    );
+
     if (!confirm(`Delete folder "${folder.name}"?`)) {
       addTestResult(`❌ Deletion cancelled by user`);
       return;
     }
 
     setLoading(true);
-    
-    try {
-      addTestResult(`📤 Sending DELETE request to: /api/upload/folders?path=${encodeURIComponent(folder.fullPath)}`);
-      
-      const response = await fetch(`/api/upload/folders?path=${encodeURIComponent(folder.fullPath)}`, {
-        method: 'DELETE',
-      });
 
-      addTestResult(`📥 Response status: ${response.status} ${response.statusText}`);
-      
+    try {
+      addTestResult(
+        `📤 Sending DELETE request to: /api/upload/folders?path=${encodeURIComponent(
+          folder.fullPath
+        )}`
+      );
+
+      const response = await fetch(
+        `/api/upload/folders?path=${encodeURIComponent(folder.fullPath)}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      addTestResult(
+        `📥 Response status: ${response.status} ${response.statusText}`
+      );
+
       const result = await response.json();
       addTestResult(`📝 Response body: ${JSON.stringify(result)}`);
 
@@ -123,12 +134,12 @@ export default function TestDeletePage() {
         addTestResult(`✅ Folder deleted successfully: ${folder.name}`);
         loadFolders();
       } else {
-        toast.error(result.error || 'Failed to delete folder');
-        addTestResult(`❌ Delete failed: ${result.error || 'Unknown error'}`);
+        toast.error(result.error || "Failed to delete folder");
+        addTestResult(`❌ Delete failed: ${result.error || "Unknown error"}`);
       }
     } catch (error) {
       addTestResult(`❌ Network error: ${error}`);
-      toast.error('Network error occurred');
+      toast.error("Network error occurred");
     } finally {
       setLoading(false);
     }
@@ -137,17 +148,18 @@ export default function TestDeletePage() {
   // Test API endpoint directly
   const testDeleteAPI = async () => {
     addTestResult(`🧪 Testing DELETE API endpoint directly...`);
-    
+
     try {
-      const response = await fetch('/api/upload/folders?path=test-folder', {
-        method: 'DELETE',
+      const response = await fetch("/api/upload/folders?path=test-folder", {
+        method: "DELETE",
       });
-      
-      addTestResult(`📥 API Test Response: ${response.status} ${response.statusText}`);
-      
+
+      addTestResult(
+        `📥 API Test Response: ${response.status} ${response.statusText}`
+      );
+
       const result = await response.json();
       addTestResult(`📝 API Test Body: ${JSON.stringify(result)}`);
-      
     } catch (error) {
       addTestResult(`❌ API Test Error: ${error}`);
     }
@@ -165,7 +177,7 @@ export default function TestDeletePage() {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <Toaster position="top-right" />
-      
+
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
@@ -174,7 +186,8 @@ export default function TestDeletePage() {
             🔧 Delete Functionality Diagnostic Tool
           </h1>
           <p className="text-gray-600">
-            This tool helps diagnose issues with folder deletion. It provides detailed logging of all API calls and responses.
+            This tool helps diagnose issues with folder deletion. It provides
+            detailed logging of all API calls and responses.
           </p>
         </div>
 
@@ -188,7 +201,9 @@ export default function TestDeletePage() {
 
             {/* Create Folder */}
             <div className="mb-6">
-              <h3 className="font-medium text-gray-900 mb-2">Create Test Folder:</h3>
+              <h3 className="font-medium text-gray-900 mb-2">
+                Create Test Folder:
+              </h3>
               <div className="flex space-x-2">
                 <input
                   type="text"
@@ -196,7 +211,7 @@ export default function TestDeletePage() {
                   onChange={(e) => setNewFolderName(e.target.value)}
                   placeholder="Enter folder name..."
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                  onKeyPress={(e) => e.key === 'Enter' && createTestFolder()}
+                  onKeyPress={(e) => e.key === "Enter" && createTestFolder()}
                 />
                 <button
                   onClick={createTestFolder}
@@ -216,7 +231,9 @@ export default function TestDeletePage() {
                 disabled={loading}
                 className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors disabled:opacity-50 flex items-center"
               >
-                <RefreshCw className={`h-4 w-4 mr-1 ${loading ? 'animate-spin' : ''}`} />
+                <RefreshCw
+                  className={`h-4 w-4 mr-1 ${loading ? "animate-spin" : ""}`}
+                />
                 Refresh Folders
               </button>
             </div>
@@ -238,7 +255,9 @@ export default function TestDeletePage() {
                 Current Folders ({folders.length}):
               </h3>
               {folders.length === 0 ? (
-                <p className="text-gray-500 text-sm">No folders found. Create one to test deletion.</p>
+                <p className="text-gray-500 text-sm">
+                  No folders found. Create one to test deletion.
+                </p>
               ) : (
                 <div className="space-y-2">
                   {folders.map((folder) => (
@@ -247,7 +266,9 @@ export default function TestDeletePage() {
                       className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border"
                     >
                       <div>
-                        <p className="font-medium text-gray-900">{folder.name}</p>
+                        <p className="font-medium text-gray-900">
+                          {folder.name}
+                        </p>
                         <p className="text-sm text-gray-500">
                           Path: {folder.fullPath} • Source: {folder.source}
                         </p>
@@ -284,7 +305,9 @@ export default function TestDeletePage() {
 
             <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm max-h-96 overflow-y-auto">
               {testResults.length === 0 ? (
-                <p className="text-gray-500">No test results yet. Perform some actions to see logs here.</p>
+                <p className="text-gray-500">
+                  No test results yet. Perform some actions to see logs here.
+                </p>
               ) : (
                 testResults.map((result, index) => (
                   <div key={index} className="mb-1">
@@ -296,7 +319,9 @@ export default function TestDeletePage() {
 
             {/* Instructions */}
             <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <h3 className="font-medium text-blue-900 mb-2">🔍 How to Use This Tool:</h3>
+              <h3 className="font-medium text-blue-900 mb-2">
+                🔍 How to Use This Tool:
+              </h3>
               <ol className="text-sm text-blue-800 space-y-1">
                 <li>1. Create a test folder using the input above</li>
                 <li>2. Try to delete the folder using the Delete button</li>
@@ -308,7 +333,9 @@ export default function TestDeletePage() {
 
             {/* Common Issues */}
             <div className="mt-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-              <h3 className="font-medium text-yellow-900 mb-2">⚠️ Common Issues:</h3>
+              <h3 className="font-medium text-yellow-900 mb-2">
+                ⚠️ Common Issues:
+              </h3>
               <ul className="text-sm text-yellow-800 space-y-1">
                 <li>• API endpoint not responding (check server logs)</li>
                 <li>• Supabase connection issues (check credentials)</li>
