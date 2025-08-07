@@ -1,10 +1,16 @@
 "use client";
 
-import React from 'react';
-import { MapPin, Phone, Mail, Clock, ExternalLink } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { Button } from '@/app/components/ui/button';
-import { Badge } from '@/app/components/ui/badge';
+import React from "react";
+import { MapPin, Phone, Mail, Clock, ExternalLink } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/app/components/ui/card";
+import { Button } from "@/app/components/ui/button";
+import { Badge } from "@/app/components/ui/badge";
 
 interface Branch {
   id: string;
@@ -27,23 +33,23 @@ interface BranchListProps {
 
 const BranchList: React.FC<BranchListProps> = ({
   branches,
-  className = ""
+  className = "",
 }) => {
   const openInGoogleMaps = (branch: Branch) => {
     if (branch.map_url) {
-      window.open(branch.map_url, '_blank');
+      window.open(branch.map_url, "_blank");
     } else if (branch.latitude && branch.longitude) {
       const url = `https://www.google.com/maps/search/?api=1&query=${branch.latitude},${branch.longitude}`;
-      window.open(url, '_blank');
+      window.open(url, "_blank");
     }
   };
 
   const getDirections = (branch: Branch) => {
     if (branch.latitude && branch.longitude) {
       const url = `https://www.google.com/maps/dir/?api=1&destination=${branch.latitude},${branch.longitude}`;
-      window.open(url, '_blank');
+      window.open(url, "_blank");
     } else if (branch.map_url) {
-      window.open(branch.map_url, '_blank');
+      window.open(branch.map_url, "_blank");
     }
   };
 
@@ -74,29 +80,33 @@ const BranchList: React.FC<BranchListProps> = ({
             </CardDescription>
           </div>
           <Badge variant="secondary">
-            {branches.length} {branches.length === 1 ? 'Location' : 'Locations'}
+            {branches.length} {branches.length === 1 ? "Location" : "Locations"}
           </Badge>
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {branches.map((branch) => (
             <Card key={branch.id} className="border-l-4 border-l-primary/20">
               <CardContent className="p-4">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <h4 className="font-semibold text-lg mb-2">{branch.name}</h4>
-                    
+                    <h4 className="font-semibold text-lg mb-2">
+                      {branch.name}
+                    </h4>
+
                     <div className="space-y-2 text-sm">
                       <div className="flex items-start space-x-2">
                         <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 text-muted-foreground" />
-                        <span className="text-muted-foreground">{branch.address}</span>
+                        <span className="text-muted-foreground">
+                          {branch.address}
+                        </span>
                       </div>
-                      
+
                       {branch.phone && (
                         <div className="flex items-center space-x-2">
                           <Phone className="w-4 h-4 flex-shrink-0 text-muted-foreground" />
-                          <a 
+                          <a
                             href={`tel:${branch.phone}`}
                             className="text-primary hover:underline"
                           >
@@ -104,11 +114,11 @@ const BranchList: React.FC<BranchListProps> = ({
                           </a>
                         </div>
                       )}
-                      
+
                       {branch.email && (
                         <div className="flex items-center space-x-2">
                           <Mail className="w-4 h-4 flex-shrink-0 text-muted-foreground" />
-                          <a 
+                          <a
                             href={`mailto:${branch.email}`}
                             className="text-primary hover:underline"
                           >
@@ -118,7 +128,7 @@ const BranchList: React.FC<BranchListProps> = ({
                       )}
                     </div>
                   </div>
-                  
+
                   <div className="flex flex-col space-y-2 ml-4">
                     {(branch.latitude && branch.longitude) || branch.map_url ? (
                       <>
