@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Heart, Share2, Star, ChevronLeft, ChevronRight, Zap, ZoomIn } from 'lucide-react';
-import Image from 'next/image';
+import { X, Star, ChevronLeft, ChevronRight, Zap, ZoomIn } from "lucide-react";
+import Image from "next/image";
 import AnimatedElement from "../common/AnimatedElement";
 
 interface Product {
@@ -25,46 +25,53 @@ interface ProductModalProps {
   onClose: () => void;
 }
 
-const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose }) => {
+const ProductModal: React.FC<ProductModalProps> = ({
+  product,
+  isOpen,
+  onClose,
+}) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
   const [isImageZoomed, setIsImageZoomed] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
 
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, [isOpen]);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         onClose();
       }
     };
 
     if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
+      document.addEventListener("keydown", handleEscape);
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener("keydown", handleEscape);
     };
   }, [isOpen, onClose]);
 
   if (!isOpen || !product) return null;
 
-  const productImages = product.images && product.images.length > 0 
-    ? product.images 
-    : product.image_url 
-    ? [product.image_url]
-    : ['https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800'];
+  const productImages =
+    product.images && product.images.length > 0
+      ? product.images
+      : product.image_url
+      ? [product.image_url]
+      : [
+          "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800",
+        ];
 
   const nextImage = () => {
     setCurrentImageIndex((prev) =>
@@ -78,51 +85,19 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
     );
   };
 
-  const toggleFavorite = () => {
-    setIsFavorite(!isFavorite);
-  };
-
-  const shareProduct = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: product.name,
-        text: product.short_description || product.description,
-        url: window.location.href,
-      });
-    }
-  };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
-      <div 
+      <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       />
-      
+
       {/* Modal */}
       <AnimatedElement animation="fadeIn">
         <div className="relative bg-white rounded-2xl shadow-2xl max-w-6xl w-full mx-4 max-h-[90vh] overflow-hidden">
           {/* Header */}
           <div className="absolute top-4 right-4 z-10 flex space-x-2">
-            <button
-              onClick={toggleFavorite}
-              className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 shadow-lg ${
-                isFavorite 
-                  ? 'bg-red-500 text-white' 
-                  : 'bg-white/90 text-gray-600 hover:bg-white hover:text-red-500'
-              }`}
-            >
-              <Heart className={`w-6 h-6 ${isFavorite ? 'fill-current' : ''}`} />
-            </button>
-            
-            <button
-              onClick={shareProduct}
-              className="w-12 h-12 bg-white/90 text-gray-600 rounded-full flex items-center justify-center hover:bg-white hover:text-cyan-600 transition-all duration-200 shadow-lg"
-            >
-              <Share2 className="w-6 h-6" />
-            </button>
-            
             <button
               onClick={onClose}
               className="w-12 h-12 bg-white/90 text-gray-600 rounded-full flex items-center justify-center hover:bg-white hover:text-gray-900 transition-all duration-200 shadow-lg"
@@ -143,12 +118,12 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
                   sizes="50vw"
                   onClick={() => setIsImageZoomed(true)}
                 />
-                
+
                 {/* Zoom Icon */}
                 <div className="absolute top-4 left-4 w-10 h-10 bg-black/50 text-white rounded-full flex items-center justify-center opacity-0 group-hover/image:opacity-100 transition-opacity duration-300">
                   <ZoomIn className="w-5 h-5" />
                 </div>
-                
+
                 {/* Navigation */}
                 {productImages.length > 1 && (
                   <>
@@ -175,9 +150,9 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
                         key={index}
                         onClick={() => setCurrentImageIndex(index)}
                         className={`w-3 h-3 rounded-full transition-all duration-200 ${
-                          index === currentImageIndex 
-                            ? 'bg-white scale-125 shadow-lg' 
-                            : 'bg-white/60 hover:bg-white/80'
+                          index === currentImageIndex
+                            ? "bg-white scale-125 shadow-lg"
+                            : "bg-white/60 hover:bg-white/80"
                         }`}
                       />
                     ))}
@@ -194,9 +169,9 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
                         key={index}
                         onClick={() => setCurrentImageIndex(index)}
                         className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all duration-200 ${
-                          index === currentImageIndex 
-                            ? 'border-cyan-500 scale-110' 
-                            : 'border-gray-200 hover:border-gray-300'
+                          index === currentImageIndex
+                            ? "border-cyan-500 scale-110"
+                            : "border-gray-200 hover:border-gray-300"
                         }`}
                       >
                         <Image
@@ -219,16 +194,13 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
                 {/* Title and Badge */}
                 <div className="space-y-3">
                   <div className="flex items-center space-x-3">
-                    <div className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-full px-3 py-1 text-sm font-semibold">
-                      Premium Product
-                    </div>
                     {product.features && product.features.length > 0 && (
                       <div className="bg-gray-100 text-gray-700 rounded-full px-3 py-1 text-sm font-semibold">
                         {product.features.length} Features
                       </div>
                     )}
                   </div>
-                  
+
                   <h1 className="text-3xl lg:text-4xl font-bold text-gray-900">
                     {product.name}
                   </h1>
@@ -236,7 +208,9 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
 
                 {/* Description */}
                 <div className="space-y-4">
-                  <h2 className="text-xl font-semibold text-gray-900">Description</h2>
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    Description
+                  </h2>
                   <p className="text-gray-600 text-lg leading-relaxed">
                     {product.description}
                   </p>
@@ -251,10 +225,13 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
                       </div>
                       Key Features
                     </h2>
-                    
+
                     <div className="grid grid-cols-1 gap-3">
                       {product.features.map((feature, index) => (
-                        <div key={index} className="flex items-start group/feature p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                        <div
+                          key={index}
+                          className="flex items-start group/feature p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                        >
                           <div className="relative mt-1 mr-4">
                             <div className="w-6 h-6 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full flex items-center justify-center group-hover/feature:scale-110 transition-transform duration-200">
                               <Zap className="w-3 h-3 text-white" />
@@ -268,21 +245,6 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
                     </div>
                   </div>
                 )}
-
-                {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
-                  <button className="flex-1 bg-gradient-to-r from-cyan-500 to-blue-600 text-white py-4 px-6 rounded-lg font-semibold hover:from-cyan-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl">
-                    Contact for Details
-                  </button>
-                  
-                  <button 
-                    onClick={shareProduct}
-                    className="flex-1 bg-white border-2 border-gray-200 text-gray-700 py-4 px-6 rounded-lg font-semibold hover:border-cyan-300 hover:text-cyan-700 transition-all duration-200 flex items-center justify-center space-x-2"
-                  >
-                    <Share2 className="w-5 h-5" />
-                    <span>Share Product</span>
-                  </button>
-                </div>
               </div>
             </div>
           </div>
@@ -307,7 +269,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
               >
                 <ChevronLeft className="w-6 h-6" />
               </button>
-              
+
               <button
                 onClick={nextImage}
                 className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/20 text-white rounded-full flex items-center justify-center hover:bg-white/30 transition-colors duration-200 z-10"
@@ -333,8 +295,8 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onClose })
             </div>
           )}
 
-          <div 
-            className="absolute inset-0 -z-10" 
+          <div
+            className="absolute inset-0 -z-10"
             onClick={() => setIsImageZoomed(false)}
           />
         </div>

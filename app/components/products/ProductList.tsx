@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import ProductDetail from "./ProductDetail";
+import ProductDetail from "./ProductCard";
 import SearchBar from "./SearchBar";
 import { useSearch } from "../../hooks/useSearch";
 import AnimatedElement from "../common/AnimatedElement";

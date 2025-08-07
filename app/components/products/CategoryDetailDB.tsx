@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
-import { supabase } from "../../lib/supabase";
-import ProductListDB from "./ProductListDB";
-import ProductHero from "./ProductHero";
-import CategoryDetailFallback from "./CategoryDetailFallback";
 import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
+import React, { useCallback, useEffect, useState } from "react";
+import { supabase } from "../../lib/supabase";
+import CategoryDetailFallback from "./CategoryDetailFallback";
+import ProductHero from "./ProductHero";
+import ProductListDB from "./ProductListDB";
 
 interface Category {
   id: string;
@@ -31,22 +31,22 @@ const CategoryDetailDB: React.FC<CategoryDetailDBProps> = ({ categoryId }) => {
   const fetchCategory = useCallback(async () => {
     try {
       setError(null);
-      console.log('Fetching category with ID/slug:', categoryId);
-      
+      console.log("Fetching category with ID/slug:", categoryId);
+
       const { data, error } = await supabase
-        .from('product_categories')
-        .select('*')
+        .from("product_categories")
+        .select("*")
         .eq(`slug`, `${categoryId}`)
-        .eq('is_active', true)
+        .eq("is_active", true)
         .single();
 
-      console.log('Category query result:', { data, error });
+      console.log("Category query result:", { data, error });
 
       if (error) throw error;
       setCategory(data);
-      console.log('Category set successfully:', data);
+      console.log("Category set successfully:", data);
     } catch (error: any) {
-      console.error('Error fetching category:', error);
+      console.error("Error fetching category:", error);
       setError(error.message);
       setCategory(null);
     } finally {
@@ -68,14 +68,17 @@ const CategoryDetailDB: React.FC<CategoryDetailDBProps> = ({ categoryId }) => {
 
   // If there's an error or no category found, fall back to the fallback component
   if (error || !category) {
-    console.log('Falling back to CategoryDetailFallback due to:', error || 'Category not found');
+    console.log(
+      "Falling back to CategoryDetailFallback due to:",
+      error || "Category not found"
+    );
     return <CategoryDetailFallback categoryId={categoryId} />;
   }
 
   return (
     <div>
       <ProductHero category={category} />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center space-x-4 mb-8">
           <button
