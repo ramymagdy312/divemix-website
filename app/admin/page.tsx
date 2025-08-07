@@ -1,15 +1,39 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
-import { Package, Wrench, Target, Image as ImageIcon, Users, TrendingUp, Info, Phone, MapPin, Plus, ArrowUpRight, Activity, BarChart3, AlertCircle, CheckCircle2 } from 'lucide-react';
-import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { Badge } from '@/app/components/ui/badge';
-import { Button } from '@/app/components/ui/button';
-import { Progress } from '@/app/components/ui/progress';
-import { Alert, AlertDescription, AlertTitle } from '@/app/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/app/components/ui/tabs';
+import { Alert, AlertDescription, AlertTitle } from "@/app/components/ui/alert";
+import { Badge } from "@/app/components/ui/badge";
+import { Button } from "@/app/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/app/components/ui/card";
+import { Progress } from "@/app/components/ui/progress";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/app/components/ui/tabs";
+import {
+  Activity,
+  ArrowUpRight,
+  BarChart3,
+  CheckCircle2,
+  Image as ImageIcon,
+  Info,
+  Package,
+  Plus,
+  Target,
+  TrendingUp,
+  Users,
+  Wrench,
+} from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { supabase } from "../lib/supabase";
 
 interface Stats {
   products: number;
@@ -63,18 +87,34 @@ export default function AdminDashboard() {
         { count: servicesPageCount },
         { count: applicationsPageCount },
       ] = await Promise.all([
-        supabase.from('products').select('*', { count: 'exact', head: true }),
-        supabase.from('product_categories').select('*', { count: 'exact', head: true }),
-        supabase.from('services').select('*', { count: 'exact', head: true }),
-        supabase.from('applications').select('*', { count: 'exact', head: true }),
-        supabase.from('vendors').select('*', { count: 'exact', head: true }),
-        supabase.from('gallery_images').select('*', { count: 'exact', head: true }),
-        supabase.from('gallery_categories').select('*', { count: 'exact', head: true }),
-        supabase.from('about_page').select('*', { count: 'exact', head: true }),
-        supabase.from('contact_page').select('*', { count: 'exact', head: true }),
-        supabase.from('products_page').select('*', { count: 'exact', head: true }),
-        supabase.from('services_page').select('*', { count: 'exact', head: true }),
-        supabase.from('applications_page').select('*', { count: 'exact', head: true }),
+        supabase.from("products").select("*", { count: "exact", head: true }),
+        supabase
+          .from("product_categories")
+          .select("*", { count: "exact", head: true }),
+        supabase.from("services").select("*", { count: "exact", head: true }),
+        supabase
+          .from("applications")
+          .select("*", { count: "exact", head: true }),
+        supabase.from("vendors").select("*", { count: "exact", head: true }),
+        supabase
+          .from("gallery_images")
+          .select("*", { count: "exact", head: true }),
+        supabase
+          .from("gallery_categories")
+          .select("*", { count: "exact", head: true }),
+        supabase.from("about_page").select("*", { count: "exact", head: true }),
+        supabase
+          .from("contact_page")
+          .select("*", { count: "exact", head: true }),
+        supabase
+          .from("products_page")
+          .select("*", { count: "exact", head: true }),
+        supabase
+          .from("services_page")
+          .select("*", { count: "exact", head: true }),
+        supabase
+          .from("applications_page")
+          .select("*", { count: "exact", head: true }),
       ]);
 
       setStats({
@@ -92,7 +132,7 @@ export default function AdminDashboard() {
         applicationsPage: applicationsPageCount || 0,
       });
     } catch (error) {
-      console.error('Error fetching stats:', error);
+      console.error("Error fetching stats:", error);
 
       setStats({
         products: 15,
@@ -112,8 +152,6 @@ export default function AdminDashboard() {
       setLoading(false);
     }
   };
-
-
 
   if (loading) {
     return (
@@ -158,7 +196,12 @@ export default function AdminDashboard() {
               <span className="ml-1">from last month</span>
             </div>
             <div className="mt-3">
-              <Button asChild variant="ghost" size="sm" className="w-full justify-between">
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                className="w-full justify-between"
+              >
                 <Link href="/admin/products">
                   View All
                   <ArrowUpRight className="w-3 h-3" />
@@ -183,7 +226,12 @@ export default function AdminDashboard() {
               <span className="ml-1">from last month</span>
             </div>
             <div className="mt-3">
-              <Button asChild variant="ghost" size="sm" className="w-full justify-between">
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                className="w-full justify-between"
+              >
                 <Link href="/admin/categories">
                   View All
                   <ArrowUpRight className="w-3 h-3" />
@@ -208,7 +256,12 @@ export default function AdminDashboard() {
               <span className="ml-1">from last month</span>
             </div>
             <div className="mt-3">
-              <Button asChild variant="ghost" size="sm" className="w-full justify-between">
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                className="w-full justify-between"
+              >
                 <Link href="/admin/services">
                   View All
                   <ArrowUpRight className="w-3 h-3" />
@@ -233,7 +286,12 @@ export default function AdminDashboard() {
               <span className="ml-1">from last month</span>
             </div>
             <div className="mt-3">
-              <Button asChild variant="ghost" size="sm" className="w-full justify-between">
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                className="w-full justify-between"
+              >
                 <Link href="/admin/applications">
                   View All
                   <ArrowUpRight className="w-3 h-3" />
@@ -258,7 +316,12 @@ export default function AdminDashboard() {
               <span className="ml-1">from last month</span>
             </div>
             <div className="mt-3">
-              <Button asChild variant="ghost" size="sm" className="w-full justify-between">
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                className="w-full justify-between"
+              >
                 <Link href="/admin/vendors">
                   View All
                   <ArrowUpRight className="w-3 h-3" />
@@ -283,7 +346,12 @@ export default function AdminDashboard() {
               <span className="ml-1">from last month</span>
             </div>
             <div className="mt-3">
-              <Button asChild variant="ghost" size="sm" className="w-full justify-between">
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                className="w-full justify-between"
+              >
                 <Link href="/admin/gallery">
                   View All
                   <ArrowUpRight className="w-3 h-3" />
@@ -299,7 +367,8 @@ export default function AdminDashboard() {
         <CheckCircle2 className="h-4 w-4" />
         <AlertTitle>System Status</AlertTitle>
         <AlertDescription>
-          All systems are operational. Database connection is stable and all services are running normally.
+          All systems are operational. Database connection is stable and all
+          services are running normally.
         </AlertDescription>
       </Alert>
 
@@ -321,40 +390,69 @@ export default function AdminDashboard() {
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Total Content</span>
                 <Badge variant="secondary">
-                  {stats.products + stats.services + stats.applications + stats.gallery + stats.galleryCategories + stats.about + stats.contact + stats.productsPage + stats.servicesPage + stats.applicationsPage}
+                  {stats.products +
+                    stats.services +
+                    stats.applications +
+                    stats.gallery +
+                    stats.galleryCategories +
+                    stats.about +
+                    stats.contact +
+                    stats.productsPage +
+                    stats.servicesPage +
+                    stats.applicationsPage}
                 </Badge>
               </div>
               <Progress value={85} className="h-2" />
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Products</span>
-                  <span className="text-sm font-semibold text-blue-600">{stats.products}</span>
+                  <span className="text-sm text-muted-foreground">
+                    Products
+                  </span>
+                  <span className="text-sm font-semibold text-blue-600">
+                    {stats.products}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Categories</span>
-                  <span className="text-sm font-semibold text-indigo-600">{stats.categories}</span>
+                  <span className="text-sm text-muted-foreground">
+                    Categories
+                  </span>
+                  <span className="text-sm font-semibold text-indigo-600">
+                    {stats.categories}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Services</span>
-                  <span className="text-sm font-semibold text-green-600">{stats.services}</span>
+                  <span className="text-sm text-muted-foreground">
+                    Services
+                  </span>
+                  <span className="text-sm font-semibold text-green-600">
+                    {stats.services}
+                  </span>
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Vendors</span>
-                  <span className="text-sm font-semibold text-orange-600">{stats.vendors}</span>
+                  <span className="text-sm font-semibold text-orange-600">
+                    {stats.vendors}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Gallery</span>
-                  <span className="text-sm font-semibold text-pink-600">{stats.gallery}</span>
+                  <span className="text-sm font-semibold text-pink-600">
+                    {stats.gallery}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Last Update</span>
-                  <Badge variant="outline" className="text-xs">Today</Badge>
+                  <span className="text-sm text-muted-foreground">
+                    Last Update
+                  </span>
+                  <Badge variant="outline" className="text-xs">
+                    Today
+                  </Badge>
                 </div>
               </div>
             </div>
@@ -374,48 +472,85 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="space-y-1">
-              <Button asChild variant="ghost" className="w-full justify-start" size="sm">
+              <Button
+                asChild
+                variant="ghost"
+                className="w-full justify-start"
+                size="sm"
+              >
                 <Link href="/admin/products/new">
                   <Package className="w-4 h-4 mr-2" />
                   Add New Product
                 </Link>
               </Button>
-              <Button asChild variant="ghost" className="w-full justify-start" size="sm">
+              <Button
+                asChild
+                variant="ghost"
+                className="w-full justify-start"
+                size="sm"
+              >
                 <Link href="/admin/categories/new/">
                   <Package className="w-4 h-4 mr-2" />
                   Add New Category
                 </Link>
               </Button>
-              <Button asChild variant="ghost" className="w-full justify-start" size="sm">
+              <Button
+                asChild
+                variant="ghost"
+                className="w-full justify-start"
+                size="sm"
+              >
                 <Link href="/admin/services/new">
                   <Wrench className="w-4 h-4 mr-2" />
                   Add New Service
                 </Link>
               </Button>
-              <Button asChild variant="ghost" className="w-full justify-start" size="sm">
+              <Button
+                asChild
+                variant="ghost"
+                className="w-full justify-start"
+                size="sm"
+              >
                 <Link href="/admin/gallery/new">
                   <ImageIcon className="w-4 h-4 mr-2" />
                   Add Gallery Image
                 </Link>
               </Button>
             </div>
-            
+
             <div className="pt-2 border-t">
-              <p className="text-xs font-medium text-muted-foreground mb-2">Page Management</p>
+              <p className="text-xs font-medium text-muted-foreground mb-2">
+                Page Management
+              </p>
               <div className="space-y-1">
-                <Button asChild variant="ghost" className="w-full justify-start" size="sm">
+                <Button
+                  asChild
+                  variant="ghost"
+                  className="w-full justify-start"
+                  size="sm"
+                >
                   <Link href="/admin/products-page">
                     <Info className="w-4 h-4 mr-2" />
                     Edit Products Page
                   </Link>
                 </Button>
-                <Button asChild variant="ghost" className="w-full justify-start" size="sm">
+                <Button
+                  asChild
+                  variant="ghost"
+                  className="w-full justify-start"
+                  size="sm"
+                >
                   <Link href="/admin/services-page">
                     <Info className="w-4 h-4 mr-2" />
                     Edit Services Page
                   </Link>
                 </Button>
-                <Button asChild variant="ghost" className="w-full justify-start" size="sm">
+                <Button
+                  asChild
+                  variant="ghost"
+                  className="w-full justify-start"
+                  size="sm"
+                >
                   <Link href="/admin/about">
                     <Info className="w-4 h-4 mr-2" />
                     Edit About Page
@@ -434,20 +569,24 @@ export default function AdminDashboard() {
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="system">System Health</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="activity" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <Card>
               <CardHeader>
                 <CardTitle className="text-base">Recent Changes</CardTitle>
-                <CardDescription>Latest updates and modifications</CardDescription>
+                <CardDescription>
+                  Latest updates and modifications
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                   <div className="flex-1 space-y-1">
                     <p className="text-sm font-medium">New product added</p>
-                    <p className="text-xs text-muted-foreground">2 minutes ago</p>
+                    <p className="text-xs text-muted-foreground">
+                      2 minutes ago
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
@@ -460,14 +599,18 @@ export default function AdminDashboard() {
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                   <div className="flex-1 space-y-1">
-                    <p className="text-sm font-medium">Gallery image uploaded</p>
+                    <p className="text-sm font-medium">
+                      Gallery image uploaded
+                    </p>
                     <p className="text-xs text-muted-foreground">3 hours ago</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
                   <div className="flex-1 space-y-1">
-                    <p className="text-sm font-medium">Vendor information updated</p>
+                    <p className="text-sm font-medium">
+                      Vendor information updated
+                    </p>
                     <p className="text-xs text-muted-foreground">5 hours ago</p>
                   </div>
                 </div>
@@ -494,7 +637,9 @@ export default function AdminDashboard() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">System Uptime</span>
-                  <Badge variant="outline" className="text-green-600">99.9%</Badge>
+                  <Badge variant="outline" className="text-green-600">
+                    99.9%
+                  </Badge>
                 </div>
               </CardContent>
             </Card>
@@ -505,29 +650,85 @@ export default function AdminDashboard() {
           <div className="grid gap-4 md:grid-cols-3">
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-base">Content Distribution</CardTitle>
+                <CardTitle className="text-base">
+                  Content Distribution
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <div className="space-y-1">
                   <div className="flex items-center justify-between text-sm">
                     <span>Products</span>
-                    <span>{Math.round((stats.products / (stats.products + stats.services + stats.applications)) * 100)}%</span>
+                    <span>
+                      {Math.round(
+                        (stats.products /
+                          (stats.products +
+                            stats.services +
+                            stats.applications)) *
+                          100
+                      )}
+                      %
+                    </span>
                   </div>
-                  <Progress value={(stats.products / (stats.products + stats.services + stats.applications)) * 100} className="h-1" />
+                  <Progress
+                    value={
+                      (stats.products /
+                        (stats.products +
+                          stats.services +
+                          stats.applications)) *
+                      100
+                    }
+                    className="h-1"
+                  />
                 </div>
                 <div className="space-y-1">
                   <div className="flex items-center justify-between text-sm">
                     <span>Services</span>
-                    <span>{Math.round((stats.services / (stats.products + stats.services + stats.applications)) * 100)}%</span>
+                    <span>
+                      {Math.round(
+                        (stats.services /
+                          (stats.products +
+                            stats.services +
+                            stats.applications)) *
+                          100
+                      )}
+                      %
+                    </span>
                   </div>
-                  <Progress value={(stats.services / (stats.products + stats.services + stats.applications)) * 100} className="h-1" />
+                  <Progress
+                    value={
+                      (stats.services /
+                        (stats.products +
+                          stats.services +
+                          stats.applications)) *
+                      100
+                    }
+                    className="h-1"
+                  />
                 </div>
                 <div className="space-y-1">
                   <div className="flex items-center justify-between text-sm">
                     <span>Applications</span>
-                    <span>{Math.round((stats.applications / (stats.products + stats.services + stats.applications)) * 100)}%</span>
+                    <span>
+                      {Math.round(
+                        (stats.applications /
+                          (stats.products +
+                            stats.services +
+                            stats.applications)) *
+                          100
+                      )}
+                      %
+                    </span>
                   </div>
-                  <Progress value={(stats.applications / (stats.products + stats.services + stats.applications)) * 100} className="h-1" />
+                  <Progress
+                    value={
+                      (stats.applications /
+                        (stats.products +
+                          stats.services +
+                          stats.applications)) *
+                      100
+                    }
+                    className="h-1"
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -539,11 +740,15 @@ export default function AdminDashboard() {
               <CardContent className="space-y-3">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-green-600">+24%</div>
-                  <p className="text-xs text-muted-foreground">Content Growth</p>
+                  <p className="text-xs text-muted-foreground">
+                    Content Growth
+                  </p>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-blue-600">+18%</div>
-                  <p className="text-xs text-muted-foreground">User Engagement</p>
+                  <p className="text-xs text-muted-foreground">
+                    User Engagement
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -612,12 +817,16 @@ export default function AdminDashboard() {
             <Card>
               <CardHeader>
                 <CardTitle className="text-base">Security Status</CardTitle>
-                <CardDescription>Security and backup information</CardDescription>
+                <CardDescription>
+                  Security and backup information
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-sm">SSL Certificate</span>
-                  <Badge variant="outline" className="text-green-600">Valid</Badge>
+                  <Badge variant="outline" className="text-green-600">
+                    Valid
+                  </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Last Backup</span>
@@ -625,11 +834,15 @@ export default function AdminDashboard() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Security Scan</span>
-                  <Badge variant="outline" className="text-green-600">Clean</Badge>
+                  <Badge variant="outline" className="text-green-600">
+                    Clean
+                  </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Firewall Status</span>
-                  <Badge variant="outline" className="text-green-600">Active</Badge>
+                  <Badge variant="outline" className="text-green-600">
+                    Active
+                  </Badge>
                 </div>
               </CardContent>
             </Card>

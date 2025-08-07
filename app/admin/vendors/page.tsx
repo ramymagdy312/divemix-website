@@ -1,33 +1,22 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabase';
-import { Plus, Edit, Trash2, Eye, EyeOff, ExternalLink, Users } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import toast from 'react-hot-toast';
-import { Button } from '@/app/components/ui/button';
-import { Badge } from '@/app/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import { Badge } from "@/app/components/ui/badge";
+import { Button } from "@/app/components/ui/button";
+import { Card, CardContent } from "@/app/components/ui/card";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/app/components/ui/table';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/app/components/ui/alert-dialog';
+  Edit,
+  ExternalLink,
+  Eye,
+  EyeOff,
+  Plus,
+  Trash2,
+  Users,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { supabase } from "../../lib/supabase";
 
 interface Vendor {
   id: string;
@@ -52,20 +41,20 @@ export default function VendorsPage() {
   const fetchVendors = async () => {
     try {
       const { data, error } = await supabase
-        .from('vendors')
-        .select('*')
-        .order('display_order', { ascending: true });
+        .from("vendors")
+        .select("*")
+        .order("display_order", { ascending: true });
 
       if (error) {
-        console.error('Error fetching vendors:', error);
-        toast.error('Failed to load vendors');
+        console.error("Error fetching vendors:", error);
+        toast.error("Failed to load vendors");
         return;
       }
 
       setVendors(data || []);
     } catch (error) {
-      console.error('Error:', error);
-      toast.error('Failed to load vendors');
+      console.error("Error:", error);
+      toast.error("Failed to load vendors");
     } finally {
       setLoading(false);
     }
@@ -74,48 +63,47 @@ export default function VendorsPage() {
   const toggleVendorStatus = async (id: string, currentStatus: boolean) => {
     try {
       const { error } = await supabase
-        .from('vendors')
+        .from("vendors")
         .update({ is_active: !currentStatus })
-        .eq('id', id);
+        .eq("id", id);
 
       if (error) {
-        console.error('Error updating vendor status:', error);
-        toast.error('Failed to update vendor status');
+        console.error("Error updating vendor status:", error);
+        toast.error("Failed to update vendor status");
         return;
       }
 
-      setVendors(prev => 
-        prev.map(vendor => 
+      setVendors((prev) =>
+        prev.map((vendor) =>
           vendor.id === id ? { ...vendor, is_active: !currentStatus } : vendor
         )
       );
 
-      toast.success(`Vendor ${!currentStatus ? 'activated' : 'deactivated'} successfully`);
+      toast.success(
+        `Vendor ${!currentStatus ? "activated" : "deactivated"} successfully`
+      );
     } catch (error) {
-      console.error('Error:', error);
-      toast.error('Failed to update vendor status');
+      console.error("Error:", error);
+      toast.error("Failed to update vendor status");
     }
   };
 
   const deleteVendor = async (id: string) => {
     setDeleting(id);
     try {
-      const { error } = await supabase
-        .from('vendors')
-        .delete()
-        .eq('id', id);
+      const { error } = await supabase.from("vendors").delete().eq("id", id);
 
       if (error) {
-        console.error('Error deleting vendor:', error);
-        toast.error('Failed to delete vendor');
+        console.error("Error deleting vendor:", error);
+        toast.error("Failed to delete vendor");
         return;
       }
 
-      setVendors(prev => prev.filter(vendor => vendor.id !== id));
-      toast.success('Vendor deleted successfully');
+      setVendors((prev) => prev.filter((vendor) => vendor.id !== id));
+      toast.success("Vendor deleted successfully");
     } catch (error) {
-      console.error('Error:', error);
-      toast.error('Failed to delete vendor');
+      console.error("Error:", error);
+      toast.error("Failed to delete vendor");
     } finally {
       setDeleting(null);
     }
@@ -131,6 +119,7 @@ export default function VendorsPage() {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex justify-between items-center">
         <div className="space-y-1">
           <h1 className="text-3xl font-bold tracking-tight flex items-center">
@@ -149,48 +138,49 @@ export default function VendorsPage() {
         </Button>
       </div>
 
+      {/* Vendors Table or Empty State */}
       {vendors.length === 0 ? (
         <div className="text-center py-12">
           <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No vendors yet</h3>
-          <p className="text-gray-500 mb-4">Get started by adding your first vendor.</p>
-          <Link
-            href="/admin/vendors/new"
-            className="bg-cyan-600 text-white px-4 py-2 rounded-md hover:bg-cyan-700 inline-flex items-center space-x-2"
-          >
-            <Plus className="h-4 w-4" />
-            <span>Add First Vendor</span>
-          </Link>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            No vendors yet
+          </h3>
+          <p className="text-gray-500 mb-4">
+            Get started by adding your first vendor.
+          </p>
+          <Button asChild>
+            <Link href="/admin/vendors/new">
+              <Plus className="h-4 w-4 mr-2" />
+              Add First Vendor
+            </Link>
+          </Button>
         </div>
       ) : (
-        <div className="bg-white shadow rounded-lg overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+        <Card>
+          <CardContent className="p-0 overflow-x-auto">
+            <table className="min-w-full divide-y divide-border">
+              <thead className="bg-muted">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Vendor
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Description
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Website
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Order
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
+                  {[
+                    "Vendor",
+                    "Description",
+                    "Website",
+                    "Order",
+                    "Status",
+                    "Actions",
+                  ].map((header) => (
+                    <th
+                      key={header}
+                      className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"
+                    >
+                      {header}
+                    </th>
+                  ))}
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-background divide-y divide-border">
                 {vendors.map((vendor) => (
-                  <tr key={vendor.id} className="hover:bg-gray-50">
+                  <tr key={vendor.id} className="hover:bg-muted/40">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="relative h-12 w-12 mr-4">
@@ -202,18 +192,19 @@ export default function VendorsPage() {
                           />
                         </div>
                         <div>
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-foreground">
                             {vendor.name}
                           </div>
-                          <div className="text-sm text-gray-500">
-                            Added {new Date(vendor.created_at).toLocaleDateString()}
+                          <div className="text-sm text-muted-foreground">
+                            Added{" "}
+                            {new Date(vendor.created_at).toLocaleDateString()}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900 max-w-xs truncate">
-                        {vendor.description || 'No description'}
+                      <div className="text-sm text-foreground max-w-xs truncate">
+                        {vendor.description || "No description"}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -228,22 +219,20 @@ export default function VendorsPage() {
                           Visit
                         </a>
                       ) : (
-                        <span className="text-gray-400 text-sm">No website</span>
+                        <span className="text-muted-foreground text-sm">
+                          No website
+                        </span>
                       )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-gray-900">
-                        {vendor.display_order}
-                      </span>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
+                      {vendor.display_order}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <button
-                        onClick={() => toggleVendorStatus(vendor.id, vendor.is_active)}
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          vendor.is_active
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
-                        }`}
+                      <Badge
+                        className="cursor-pointer"
+                        onClick={() =>
+                          toggleVendorStatus(vendor.id, vendor.is_active)
+                        }
                       >
                         {vendor.is_active ? (
                           <>
@@ -256,7 +245,7 @@ export default function VendorsPage() {
                             Inactive
                           </>
                         )}
-                      </button>
+                      </Badge>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex items-center space-x-2">
@@ -279,51 +268,43 @@ export default function VendorsPage() {
                 ))}
               </tbody>
             </table>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       )}
 
       {/* Stats */}
       <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <Users className="h-8 w-8 text-cyan-600" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500">Total Vendors</p>
-              <p className="text-2xl font-semibold text-gray-900">{vendors.length}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <Eye className="h-8 w-8 text-green-600" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500">Active Vendors</p>
-              <p className="text-2xl font-semibold text-gray-900">
-                {vendors.filter(v => v.is_active).length}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <EyeOff className="h-8 w-8 text-red-600" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-500">Inactive Vendors</p>
-              <p className="text-2xl font-semibold text-gray-900">
-                {vendors.filter(v => !v.is_active).length}
-              </p>
-            </div>
-          </div>
-        </div>
+        {[
+          {
+            icon: <Users className="h-8 w-8 text-cyan-600" />,
+            label: "Total Vendors",
+            value: vendors.length,
+          },
+          {
+            icon: <Eye className="h-8 w-8 text-green-600" />,
+            label: "Active Vendors",
+            value: vendors.filter((v) => v.is_active).length,
+          },
+          {
+            icon: <EyeOff className="h-8 w-8 text-red-600" />,
+            label: "Inactive Vendors",
+            value: vendors.filter((v) => !v.is_active).length,
+          },
+        ].map((stat, index) => (
+          <Card key={index}>
+            <CardContent className="p-6 flex items-center">
+              <div className="flex-shrink-0">{stat.icon}</div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-muted-foreground">
+                  {stat.label}
+                </p>
+                <p className="text-2xl font-semibold text-foreground">
+                  {stat.value}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </div>
   );

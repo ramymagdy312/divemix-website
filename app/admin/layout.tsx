@@ -1,14 +1,18 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
-import { User } from '@supabase/supabase-js';
-import AdminSidebar from './components/AdminSidebar';
-import AdminHeader from './components/AdminHeader';
-import LoginForm from './components/LoginForm';
-import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/app/components/ui/sidebar';
-import { Separator } from '@/app/components/ui/separator';
-import DynamicBreadcrumb from './components/DynamicBreadcrumb';
+import { useState, useEffect } from "react";
+import { supabase } from "../lib/supabase";
+import { User } from "@supabase/supabase-js";
+import AdminSidebar from "./components/AdminSidebar";
+import AdminHeader from "./components/AdminHeader";
+import LoginForm from "./components/LoginForm";
+import {
+  SidebarProvider,
+  SidebarInset,
+  SidebarTrigger,
+} from "@/app/components/ui/sidebar";
+import { Separator } from "@/app/components/ui/separator";
+import DynamicBreadcrumb from "./components/DynamicBreadcrumb";
 
 export default function AdminLayout({
   children,
@@ -63,9 +67,7 @@ export default function AdminLayout({
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <main className="flex-1 space-y-4">
-            {children}
-          </main>
+          <main className="flex-1 space-y-4">{children}</main>
         </div>
       </SidebarInset>
     </SidebarProvider>

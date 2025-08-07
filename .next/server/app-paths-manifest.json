@@ -1,7 +1,16 @@
 {
+  "/applications/page": "app/applications/page.js",
   "/page": "app/page.js",
   "/contact/page": "app/contact/page.js",
-  "/admin/applications/page": "app/admin/applications/page.js",
-  "/admin/page": "app/admin/page.js",
-  "/admin/gallery/page": "app/admin/gallery/page.js"
+  "/services/page": "app/services/page.js",
+  "/gallery/page": "app/gallery/page.js",
+  "/api/upload/list/route": "app/api/upload/list/route.js",
+  "/api/upload/folders/route": "app/api/upload/folders/route.js",
+  "/admin/vendors/[id]/edit/page": "app/admin/vendors/[id]/edit/page.js",
+  "/admin/vendors/page": "app/admin/vendors/page.js",
+  "/admin/services-page/page": "app/admin/services-page/page.js",
+  "/admin/applications-page/page": "app/admin/applications-page/page.js",
+  "/admin/about/page": "app/admin/about/page.js",
+  "/admin/products-page/page": "app/admin/products-page/page.js",
+  "/admin/contact/page": "app/admin/contact/page.js"
 }
