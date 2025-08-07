@@ -1,16 +1,16 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabase';
-import Image from 'next/image';
-import { ExternalLink } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { supabase } from "../../lib/supabase";
+import Image from "next/image";
+import { ExternalLink } from "lucide-react";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel";
+} from "@/app/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 
 interface Vendor {
@@ -34,19 +34,19 @@ export default function VendorsSlider() {
   const fetchVendors = async () => {
     try {
       const { data, error } = await supabase
-        .from('vendors')
-        .select('*')
-        .eq('is_active', true)
-        .order('display_order', { ascending: true });
+        .from("vendors")
+        .select("*")
+        .eq("is_active", true)
+        .order("display_order", { ascending: true });
 
       if (error) {
-        console.error('Error fetching vendors:', error);
+        console.error("Error fetching vendors:", error);
         return;
       }
 
       setVendors(data || []);
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     } finally {
       setLoading(false);
     }
@@ -62,7 +62,10 @@ export default function VendorsSlider() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
             {[...Array(5)].map((_, index) => (
-              <div key={index} className="bg-white p-6 rounded-lg shadow-sm animate-pulse">
+              <div
+                key={index}
+                className="bg-white p-6 rounded-lg shadow-sm animate-pulse"
+              >
                 <div className="h-16 bg-gray-200 rounded mb-4"></div>
                 <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto"></div>
               </div>
@@ -86,7 +89,8 @@ export default function VendorsSlider() {
             Our Trusted Partners
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            We collaborate with industry-leading companies to deliver exceptional solutions and services to our clients.
+            We collaborate with industry-leading companies to deliver
+            exceptional solutions and services to our clients.
           </p>
         </div>
 
@@ -106,7 +110,10 @@ export default function VendorsSlider() {
           >
             <CarouselContent className="-ml-2 md:-ml-4">
               {vendors.map((vendor) => (
-                <CarouselItem key={vendor.id} className="pl-2 md:pl-4 basis-1/2 md:basis-1/3 lg:basis-1/5">
+                <CarouselItem
+                  key={vendor.id}
+                  className="pl-2 md:pl-4 basis-1/2 md:basis-1/3 lg:basis-1/5"
+                >
                   <div className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-200 group h-full">
                     {/* Vendor Logo */}
                     <div className="relative h-16 mb-4 flex items-center justify-center">
