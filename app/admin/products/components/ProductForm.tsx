@@ -1,18 +1,30 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { supabase } from '../../../lib/supabase';
-import { Plus, X, AlertCircle } from 'lucide-react';
-import Link from 'next/link';
-import FolderExplorer from '../../../components/admin/FolderExplorer';
-import { Button } from '@/app/components/ui/button';
-import { Input } from '@/app/components/ui/input';
-import { Label } from '@/app/components/ui/label';
-import { Textarea } from '@/app/components/ui/textarea';
-import { Switch } from '@/app/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { Alert, AlertDescription } from '@/app/components/ui/alert';
+import { useState, useEffect } from "react";
+import { supabase } from "../../../lib/supabase";
+import { Plus, X, AlertCircle } from "lucide-react";
+import Link from "next/link";
+import FolderExplorer from "../../../components/admin/FolderExplorer";
+import { Button } from "@/app/components/ui/button";
+import { Input } from "@/app/components/ui/input";
+import { Label } from "@/app/components/ui/label";
+import { Textarea } from "@/app/components/ui/textarea";
+import { Switch } from "@/app/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/app/components/ui/select";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/app/components/ui/card";
+import { Alert, AlertDescription } from "@/app/components/ui/alert";
 
 interface Category {
   id: string;
@@ -28,18 +40,22 @@ interface ProductFormProps {
 
 // Fallback categories
 const fallbackCategories: Category[] = [
-  { id: '1', name: 'Diving Equipment', slug: 'diving-equipment' },
-  { id: '2', name: 'Safety Gear', slug: 'safety-gear' },
-  { id: '3', name: 'Underwater Cameras', slug: 'underwater-cameras' },
-  { id: '4', name: 'Accessories', slug: 'accessories' },
-  { id: '5', name: 'Wetsuits & Gear', slug: 'wetsuits-gear' },
-  { id: '6', name: 'Maintenance Tools', slug: 'maintenance-tools' }
+  { id: "1", name: "Diving Equipment", slug: "diving-equipment" },
+  { id: "2", name: "Safety Gear", slug: "safety-gear" },
+  { id: "3", name: "Underwater Cameras", slug: "underwater-cameras" },
+  { id: "4", name: "Accessories", slug: "accessories" },
+  { id: "5", name: "Wetsuits & Gear", slug: "wetsuits-gear" },
+  { id: "6", name: "Maintenance Tools", slug: "maintenance-tools" },
 ];
 
-export default function ProductForm({ initialData, onSubmit, loading }: ProductFormProps) {
+export default function ProductForm({
+  initialData,
+  onSubmit,
+  loading,
+}: ProductFormProps) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [usingFallback, setUsingFallback] = useState(false);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
 
   // Convert between old format (images array) and new format (single image_url + images array)
   const getInitialImages = () => {
@@ -53,13 +69,14 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
   };
 
   const [formData, setFormData] = useState({
-    name: initialData?.name || '',
-    description: initialData?.description || '',
-    short_description: initialData?.short_description || '',
-    category_id: initialData?.category_id || '',
+    name: initialData?.name || "",
+    description: initialData?.description || "",
+    short_description: initialData?.short_description || "",
+    category_id: initialData?.category_id || "",
     images: getInitialImages(),
-    features: initialData?.features || [''],
-    is_active: initialData?.is_active !== undefined ? initialData.is_active : true,
+    features: initialData?.features || [""],
+    is_active:
+      initialData?.is_active !== undefined ? initialData.is_active : true,
     display_order: initialData?.display_order || 1,
   });
 
@@ -70,13 +87,13 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
   const fetchCategories = async () => {
     try {
       const { data, error } = await supabase
-        .from('categories')
-        .select('id, name, slug')
-        .eq('is_active', true)
-        .order('display_order', { ascending: true });
+        .from("product_categories")
+        .select("id, name, slug")
+        .eq("is_active", true)
+        .order("display_order", { ascending: true });
 
       if (error) {
-        console.error('Error fetching categories:', error);
+        console.error("Error fetching categories:", error);
         setError(`Database error: ${error.message}`);
         setCategories(fallbackCategories);
         setUsingFallback(true);
@@ -85,7 +102,7 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
         setUsingFallback(false);
       }
     } catch (error: any) {
-      console.error('Error:', error);
+      console.error("Error:", error);
       setError(`Connection error: ${error.message}`);
       setCategories(fallbackCategories);
       setUsingFallback(true);
@@ -94,14 +111,18 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (usingFallback) {
       return;
     }
-    
-    const cleanedImages = formData.images.filter((img: string) => img.trim() !== '');
-    const cleanedFeatures = formData.features.filter((feature: string) => feature.trim() !== '');
-    
+
+    const cleanedImages = formData.images.filter(
+      (img: string) => img.trim() !== ""
+    );
+    const cleanedFeatures = formData.features.filter(
+      (feature: string) => feature.trim() !== ""
+    );
+
     const cleanedData = {
       name: formData.name,
       description: formData.description,
@@ -120,12 +141,14 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
   const addFeature = () => {
     setFormData({
       ...formData,
-      features: [...formData.features, ''],
+      features: [...formData.features, ""],
     });
   };
 
   const removeFeature = (index: number) => {
-    const newFeatures = formData.features.filter((_: string, i: number) => i !== index);
+    const newFeatures = formData.features.filter(
+      (_: string, i: number) => i !== index
+    );
     setFormData({
       ...formData,
       features: newFeatures,
@@ -175,7 +198,9 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
                 type="text"
                 required
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 placeholder="Enter product name"
               />
             </div>
@@ -187,7 +212,12 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
                 id="short-description"
                 type="text"
                 value={formData.short_description}
-                onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    short_description: e.target.value,
+                  })
+                }
                 placeholder="Brief product description"
               />
             </div>
@@ -197,7 +227,9 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
               <Label htmlFor="category">Category *</Label>
               <Select
                 value={formData.category_id}
-                onValueChange={(value) => setFormData({ ...formData, category_id: value })}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, category_id: value })
+                }
                 required
               >
                 <SelectTrigger>
@@ -226,7 +258,9 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
                 required
                 rows={4}
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
                 placeholder="Detailed product description"
               />
             </div>
@@ -244,19 +278,23 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
                 }}
                 multiple={true}
               />
-
             </div>
 
             {/* Features Section */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <Label>Product Features</Label>
-                <Button type="button" variant="outline" size="sm" onClick={addFeature}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={addFeature}
+                >
                   <Plus className="h-4 w-4 mr-2" />
                   Add Feature
                 </Button>
               </div>
-              
+
               <div className="space-y-2">
                 {formData.features.map((feature: string, index: number) => (
                   <div key={index} className="flex gap-2">
@@ -289,17 +327,24 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
                   type="number"
                   min="1"
                   value={formData.display_order}
-                  onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 1 })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      display_order: parseInt(e.target.value) || 1,
+                    })
+                  }
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label>Status</Label>
                 <div className="flex items-center space-x-2">
                   <Switch
                     id="is_active"
                     checked={formData.is_active}
-                    onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
+                    onCheckedChange={(checked) =>
+                      setFormData({ ...formData, is_active: checked })
+                    }
                   />
                   <Label htmlFor="is_active">Active</Label>
                 </div>
@@ -309,7 +354,11 @@ export default function ProductForm({ initialData, onSubmit, loading }: ProductF
             {/* Submit Button */}
             <div className="flex justify-end space-x-4">
               <Button type="submit" disabled={loading || usingFallback}>
-                {loading ? 'Saving...' : initialData ? 'Update Product' : 'Create Product'}
+                {loading
+                  ? "Saving..."
+                  : initialData
+                  ? "Update Product"
+                  : "Create Product"}
               </Button>
             </div>
           </form>
