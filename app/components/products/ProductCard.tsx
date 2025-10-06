@@ -9,7 +9,7 @@ interface Product {
   name: string;
   description: string;
   short_description: string;
-  category_id: string;
+  subcategory_id: string;
   image_url: string;
   images: string[];
   features: string[];

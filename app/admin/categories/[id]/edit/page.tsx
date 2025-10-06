@@ -1,92 +1,84 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { supabase } from '../../../../lib/supabase';
-import { AlertCircle, ArrowLeft, Settings } from 'lucide-react';
-import Link from 'next/link';
-import toast from 'react-hot-toast';
-import CategoryForm from '../../components/CategoryForm';
-import { Button } from '@/app/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { Alert, AlertDescription, AlertTitle } from '@/app/components/ui/alert';
-import { Skeleton } from '@/app/components/ui/skeleton';
-
-interface Category {
-  id: string;
-  name: string;
-  description: string;
-  slug: string;
-  image_url: string;
-  is_active: boolean;
-  display_order: number;
-}
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "../../../../lib/supabase";
+import { AlertCircle, ArrowLeft, Settings } from "lucide-react";
+import Link from "next/link";
+import toast from "react-hot-toast";
+import CategoryForm from "../../components/CategoryForm";
+import { Button } from "@/app/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/app/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/app/components/ui/alert";
+import { Skeleton } from "@/app/components/ui/skeleton";
+import { ProductCategory } from "../../../../types/database";
 
 // Fallback category data for demo
-const fallbackCategories: { [key: string]: Category } = {
-  '1': {
-    id: '1',
-    name: 'Diving Equipment',
-    description: 'Professional diving gear and equipment for all levels of divers',
-    slug: 'diving-equipment',
-    image_url: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800',
+const fallbackCategories: { [key: string]: ProductCategory } = {
+  "1": {
+    id: "1",
+    name: "L&W Compressors",
+    description: "Professional compressor equipment",
+    slug: "lw-compressors",
+    image_url:
+      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800",
     is_active: true,
-    display_order: 1
+    display_order: 1,
+    parent_id: null,
+    features: ["High performance", "Durable design"],
+    images: [],
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
   },
-  '2': {
-    id: '2',
-    name: 'Safety Gear',
-    description: 'Essential safety equipment for underwater activities and diving',
-    slug: 'safety-gear',
-    image_url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?auto=format&fit=crop&w=800',
+  "1-1": {
+    id: "1-1",
+    name: "Mobile Compressors",
+    description: "Portable compressor solutions",
+    slug: "mobile-compressors",
+    image_url:
+      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?auto=format&fit=crop&w=800",
     is_active: true,
-    display_order: 2
+    display_order: 1,
+    parent_id: "1",
+    features: ["Portable", "Easy to move"],
+    images: [],
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
   },
-  '3': {
-    id: '3',
-    name: 'Underwater Cameras',
-    description: 'Capture your underwater adventures with professional cameras',
-    slug: 'underwater-cameras',
-    image_url: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&w=800',
+  "2": {
+    id: "2",
+    name: "INMATEC",
+    description: "Advanced compressor technology",
+    slug: "inmatec",
+    image_url:
+      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?auto=format&fit=crop&w=800",
     is_active: true,
-    display_order: 3
+    display_order: 2,
+    parent_id: null,
+    features: ["Advanced technology", "Energy efficient"],
+    images: [],
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
   },
-  '4': {
-    id: '4',
-    name: 'Accessories',
-    description: 'Essential accessories for diving and underwater activities',
-    slug: 'accessories',
-    image_url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?auto=format&fit=crop&w=800',
-    is_active: true,
-    display_order: 4
-  },
-  '5': {
-    id: '5',
-    name: 'Wetsuits & Gear',
-    description: 'High-quality wetsuits and thermal protection gear',
-    slug: 'wetsuits-gear',
-    image_url: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?auto=format&fit=crop&w=800',
-    is_active: true,
-    display_order: 5
-  },
-  '6': {
-    id: '6',
-    name: 'Maintenance Tools',
-    description: 'Tools and equipment for maintaining your diving gear',
-    slug: 'maintenance-tools',
-    image_url: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=800',
-    is_active: true,
-    display_order: 6
-  }
 };
 
-export default function EditCategoryPage({ params }: { params: { id: string } }) {
+export default function EditCategoryPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [initialData, setInitialData] = useState<Category | null>(null);
+  const [initialData, setInitialData] = useState<ProductCategory | null>(null);
   const [fetchLoading, setFetchLoading] = useState(true);
   const [usingFallback, setUsingFallback] = useState(false);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     fetchCategory();
@@ -96,13 +88,13 @@ export default function EditCategoryPage({ params }: { params: { id: string } })
     try {
       // Check if Supabase is configured
       const { data, error } = await supabase
-        .from('product_categories')
-        .select('*')
-        .eq('id', params.id)
+        .from("product_categories")
+        .select("*")
+        .eq("id", params.id)
         .single();
 
       if (error) {
-        console.error('Error fetching category:', error);
+        console.error("Error fetching category:", error);
         setError(`Database error: ${error.message}`);
         const fallbackCategory = fallbackCategories[params.id];
         if (fallbackCategory) {
@@ -114,7 +106,7 @@ export default function EditCategoryPage({ params }: { params: { id: string } })
         setUsingFallback(false);
       }
     } catch (error: any) {
-      console.error('Error:', error);
+      console.error("Error:", error);
       setError(`Connection error: ${error.message}`);
       const fallbackCategory = fallbackCategories[params.id];
       if (fallbackCategory) {
@@ -134,20 +126,20 @@ export default function EditCategoryPage({ params }: { params: { id: string } })
     setLoading(true);
     try {
       const { error } = await supabase
-        .from('product_categories')
+        .from("product_categories")
         .update(categoryData)
-        .eq('id', params.id);
+        .eq("id", params.id);
 
       if (error) {
-        console.error('Error updating category:', error);
+        console.error("Error updating category:", error);
         toast.error(`Error updating category: ${error.message}`);
         return;
       }
 
-      toast.success('Category updated successfully!');
-      router.push('/admin/categories');
+      toast.success("Category updated successfully!");
+      router.push("/admin/categories");
     } catch (error: any) {
-      console.error('Error updating category:', error);
+      console.error("Error updating category:", error);
       toast.error(`Error updating category: ${error.message}`);
     } finally {
       setLoading(false);
@@ -199,7 +191,7 @@ export default function EditCategoryPage({ params }: { params: { id: string } })
             <AlertCircle className="h-5 w-5 text-yellow-400 mr-3" />
             <div className="flex-1">
               <h3 className="text-sm font-medium text-yellow-800">
-                {error ? 'Database Connection Issue' : 'Demo Mode Active'}
+                {error ? "Database Connection Issue" : "Demo Mode Active"}
               </h3>
               <p className="text-sm text-yellow-700 mt-1">
                 {error ? (
@@ -207,7 +199,10 @@ export default function EditCategoryPage({ params }: { params: { id: string } })
                 ) : (
                   <>Editing sample category. Database not configured.</>
                 )}
-                <Link href="/check-products-database" className="underline ml-2">
+                <Link
+                  href="/check-products-database"
+                  className="underline ml-2"
+                >
                   Set up database →
                 </Link>
               </p>
@@ -228,7 +223,9 @@ export default function EditCategoryPage({ params }: { params: { id: string } })
         </div>
         <h1 className="text-3xl font-bold text-gray-900">Edit Category</h1>
         <p className="mt-2 text-gray-600">
-          {usingFallback ? 'Editing sample category (Demo Mode)' : 'Edit category data'}
+          {usingFallback
+            ? "Editing sample category (Demo Mode)"
+            : "Edit category data"}
         </p>
         {initialData && (
           <div className="mt-2 text-sm text-gray-500">
@@ -237,10 +234,10 @@ export default function EditCategoryPage({ params }: { params: { id: string } })
         )}
       </div>
 
-      <CategoryForm 
-        initialData={initialData} 
-        onSubmit={handleSubmit} 
-        loading={loading} 
+      <CategoryForm
+        initialData={initialData}
+        onSubmit={handleSubmit}
+        loading={loading}
       />
     </div>
   );

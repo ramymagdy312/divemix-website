@@ -26,7 +26,7 @@ import {
 } from "@/app/components/ui/card";
 import { Alert, AlertDescription } from "@/app/components/ui/alert";
 
-interface Category {
+interface Subcategory {
   id: string;
   name: string;
   slug: string;
@@ -38,14 +38,30 @@ interface ProductFormProps {
   loading: boolean;
 }
 
-// Fallback categories
-const fallbackCategories: Category[] = [
-  { id: "1", name: "Diving Equipment", slug: "diving-equipment" },
-  { id: "2", name: "Safety Gear", slug: "safety-gear" },
-  { id: "3", name: "Underwater Cameras", slug: "underwater-cameras" },
-  { id: "4", name: "Accessories", slug: "accessories" },
-  { id: "5", name: "Wetsuits & Gear", slug: "wetsuits-gear" },
-  { id: "6", name: "Maintenance Tools", slug: "maintenance-tools" },
+// Fallback subcategories
+const fallbackSubcategories: Subcategory[] = [
+  {
+    id: "1",
+    name: "Diving Equipment - Products",
+    slug: "diving-equipment-products",
+  },
+  { id: "2", name: "Safety Gear - Products", slug: "safety-gear-products" },
+  {
+    id: "3",
+    name: "Underwater Cameras - Products",
+    slug: "underwater-cameras-products",
+  },
+  { id: "4", name: "Accessories - Products", slug: "accessories-products" },
+  {
+    id: "5",
+    name: "Wetsuits & Gear - Products",
+    slug: "wetsuits-gear-products",
+  },
+  {
+    id: "6",
+    name: "Maintenance Tools - Products",
+    slug: "maintenance-tools-products",
+  },
 ];
 
 export default function ProductForm({
@@ -53,7 +69,7 @@ export default function ProductForm({
   onSubmit,
   loading,
 }: ProductFormProps) {
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
   const [usingFallback, setUsingFallback] = useState(false);
   const [error, setError] = useState<string>("");
 
@@ -72,7 +88,7 @@ export default function ProductForm({
     name: initialData?.name || "",
     description: initialData?.description || "",
     short_description: initialData?.short_description || "",
-    category_id: initialData?.category_id || "",
+    subcategory_id: initialData?.subcategory_id || "",
     images: getInitialImages(),
     features: initialData?.features || [""],
     is_active:
@@ -81,30 +97,31 @@ export default function ProductForm({
   });
 
   useEffect(() => {
-    fetchCategories();
+    fetchSubcategories();
   }, []);
 
-  const fetchCategories = async () => {
+  const fetchSubcategories = async () => {
     try {
       const { data, error } = await supabase
         .from("product_categories")
         .select("id, name, slug")
+        .not("parent_id", "is", null)
         .eq("is_active", true)
         .order("display_order", { ascending: true });
 
       if (error) {
-        console.error("Error fetching categories:", error);
+        console.error("Error fetching subcategories:", error);
         setError(`Database error: ${error.message}`);
-        setCategories(fallbackCategories);
+        setSubcategories(fallbackSubcategories);
         setUsingFallback(true);
       } else {
-        setCategories(data || []);
+        setSubcategories(data || []);
         setUsingFallback(false);
       }
     } catch (error: any) {
       console.error("Error:", error);
       setError(`Connection error: ${error.message}`);
-      setCategories(fallbackCategories);
+      setSubcategories(fallbackSubcategories);
       setUsingFallback(true);
     }
   };
@@ -127,7 +144,7 @@ export default function ProductForm({
       name: formData.name,
       description: formData.description,
       short_description: formData.short_description,
-      category_id: formData.category_id,
+      subcategory_id: formData.subcategory_id,
       image_url: cleanedImages[0] || null, // Primary image
       images: cleanedImages, // All images array
       features: cleanedFeatures,
@@ -222,30 +239,31 @@ export default function ProductForm({
               />
             </div>
 
-            {/* Category */}
+            {/* Subcategory */}
             <div className="space-y-2">
-              <Label htmlFor="category">Category *</Label>
+              <Label htmlFor="subcategory">Subcategory *</Label>
               <Select
-                value={formData.category_id}
+                value={formData.subcategory_id}
                 onValueChange={(value) =>
-                  setFormData({ ...formData, category_id: value })
+                  setFormData({ ...formData, subcategory_id: value })
                 }
                 required
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select Category" />
+                  <SelectValue placeholder="Select Subcategory" />
                 </SelectTrigger>
                 <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem key={category.id} value={category.id}>
-                      {category.name}
+                  {subcategories.map((subcategory) => (
+                    <SelectItem key={subcategory.id} value={subcategory.id}>
+                      {subcategory.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
               {usingFallback && (
                 <p className="text-sm text-muted-foreground">
-                  Using sample categories. Set up database for real categories.
+                  Using sample subcategories. Set up database for real
+                  subcategories.
                 </p>
               )}
             </div>

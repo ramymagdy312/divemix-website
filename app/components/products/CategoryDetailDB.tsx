@@ -7,6 +7,7 @@ import { supabase } from "../../lib/supabase";
 import CategoryDetailFallback from "./CategoryDetailFallback";
 import ProductHero from "./ProductHero";
 import ProductListDB from "./ProductListDB";
+import CategoryCard from "./CategoryCard";
 
 interface Category {
   id: string;
@@ -14,6 +15,9 @@ interface Category {
   description: string;
   slug: string;
   image_url: string;
+  images?: string[];
+  features?: string[];
+  parent_id?: string;
   is_active: boolean;
   display_order: number;
 }
@@ -25,6 +29,7 @@ interface CategoryDetailDBProps {
 const CategoryDetailDB: React.FC<CategoryDetailDBProps> = ({ categoryId }) => {
   const router = useRouter();
   const [category, setCategory] = useState<Category | null>(null);
+  const [subcategories, setSubcategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -45,10 +50,26 @@ const CategoryDetailDB: React.FC<CategoryDetailDBProps> = ({ categoryId }) => {
       if (error) throw error;
       setCategory(data);
       console.log("Category set successfully:", data);
+
+      // Fetch subcategories
+      const { data: subData, error: subError } = await supabase
+        .from("product_categories")
+        .select("*")
+        .eq("parent_id", data.id)
+        .eq("is_active", true)
+        .order("display_order", { ascending: true });
+
+      if (subError) {
+        console.error("Error fetching subcategories:", subError);
+        setSubcategories([]);
+      } else {
+        setSubcategories(subData || []);
+      }
     } catch (error: any) {
       console.error("Error fetching category:", error);
       setError(error.message);
       setCategory(null);
+      setSubcategories([]);
     } finally {
       setLoading(false);
     }
@@ -90,7 +111,30 @@ const CategoryDetailDB: React.FC<CategoryDetailDBProps> = ({ categoryId }) => {
           <span className="text-gray-600">Back to categories</span>
         </div>
 
-        <ProductListDB categoryId={categoryId} />
+        {subcategories.length > 0 ? (
+          <div className="space-y-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                Subcategories
+              </h2>
+              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+                Explore the different types of {category.name} products
+                available.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 grid-stagger items-stretch">
+              {subcategories.map((subcategory, index) => (
+                <CategoryCard
+                  key={subcategory.id}
+                  category={subcategory}
+                  index={index}
+                />
+              ))}
+            </div>
+          </div>
+        ) : category.parent_id ? (
+          <ProductListDB subcategory_id={categoryId} />
+        ) : null}
       </div>
     </div>
   );

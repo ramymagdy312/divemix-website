@@ -6,6 +6,9 @@ export interface ProductCategory {
   description: string;
   slug: string;
   image_url: string;
+  images?: string[];
+  features?: string[];
+  parent_id?: string;
   is_active: boolean;
   display_order: number;
   created_at: string;

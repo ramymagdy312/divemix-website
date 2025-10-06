@@ -28,7 +28,7 @@ interface Product {
   short_description?: string;
   image_url?: string;
   images?: string[];
-  category_id?: string;
+  subcategory_id?: string;
   category?: string;
   features?: string[];
   is_active: boolean;
@@ -36,10 +36,10 @@ interface Product {
 }
 
 interface ProductListDBProps {
-  categoryId: string;
+  subcategory_id: string;
 }
 
-const ProductListDB: React.FC<ProductListDBProps> = ({ categoryId }) => {
+const ProductListDB: React.FC<ProductListDBProps> = ({ subcategory_id }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -69,7 +69,7 @@ const ProductListDB: React.FC<ProductListDBProps> = ({ categoryId }) => {
       const { data: categoryData, error: categoryError } = await supabase
         .from("product_categories")
         .select("id, slug, name, description")
-        .eq("slug", categoryId)
+        .eq("slug", subcategory_id)
         .single();
 
       if (categoryError || !categoryData) {
@@ -89,16 +89,20 @@ const ProductListDB: React.FC<ProductListDBProps> = ({ categoryId }) => {
       const { data, error } = await supabase
         .from("products")
         .select("*")
-        .eq("category_id", categoryData.id)
+        .eq("subcategory_id", "05bed832-532f-4191-92b9-bc735b49dad7")
         .eq("is_active", true)
         .order("display_order", { ascending: true });
+
+      console.log("Fetched products:", data);
 
       if (error) throw error;
       setProducts(data || []);
 
       // If no products found, this is not an error, just empty results
+
+      console.log("Fetched products:", data);
       if (!data || data.length === 0) {
-        console.log("No products found for category:", categoryId);
+        console.log("No products found for category:", subcategory_id);
       }
     } catch (error: any) {
       console.error("Error fetching products:", error);
@@ -107,7 +111,7 @@ const ProductListDB: React.FC<ProductListDBProps> = ({ categoryId }) => {
     } finally {
       setLoading(false);
     }
-  }, [categoryId]);
+  }, [subcategory_id]);
 
   useEffect(() => {
     fetchProducts();
@@ -293,7 +297,7 @@ const ProductListDB: React.FC<ProductListDBProps> = ({ categoryId }) => {
                     description: product.description,
                     short_description:
                       product.short_description || product.description,
-                    category_id: product.category_id || "",
+                    subcategory_id: product.subcategory_id || "",
                     image_url: product.image_url || "",
                     features: product.features || [],
                     images: productImages,
