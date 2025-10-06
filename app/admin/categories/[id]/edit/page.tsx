@@ -8,13 +8,7 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 import CategoryForm from "../../components/CategoryForm";
 import { Button } from "@/app/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/app/components/ui/card";
+
 import { Alert, AlertDescription, AlertTitle } from "@/app/components/ui/alert";
 import { Skeleton } from "@/app/components/ui/skeleton";
 import { ProductCategory } from "../../../../types/database";
@@ -30,7 +24,7 @@ const fallbackCategories: { [key: string]: ProductCategory } = {
       "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800",
     is_active: true,
     display_order: 1,
-    parent_id: null,
+    parent_id: "",
     features: ["High performance", "Durable design"],
     images: [],
     created_at: new Date().toISOString(),
@@ -60,7 +54,7 @@ const fallbackCategories: { [key: string]: ProductCategory } = {
       "https://images.unsplash.com/photo-1578662996442-48f60103fc96?auto=format&fit=crop&w=800",
     is_active: true,
     display_order: 2,
-    parent_id: null,
+    parent_id: "",
     features: ["Advanced technology", "Energy efficient"],
     images: [],
     created_at: new Date().toISOString(),

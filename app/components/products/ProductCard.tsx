@@ -30,7 +30,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
   index = 0,
   onViewDetails,
 }) => {
-  const [isFavorite, setIsFavorite] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
 
   if (viewMode === "grid") {
