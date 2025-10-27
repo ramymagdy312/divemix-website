@@ -45,10 +45,6 @@ const ProductListDB: React.FC<ProductListDBProps> = ({ subcategory_id }) => {
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   const [sortBy, setSortBy] = useState<"name" | "order">("order");
-  const [categoryInfo, setCategoryInfo] = useState<{
-    name: string;
-    description?: string;
-  } | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedFeatureFilters, setSelectedFeatureFilters] = useState<
@@ -80,16 +76,11 @@ const ProductListDB: React.FC<ProductListDBProps> = ({ subcategory_id }) => {
         return;
       }
 
-      setCategoryInfo({
-        name: categoryData.name,
-        description: categoryData.description,
-      });
-
       // Then get products by category_id
       const { data, error } = await supabase
         .from("products")
         .select("*")
-        .eq("subcategory_id", "05bed832-532f-4191-92b9-bc735b49dad7")
+        .eq("subcategory_id", categoryData.id)
         .eq("is_active", true)
         .order("display_order", { ascending: true });
 
@@ -171,39 +162,6 @@ const ProductListDB: React.FC<ProductListDBProps> = ({ subcategory_id }) => {
   }
   return (
     <div className="space-y-8">
-      {/* Stats Section */}
-      {products.length > 0 && (
-        <AnimatedElement animation="slideUp" delay={0.1}>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
-            <StatsCounter
-              count={products.length}
-              label="Total Products"
-              icon={<Package className="w-full h-full" />}
-            />
-            <StatsCounter
-              count={sortedProducts.length}
-              label="Showing"
-              icon={<SearchIcon className="w-full h-full" />}
-            />
-            <StatsCounter
-              count={products.reduce(
-                (acc, product) => acc + (product.features?.length || 0),
-                0
-              )}
-              label="Features"
-              icon={<Filter className="w-full h-full" />}
-            />
-          </div>
-        </AnimatedElement>
-      )}
-
-      {/* Product Insights */}
-      {products.length > 0 && (
-        <AnimatedElement animation="slideUp" delay={0.2}>
-          <ProductInsights products={products} />
-        </AnimatedElement>
-      )}
-
       {/* Search and Controls */}
       <AnimatedElement animation="slideUp" delay={0.15}>
         <div className="space-y-6">

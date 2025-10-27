@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import ProductImageGallery from "./ProductImageGallery";
 import AnimatedElement from "../common/AnimatedElement";
-import { Button } from "@/app/components/ui/button";
 import { Star, Eye, ChevronDown, ChevronUp } from "lucide-react";
 
 interface Product {
