@@ -9,6 +9,7 @@ import toast from 'react-hot-toast';
 import { Button } from '@/app/components/ui/button';
 import { Badge } from '@/app/components/ui/badge';
 import ServiceForm from '../components/ServiceForm';
+import { triggerRevalidate } from '@/app/lib/revalidate-client';
 
 export default function NewServicePage() {
   const router = useRouter();
@@ -24,6 +25,7 @@ export default function NewServicePage() {
 
       if (error) throw error;
 
+      await triggerRevalidate(['services']);
       toast.success('Service created successfully!');
       router.push('/admin/services');
     } catch (error) {

@@ -1,14 +1,15 @@
 "use client";
 
 import { useState } from 'react';
+import * as LucideIcons from "lucide-react";
 import { Plus, X } from 'lucide-react';
 import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';
 import { Textarea } from '@/app/components/ui/textarea';
 import { Switch } from '@/app/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import IconPickerModal from '@/app/components/admin/IconPickerModal';
 
 interface ServiceFormProps {
   initialData?: any;
@@ -17,6 +18,7 @@ interface ServiceFormProps {
 }
 
 export default function ServiceForm({ initialData, onSubmit, loading }: ServiceFormProps) {
+  const [iconPickerOpen, setIconPickerOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
     description: initialData?.description || '',
@@ -85,24 +87,22 @@ export default function ServiceForm({ initialData, onSubmit, loading }: ServiceF
           {/* Icon */}
           <div className="space-y-2">
             <Label htmlFor="icon">Icon</Label>
-            <Select
-              value={formData.icon}
-              onValueChange={(value) => setFormData({ ...formData, icon: value })}
+            <button
+              type="button"
+              onClick={() => setIconPickerOpen(true)}
+              className="w-full border rounded-md px-3 py-2 text-sm hover:bg-muted flex items-center justify-between"
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Select an icon" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="🔧">🔧 Installation</SelectItem>
-                <SelectItem value="⚙️">⚙️ Maintenance</SelectItem>
-                <SelectItem value="🔍">🔍 Testing</SelectItem>
-                <SelectItem value="🛢️">🛢️ Cylinder Services</SelectItem>
-                <SelectItem value="Settings">Settings</SelectItem>
-                <SelectItem value="Wrench">Wrench</SelectItem>
-                <SelectItem value="Droplets">Droplets</SelectItem>
-                <SelectItem value="FireExtinguisher">FireExtinguisher</SelectItem>
-              </SelectContent>
-            </Select>
+              <span className="inline-flex items-center gap-2">
+                {(() => {
+                  const IconComp =
+                    (LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[formData.icon] ||
+                    LucideIcons.Settings;
+                  return <IconComp className="h-4 w-4" />;
+                })()}
+                <span>{formData.icon}</span>
+              </span>
+              <span className="text-xs text-muted-foreground">Change</span>
+            </button>
           </div>
 
           {/* Description */}
@@ -185,6 +185,15 @@ export default function ServiceForm({ initialData, onSubmit, loading }: ServiceF
           </div>
         </form>
       </CardContent>
+      <IconPickerModal
+        open={iconPickerOpen}
+        selectedIcon={formData.icon}
+        onClose={() => setIconPickerOpen(false)}
+        onSelect={(iconName) => {
+          setFormData({ ...formData, icon: iconName });
+          setIconPickerOpen(false);
+        }}
+      />
     </Card>
   );
 }

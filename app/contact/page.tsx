@@ -1,17 +1,22 @@
+import type { Metadata } from "next";
 import ContactPageDB from "../components/contact/ContactPageDB";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import FloatingWhatsApp from "../components/FloatingWhatsApp";
+import MainLayout from "../components/layout/MainLayout";
+import { buildRouteMetadata } from "../lib/metadata";
+import { getContactPageData } from "../lib/content";
 
-export default function Contact() {
+export async function generateMetadata(): Promise<Metadata> {
+  return buildRouteMetadata("/contact", {
+    title: "Contact DiveMix",
+    description: "Get in touch with DiveMix experts for products and services.",
+  });
+}
+
+export default async function Contact() {
+  const contactData = await getContactPageData();
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <main className="flex-grow page-content">
-        <ContactPageDB />
-      </main>
-      <Footer />
-      <FloatingWhatsApp />
-    </div>
+    <MainLayout>
+      <ContactPageDB initialData={contactData as any} />
+    </MainLayout>
   );
 }

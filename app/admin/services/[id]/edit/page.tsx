@@ -11,6 +11,7 @@ import { Badge } from '@/app/components/ui/badge';
 import { Skeleton } from '@/app/components/ui/skeleton';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import ServiceForm from '../../components/ServiceForm';
+import { triggerRevalidate } from '@/app/lib/revalidate-client';
 
 interface Service {
   id: string;
@@ -71,6 +72,7 @@ export default function EditServicePage({ params }: { params: { id: string } }) 
         return;
       }
 
+      await triggerRevalidate(['services']);
       toast.success('Service updated successfully!');
       router.push('/admin/services');
     } catch (error) {

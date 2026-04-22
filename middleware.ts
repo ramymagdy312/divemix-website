@@ -2,7 +2,20 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export async function middleware(req: NextRequest) {
-  // Just pass through for now - authentication is handled in the admin layout
+  const { pathname } = req.nextUrl;
+  const hasSupabaseSessionCookie = req.cookies
+    .getAll()
+    .some((cookie) => cookie.name.includes('auth-token') || cookie.name.startsWith('sb-'));
+
+  const isRevalidateApi = pathname.startsWith('/api/revalidate');
+  const isProtectedApi = isRevalidateApi;
+
+  if (isProtectedApi) {
+    if (!hasSupabaseSessionCookie) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+  }
+
   return NextResponse.next();
 }
 

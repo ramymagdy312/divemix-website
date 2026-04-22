@@ -1,20 +1,28 @@
+import type { Metadata } from "next";
 import ApplicationGridDB from "../components/applications/ApplicationGridDB";
 import ApplicationsPageDB from "../components/applications/ApplicationsPageDB";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import FloatingWhatsApp from "../components/FloatingWhatsApp";
+import MainLayout from "../components/layout/MainLayout";
+import { buildRouteMetadata } from "../lib/metadata";
+import { getApplications, getPageContent } from "../lib/content";
 
-export default function Applications() {
+export async function generateMetadata(): Promise<Metadata> {
+  return buildRouteMetadata("/applications", {
+    title: "DiveMix Applications",
+    description: "See how DiveMix solutions serve multiple industrial applications.",
+  });
+}
+
+export default async function Applications() {
+  const [pageData, applications] = await Promise.all([
+    getPageContent("applications"),
+    getApplications(),
+  ]);
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <main className="flex-grow page-content">
-        <ApplicationsPageDB>
-          <ApplicationGridDB />
-        </ApplicationsPageDB>
-      </main>
-      <Footer />
-      <FloatingWhatsApp />
-    </div>
+    <MainLayout>
+      <ApplicationsPageDB data={pageData}>
+        <ApplicationGridDB initialApplications={applications as any} />
+      </ApplicationsPageDB>
+    </MainLayout>
   );
 }

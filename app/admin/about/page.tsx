@@ -6,22 +6,18 @@ import { Button } from "@/app/components/ui/button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/app/components/ui/card";
 import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/app/components/ui/select";
 import { Textarea } from "@/app/components/ui/textarea";
 import { Plus, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 import Breadcrumb from "../../components/admin/Breadcrumb";
+import * as LucideIcons from "lucide-react";
+import IconPickerModal from "../../components/admin/IconPickerModal";
 
 import BasicInfoCard from "../../components/admin/BasicInfoCard";
 import PageEditorHeader from "../../components/admin/PageEditorHeader";
@@ -51,6 +47,9 @@ export default function AboutAdmin() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [iconPickerIndex, setIconPickerIndex] = useState<number | null>(null);
+  const valuesCount = data?.values?.length || 0;
+  const timelineCount = data?.timeline?.length || 0;
 
   useEffect(() => {
     fetchAboutData();
@@ -172,7 +171,28 @@ export default function AboutAdmin() {
         handleSave={handleSave}
       />
 
-      <div className="space-y-8">
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card>
+            <CardContent className="pt-6">
+              <p className="text-sm text-muted-foreground">Core Values</p>
+              <p className="text-2xl font-bold">{valuesCount}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6">
+              <p className="text-sm text-muted-foreground">Timeline Items</p>
+              <p className="text-2xl font-bold">{timelineCount}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6">
+              <p className="text-sm text-muted-foreground">Current Mode</p>
+              <p className="text-2xl font-bold">{editing ? "Editing" : "Preview"}</p>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Basic Info */}
         {data && (
           <BasicInfoCard data={data} editing={editing} setData={setData} />
@@ -180,8 +200,13 @@ export default function AboutAdmin() {
 
         {/* Vision & Mission */}
         <Card>
+          <CardHeader>
+            <CardTitle>Vision & Mission</CardTitle>
+            <CardDescription>
+              Define what the company aims to achieve and how it delivers value.
+            </CardDescription>
+          </CardHeader>
           <CardContent>
-            <h2 className="text-xl font-semibold mb-4">Vision & Mission</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <Label htmlFor="vision">Vision</Label>
@@ -195,7 +220,9 @@ export default function AboutAdmin() {
                     rows={4}
                   />
                 ) : (
-                  <p>{data?.vision}</p>
+                  <p className="text-sm text-muted-foreground leading-6">
+                    {data?.vision || "No vision text added yet."}
+                  </p>
                 )}
               </div>
               <div>
@@ -210,7 +237,9 @@ export default function AboutAdmin() {
                     rows={4}
                   />
                 ) : (
-                  <p>{data?.mission}</p>
+                  <p className="text-sm text-muted-foreground leading-6">
+                    {data?.mission || "No mission text added yet."}
+                  </p>
                 )}
               </div>
             </div>
@@ -221,6 +250,9 @@ export default function AboutAdmin() {
         <Card>
           <CardHeader>
             <CardTitle>Company Overview</CardTitle>
+            <CardDescription>
+              Main narrative shown on the About page.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             {editing ? (
@@ -232,16 +264,23 @@ export default function AboutAdmin() {
                 rows={6}
               />
             ) : (
-              <p>{data?.company_overview}</p>
+              <p className="text-sm text-muted-foreground leading-6 whitespace-pre-line">
+                {data?.company_overview || "No company overview added yet."}
+              </p>
             )}
           </CardContent>
         </Card>
 
         {/* Core Values Section */}
-        <Card className="mb-6">
-          <CardContent className="p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">Core Values</h2>
+        <Card>
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <div>
+                <CardTitle>Core Values</CardTitle>
+                <CardDescription>
+                  Highlight the principles that represent the company culture.
+                </CardDescription>
+              </div>
               {editing && (
                 <Button size="sm" onClick={addValue}>
                   <Plus className="h-4 w-4 mr-1" />
@@ -249,108 +288,103 @@ export default function AboutAdmin() {
                 </Button>
               )}
             </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {valuesCount === 0 && (
+              <div className="rounded-lg border border-dashed p-6 text-sm text-muted-foreground text-center">
+                No core values yet. Add the first one to get started.
+              </div>
+            )}
 
-            <div className="space-y-4">
-              {data?.values.map((value, index) => (
-                <div
-                  key={index}
-                  className="border border-border rounded-lg p-4"
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <Label htmlFor={`title-${index}`}>Title</Label>
-                        {editing ? (
-                          <Input
-                            id={`title-${index}`}
-                            value={value.title}
-                            onChange={(e) =>
-                              updateValue(index, "title", e.target.value)
-                            }
-                          />
-                        ) : (
-                          <p className="text-sm text-muted-foreground mt-1">
-                            {value.title}
-                          </p>
-                        )}
-                      </div>
+            {data?.values.map((value, index) => (
+              <div key={index} className="border border-border rounded-lg p-4 bg-card">
+                <div className="flex justify-between items-start mb-4">
+                  <p className="text-xs font-medium text-muted-foreground">
+                    Value #{index + 1}
+                  </p>
+                  {editing && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-red-600 hover:text-red-800"
+                      onClick={() => removeValue(index)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
 
-                      <div>
-                        <Label htmlFor={`icon-${index}`}>Icon</Label>
-                        {editing ? (
-                          <Select
-                            value={value.icon}
-                            onValueChange={(val) =>
-                              updateValue(index, "icon", val)
-                            }
-                          >
-                            <SelectTrigger
-                              id={`icon-${index}`}
-                              className="w-full"
-                            >
-                              <SelectValue placeholder="Select an icon" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="Award">Award</SelectItem>
-                              <SelectItem value="Focus">Focus</SelectItem>
-                              <SelectItem value="Users">Users</SelectItem>
-                              <SelectItem value="Shield">Shield</SelectItem>
-                              <SelectItem value="Star">Star</SelectItem>
-                              <SelectItem value="Heart">Heart</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        ) : (
-                          <p className="text-sm text-muted-foreground mt-1">
-                            {value.icon}
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="md:col-span-1">
-                        {editing && (
-                          <div className="flex justify-end">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="text-red-600 hover:text-red-800 mt-6"
-                              onClick={() => removeValue(index)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor={`desc-${index}`}>Description</Label>
+                    <Label htmlFor={`title-${index}`}>Title</Label>
                     {editing ? (
-                      <Textarea
-                        id={`desc-${index}`}
-                        value={value.description}
-                        onChange={(e) =>
-                          updateValue(index, "description", e.target.value)
-                        }
-                        rows={2}
+                      <Input
+                        id={`title-${index}`}
+                        value={value.title}
+                        onChange={(e) => updateValue(index, "title", e.target.value)}
                       />
                     ) : (
                       <p className="text-sm text-muted-foreground mt-1">
-                        {value.description}
+                        {value.title || "No title"}
                       </p>
                     )}
                   </div>
+
+                  <div>
+                    <Label htmlFor={`icon-${index}`}>Icon</Label>
+                    {editing ? (
+                      <button
+                        type="button"
+                        onClick={() => setIconPickerIndex(index)}
+                        className="w-full border rounded-md px-3 py-2 text-sm hover:bg-muted flex items-center justify-between"
+                      >
+                        <span className="inline-flex items-center gap-2">
+                          {(() => {
+                            const IconComp =
+                              (LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[value.icon] ||
+                              LucideIcons.Star;
+                            return <IconComp className="h-4 w-4" />;
+                          })()}
+                          <span>{value.icon}</span>
+                        </span>
+                        <span className="text-xs text-muted-foreground">Change</span>
+                      </button>
+                    ) : (
+                      <p className="text-sm text-muted-foreground mt-1">{value.icon}</p>
+                    )}
+                  </div>
                 </div>
-              ))}
-            </div>
+
+                <div className="mt-4">
+                  <Label htmlFor={`desc-${index}`}>Description</Label>
+                  {editing ? (
+                    <Textarea
+                      id={`desc-${index}`}
+                      value={value.description}
+                      onChange={(e) => updateValue(index, "description", e.target.value)}
+                      rows={2}
+                    />
+                  ) : (
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {value.description || "No description"}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ))}
           </CardContent>
         </Card>
 
         {/* Company Timeline Section */}
         <Card>
-          <CardContent className="p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">Company Timeline</h2>
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <div>
+                <CardTitle>Company Timeline</CardTitle>
+                <CardDescription>
+                  Present milestones in chronological order.
+                </CardDescription>
+              </div>
               {editing && (
                 <Button size="sm" onClick={addTimelineItem}>
                   <Plus className="h-4 w-4 mr-1" />
@@ -358,93 +392,96 @@ export default function AboutAdmin() {
                 </Button>
               )}
             </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {timelineCount === 0 && (
+              <div className="rounded-lg border border-dashed p-6 text-sm text-muted-foreground text-center">
+                No timeline entries yet. Add your first milestone.
+              </div>
+            )}
+            {data?.timeline.map((item, index) => (
+              <div key={index} className="border border-border rounded-lg p-4 bg-card">
+                <div className="flex justify-between items-start mb-4">
+                  <p className="text-xs font-medium text-muted-foreground">
+                    Milestone #{index + 1}
+                  </p>
+                  {editing && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeTimelineItem(index)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
 
-            <div className="space-y-4">
-              {data?.timeline.map((item, index) => (
-                <div
-                  key={index}
-                  className="border border-border rounded-lg p-4"
-                >
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div>
-                      <Label htmlFor={`year-${index}`}>Year</Label>
-                      {editing ? (
-                        <Input
-                          id={`year-${index}`}
-                          value={item.year}
-                          onChange={(e) =>
-                            updateTimelineItem(index, "year", e.target.value)
-                          }
-                        />
-                      ) : (
-                        <p className="text-sm text-muted-foreground mt-1 font-semibold">
-                          {item.year}
-                        </p>
-                      )}
-                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <Label htmlFor={`year-${index}`}>Year</Label>
+                    {editing ? (
+                      <Input
+                        id={`year-${index}`}
+                        value={item.year}
+                        onChange={(e) => updateTimelineItem(index, "year", e.target.value)}
+                      />
+                    ) : (
+                      <p className="text-sm text-muted-foreground mt-1 font-semibold">
+                        {item.year || "No year"}
+                      </p>
+                    )}
+                  </div>
 
-                    <div>
-                      <Label htmlFor={`timeline-title-${index}`}>Title</Label>
-                      {editing ? (
-                        <Input
-                          id={`timeline-title-${index}`}
-                          value={item.title}
-                          onChange={(e) =>
-                            updateTimelineItem(index, "title", e.target.value)
-                          }
-                        />
-                      ) : (
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {item.title}
-                        </p>
-                      )}
-                    </div>
+                  <div>
+                    <Label htmlFor={`timeline-title-${index}`}>Title</Label>
+                    {editing ? (
+                      <Input
+                        id={`timeline-title-${index}`}
+                        value={item.title}
+                        onChange={(e) => updateTimelineItem(index, "title", e.target.value)}
+                      />
+                    ) : (
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {item.title || "No title"}
+                      </p>
+                    )}
+                  </div>
 
-                    <div>
-                      <Label htmlFor={`timeline-desc-${index}`}>
-                        Description
-                      </Label>
-                      {editing ? (
-                        <Textarea
-                          id={`timeline-desc-${index}`}
-                          value={item.description}
-                          onChange={(e) =>
-                            updateTimelineItem(
-                              index,
-                              "description",
-                              e.target.value
-                            )
-                          }
-                          rows={2}
-                        />
-                      ) : (
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {item.description}
-                        </p>
-                      )}
-                    </div>
-
-                    <div>
-                      {editing && (
-                        <div className="flex justify-end">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="mt-6"
-                            onClick={() => removeTimelineItem(index)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      )}
-                    </div>
+                  <div>
+                    <Label htmlFor={`timeline-desc-${index}`}>Description</Label>
+                    {editing ? (
+                      <Textarea
+                        id={`timeline-desc-${index}`}
+                        value={item.description}
+                        onChange={(e) =>
+                          updateTimelineItem(index, "description", e.target.value)
+                        }
+                        rows={2}
+                      />
+                    ) : (
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {item.description || "No description"}
+                      </p>
+                    )}
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </CardContent>
         </Card>
       </div>
+
+      <IconPickerModal
+        open={iconPickerIndex !== null}
+        selectedIcon={iconPickerIndex !== null ? data?.values?.[iconPickerIndex]?.icon : "Star"}
+        onClose={() => setIconPickerIndex(null)}
+        onSelect={(iconName) => {
+          if (iconPickerIndex !== null) {
+            updateValue(iconPickerIndex, "icon", iconName);
+          }
+          setIconPickerIndex(null);
+        }}
+      />
     </div>
   );
 }

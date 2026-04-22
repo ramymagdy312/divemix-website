@@ -9,6 +9,7 @@ import toast from 'react-hot-toast';
 import { Button } from '@/app/components/ui/button';
 import { Badge } from '@/app/components/ui/badge';
 import ProductForm from '../components/ProductForm';
+import { triggerRevalidate } from '@/app/lib/revalidate-client';
 
 interface Category {
   id: string;
@@ -40,6 +41,7 @@ export default function NewProductPage() {
 
       if (error) throw error;
 
+      await triggerRevalidate(['categories']);
       toast.success('Product created successfully!');
       router.push('/admin/products');
     } catch (error: any) {

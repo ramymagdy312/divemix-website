@@ -57,9 +57,14 @@ const navigation = [
 ];
 
 const pagesNavigation = [
+  { name: "Home Page", href: "/admin/home", icon: FileText },
   { name: "Products Page", href: "/admin/products-page", icon: Package },
   { name: "Services Page", href: "/admin/services-page", icon: Wrench },
   { name: "Applications Page", href: "/admin/applications-page", icon: Target },
+  { name: "Gallery Page", href: "/admin/gallery-page", icon: Image },
+  { name: "Navigation", href: "/admin/navigation", icon: Settings },
+  { name: "Footer", href: "/admin/footer", icon: Settings },
+  { name: "SEO", href: "/admin/seo", icon: Settings },
   { name: "About Page", href: "/admin/about", icon: FileText },
   { name: "Contact Page", href: "/admin/contact", icon: FileText },
 ];

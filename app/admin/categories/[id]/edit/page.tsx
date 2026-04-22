@@ -12,6 +12,7 @@ import { Button } from "@/app/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/app/components/ui/alert";
 import { Skeleton } from "@/app/components/ui/skeleton";
 import { ProductCategory } from "../../../../types/database";
+import { triggerRevalidate } from "@/app/lib/revalidate-client";
 
 // Fallback category data for demo
 const fallbackCategories: { [key: string]: ProductCategory } = {
@@ -130,6 +131,7 @@ export default function EditCategoryPage({
         return;
       }
 
+      await triggerRevalidate(["categories"]);
       toast.success("Category updated successfully!");
       router.push("/admin/categories");
     } catch (error: any) {

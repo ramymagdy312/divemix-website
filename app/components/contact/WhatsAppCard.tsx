@@ -42,7 +42,7 @@ const WhatsAppCard: React.FC<WhatsAppCardProps> = ({ className = "" }) => {
       setWhatsappNumber(
         settings.whatsapp_number ||
           process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ||
-          "+201010606967"
+          ""
       );
       setWhatsappMessage(
         settings.whatsapp_message ||
@@ -52,7 +52,7 @@ const WhatsAppCard: React.FC<WhatsAppCardProps> = ({ className = "" }) => {
       console.error("Error fetching WhatsApp settings:", error);
       // Use default values
       setWhatsappNumber(
-        process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "+201010606967"
+        process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || ""
       );
       setWhatsappMessage(
         "Hello! I would like to get more information about your services."
@@ -64,6 +64,9 @@ const WhatsAppCard: React.FC<WhatsAppCardProps> = ({ className = "" }) => {
 
   const openWhatsAppChat = () => {
     const cleanNumber = whatsappNumber.replace(/[^\d]/g, "");
+    if (!cleanNumber) {
+      return;
+    }
     const encodedMessage = encodeURIComponent(whatsappMessage);
     const whatsappUrl = `https://wa.me/${cleanNumber}?text=${encodedMessage}`;
     window.open(whatsappUrl, "_blank");
@@ -149,6 +152,7 @@ const WhatsAppCard: React.FC<WhatsAppCardProps> = ({ className = "" }) => {
         {/* WhatsApp Button */}
         <Button
           onClick={openWhatsAppChat}
+          disabled={!whatsappNumber}
           className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 text-base transition-all duration-300 transform hover:scale-105"
           size="lg"
         >

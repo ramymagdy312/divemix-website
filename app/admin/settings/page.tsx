@@ -39,9 +39,11 @@ import {
   Shield,
   Trash2,
 } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { supabase } from "../../lib/supabase";
+import IconPickerModal from "../../components/admin/IconPickerModal";
 
 interface Setting {
   key: string;
@@ -64,6 +66,7 @@ export default function SettingsPage() {
   const [supportItems, setSupportItems] = useState<SupportItem[]>([]);
   const [editingItem, setEditingItem] = useState<SupportItem | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [iconPickerItemId, setIconPickerItemId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchSettings();
@@ -249,26 +252,9 @@ export default function SettingsPage() {
     }
   };
 
-  const getIconComponent = (iconName: string) => {
-    switch (iconName) {
-      case "Clock":
-        return Clock;
-      case "Globe":
-        return Globe;
-      case "Shield":
-        return Shield;
-      case "Award":
-        return Save; // Using Save as Award placeholder
-      case "Users":
-        return MessageCircle; // Using MessageCircle as Users placeholder
-      case "Zap":
-        return Mail; // Using Mail as Zap placeholder
-      case "Settings":
-        return SettingsIcon;
-      default:
-        return SettingsIcon;
-    }
-  };
+  const getIconComponent = (iconName: string) =>
+    (LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[iconName] ||
+    SettingsIcon;
 
   const addSupportItem = () => {
     const newItem: SupportItem = {
@@ -342,7 +328,7 @@ export default function SettingsPage() {
             System Settings
           </h1>
           <p className="text-muted-foreground">
-            Configure email, WhatsApp, footer, and support section settings
+            Configure email and WhatsApp settings
           </p>
         </div>
         <Button onClick={handleSave} disabled={saving}>
@@ -352,11 +338,9 @@ export default function SettingsPage() {
       </div>
 
       <Tabs defaultValue="email" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="email">Email</TabsTrigger>
           <TabsTrigger value="whatsapp">WhatsApp</TabsTrigger>
-          <TabsTrigger value="footer">Footer</TabsTrigger>
-          <TabsTrigger value="support">Support</TabsTrigger>
         </TabsList>
 
         {/* Email Settings */}
@@ -635,41 +619,20 @@ export default function SettingsPage() {
                                     <Label htmlFor={`icon-${item.id}`}>
                                       Icon
                                     </Label>
-                                    <Select
-                                      value={item.icon}
-                                      onValueChange={(value) =>
-                                        updateSupportItem(item.id, {
-                                          icon: value,
-                                        })
-                                      }
+                                    <button
+                                      type="button"
+                                      onClick={() => setIconPickerItemId(item.id)}
+                                      className="w-full border rounded-md px-3 py-2 text-sm hover:bg-muted flex items-center justify-between"
                                     >
-                                      <SelectTrigger>
-                                        <SelectValue placeholder="Select icon" />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        <SelectItem value="Clock">
-                                          Clock (Working Hours)
-                                        </SelectItem>
-                                        <SelectItem value="Globe">
-                                          Globe (Languages)
-                                        </SelectItem>
-                                        <SelectItem value="Shield">
-                                          Shield (Certification)
-                                        </SelectItem>
-                                        <SelectItem value="Award">
-                                          Award (Awards)
-                                        </SelectItem>
-                                        <SelectItem value="Users">
-                                          Users (Team)
-                                        </SelectItem>
-                                        <SelectItem value="Zap">
-                                          Zap (Fast Service)
-                                        </SelectItem>
-                                        <SelectItem value="Settings">
-                                          Settings (General)
-                                        </SelectItem>
-                                      </SelectContent>
-                                    </Select>
+                                      <span className="inline-flex items-center gap-2">
+                                        {(() => {
+                                          const IconComponent = getIconComponent(item.icon);
+                                          return <IconComponent className="h-4 w-4" />;
+                                        })()}
+                                        <span>{item.icon}</span>
+                                      </span>
+                                      <span className="text-xs text-muted-foreground">Change</span>
+                                    </button>
                                   </div>
                                 </div>
 
@@ -786,7 +749,7 @@ export default function SettingsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid md:grid-cols-2 gap-6">
               {/* Email Preview */}
               <Card>
                 <CardHeader className="pb-3">
@@ -831,101 +794,26 @@ export default function SettingsPage() {
                 </CardContent>
               </Card>
 
-              {/* Footer & Float Preview */}
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base flex items-center">
-                    <SettingsIcon className="h-4 w-4 mr-2 text-purple-600" />
-                    Footer & Float
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pt-0 space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">
-                      Branches:
-                    </span>
-                    <Badge
-                      variant={
-                        showBranchesInFooterSetting?.value === "true"
-                          ? "default"
-                          : "secondary"
-                      }
-                    >
-                      {showBranchesInFooterSetting?.value === "true"
-                        ? "Enabled"
-                        : "Disabled"}
-                    </Badge>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Title:</p>
-                    <p className="text-xs font-medium">
-                      "{footerBranchesTitleSetting?.value || "Our Branches"}"
-                    </p>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">
-                      WhatsApp float:
-                    </span>
-                    <Badge
-                      variant={
-                        showWhatsappFloatSetting?.value === "true"
-                          ? "default"
-                          : "secondary"
-                      }
-                    >
-                      {showWhatsappFloatSetting?.value === "true"
-                        ? "Enabled"
-                        : "Disabled"}
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Support Section Preview */}
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base flex items-center">
-                    <SettingsIcon className="h-4 w-4 mr-2 text-orange-600" />
-                    Support Section
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pt-0 space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">
-                      Section:
-                    </span>
-                    <Badge
-                      variant={
-                        supportSectionEnabledSetting?.value === "true"
-                          ? "default"
-                          : "secondary"
-                      }
-                    >
-                      {supportSectionEnabledSetting?.value === "true"
-                        ? "Enabled"
-                        : "Disabled"}
-                    </Badge>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Title:</p>
-                    <p className="text-xs font-medium">
-                      "{supportSectionTitleSetting?.value || "Support"}"
-                    </p>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">
-                      Active items:
-                    </span>
-                    <Badge variant="outline" className="text-primary">
-                      {supportItems.filter((item) => item.enabled).length}
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
           </CardContent>
         </Card>
       </Tabs>
+
+      <IconPickerModal
+        open={iconPickerItemId !== null}
+        selectedIcon={
+          iconPickerItemId
+            ? supportItems.find((item) => item.id === iconPickerItemId)?.icon || "Settings"
+            : "Settings"
+        }
+        onClose={() => setIconPickerItemId(null)}
+        onSelect={(iconName) => {
+          if (iconPickerItemId) {
+            updateSupportItem(iconPickerItemId, { icon: iconName });
+          }
+          setIconPickerItemId(null);
+        }}
+      />
     </div>
   );
 }

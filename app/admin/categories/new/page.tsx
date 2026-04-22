@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Button } from '@/app/components/ui/button';
 import { Badge } from '@/app/components/ui/badge';
+import { triggerRevalidate } from '@/app/lib/revalidate-client';
 
 export default function NewCategoryPage() {
   const router = useRouter();
@@ -26,6 +27,7 @@ export default function NewCategoryPage() {
 
       if (error) throw error;
 
+      await triggerRevalidate(['categories']);
       toast.success('Category created successfully!');
       router.push('/admin/categories');
     } catch (error: any) {

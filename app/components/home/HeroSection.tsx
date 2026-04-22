@@ -3,18 +3,35 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-import Image from 'next/image';
+import Image from "next/image";
 
-const HeroSection = () => {
+interface HeroSectionProps {
+  title?: string;
+  subtitle?: string;
+  image?: string;
+  primaryCta?: { label: string; href: string };
+  secondaryCta?: { label: string; href: string };
+}
+
+const HeroSection = ({
+  title = "Pioneering the Future of Gas Technology",
+  subtitle =
+    "Leading the industry with innovative solutions for gas mixing and compression systems. Trust DiveMix for reliability, precision, and excellence.",
+  image = "img/hero/home.jpg",
+  primaryCta = { label: "Explore Products", href: "/products" },
+  secondaryCta = { label: "Contact Us", href: "/contact" },
+}: HeroSectionProps) => {
+  const normalizedImage =
+    image.startsWith("http://") || image.startsWith("https://") || image.startsWith("/")
+      ? image
+      : `/${image}`;
+
+  const [first, ...rest] = title.split(" ");
+
   return (
     <section className="relative min-h-screen flex items-center">
       <div className="absolute inset-0">
-        <Image
-          src="img/hero/home.jpg"
-          alt="Industrial equipment"
-          fill
-          className="object-cover"
-        />
+        <Image src={normalizedImage} alt="Industrial equipment" fill className="object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-transparent" />
       </div>
 
@@ -26,30 +43,25 @@ const HeroSection = () => {
           className="max-w-3xl"
         >
           <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-tight text-white">
-            Pioneering the Future of{" "}
-            <span className="text-cyan-400">Gas Technology</span>
+            {first} <span className="text-cyan-400">{rest.join(" ")}</span>
           </h1>
-          <p className="text-xl mb-10 text-gray-200 leading-relaxed">
-            Leading the industry with innovative solutions for gas mixing and
-            compression systems. Trust DiveMix for reliability, precision, and
-            excellence.
-          </p>
+          <p className="text-xl mb-10 text-gray-200 leading-relaxed">{subtitle}</p>
           <div className="flex flex-wrap gap-6">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link
-                href="/products"
+                href={primaryCta.href}
                 className="inline-flex items-center px-8 py-4 bg-cyan-600 rounded-lg hover:bg-cyan-700 transition-colors text-lg font-medium text-white group"
               >
-                Explore Products
+                {primaryCta.label}
                 <ArrowRight className="ml-2 h-5 w-5 transform group-hover:translate-x-1 transition-transform" />
               </Link>
             </motion.div>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link
-                href="/contact"
+                href={secondaryCta.href}
                 className="inline-flex items-center px-8 py-4 bg-white/10 backdrop-blur-sm rounded-lg hover:bg-white/20 transition-colors text-lg font-medium text-white border border-white/20"
               >
-                Contact Us
+                {secondaryCta.label}
               </Link>
             </motion.div>
           </div>

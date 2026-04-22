@@ -1,29 +1,34 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import PageEditor from "../../components/admin/PageEditor";
+import SectionEditor from "../../components/admin/SectionEditor";
 import { supabase } from "../../lib/supabase";
+import { triggerRevalidate } from "../../lib/revalidate-client";
 
-export default function ProductsPageAdmin() {
+export default function ApplicationsPageAdmin() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase
-      .from("applications_page")
-      .select("*")
-      .single()
-      .then(({ data, error }) => {
+    const load = async () => {
+      try {
+        const { data } = await supabase
+          .from("applications_page")
+          .select("*")
+          .single();
         if (data) setData(data);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+    load();
   }, []);
 
   const handleSave = async (updatedData: any) => {
-    const { error } = await supabase
-      .from("applications_page")
-      .upsert(updatedData);
-    return !error;
+    const { error } = await supabase.from("applications_page").upsert(updatedData);
+    if (error) return false;
+    await triggerRevalidate(["page:applications", "seo:/applications", "applications"]);
+    return true;
   };
 
   if (loading || !data) {
@@ -35,9 +40,9 @@ export default function ProductsPageAdmin() {
   }
 
   return (
-    <PageEditor
+    <SectionEditor
       title="Applications Page"
-      breadcrumb="Applications Page"
+      description="Manage applications page hero and introduction"
       initialData={data}
       onSave={handleSave}
     />

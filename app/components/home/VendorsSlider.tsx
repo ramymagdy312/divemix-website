@@ -23,34 +23,47 @@ interface Vendor {
   is_active: boolean;
 }
 
-export default function VendorsSlider() {
-  const [vendors, setVendors] = useState<Vendor[]>([]);
-  const [loading, setLoading] = useState(true);
+interface VendorsSliderProps {
+  initialVendors?: Vendor[];
+  heading?: string;
+  description?: string;
+}
+
+export default function VendorsSlider({
+  initialVendors,
+  heading = "Our Trusted Partners",
+  description =
+    "We collaborate with industry-leading companies to deliver exceptional solutions and services to our clients.",
+}: VendorsSliderProps) {
+  const [vendors, setVendors] = useState<Vendor[]>(initialVendors || []);
+  const [loading, setLoading] = useState(!initialVendors);
 
   useEffect(() => {
-    fetchVendors();
-  }, []);
+    if (initialVendors) return;
 
-  const fetchVendors = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("vendors")
-        .select("*")
-        .eq("is_active", true)
-        .order("display_order", { ascending: true });
+    const fetchVendors = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("vendors")
+          .select("*")
+          .eq("is_active", true)
+          .order("display_order", { ascending: true });
 
-      if (error) {
-        console.error("Error fetching vendors:", error);
-        return;
+        if (error) {
+          console.error("Error fetching vendors:", error);
+          return;
+        }
+
+        setVendors(data || []);
+      } catch (error) {
+        console.error("Error:", error);
+      } finally {
+        setLoading(false);
       }
+    };
 
-      setVendors(data || []);
-    } catch (error) {
-      console.error("Error:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    fetchVendors();
+  }, [initialVendors]);
 
   if (loading) {
     return (
@@ -62,10 +75,7 @@ export default function VendorsSlider() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
             {[...Array(5)].map((_, index) => (
-              <div
-                key={index}
-                className="bg-white p-6 rounded-lg shadow-sm animate-pulse"
-              >
+              <div key={index} className="bg-white p-6 rounded-lg shadow-sm animate-pulse">
                 <div className="h-16 bg-gray-200 rounded mb-4"></div>
                 <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto"></div>
               </div>
@@ -83,18 +93,11 @@ export default function VendorsSlider() {
   return (
     <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Our Trusted Partners
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            We collaborate with industry-leading companies to deliver
-            exceptional solutions and services to our clients.
-          </p>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">{heading}</h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">{description}</p>
         </div>
 
-        {/* Vendors Carousel */}
         <div className="relative px-12">
           <Carousel
             opts={{
@@ -115,7 +118,6 @@ export default function VendorsSlider() {
                   className="pl-2 md:pl-4 basis-1/2 md:basis-1/3 lg:basis-1/5"
                 >
                   <div className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-200 group h-full">
-                    {/* Vendor Logo */}
                     <div className="relative h-16 mb-4 flex items-center justify-center">
                       <Image
                         src={vendor.logo_url}
@@ -125,19 +127,12 @@ export default function VendorsSlider() {
                       />
                     </div>
 
-                    {/* Vendor Name */}
-                    <h3 className="text-sm font-semibold text-gray-900 text-center mb-2">
-                      {vendor.name}
-                    </h3>
+                    <h3 className="text-sm font-semibold text-gray-900 text-center mb-2">{vendor.name}</h3>
 
-                    {/* Vendor Description */}
                     {vendor.description && (
-                      <p className="text-xs text-gray-600 text-center mb-3 line-clamp-2">
-                        {vendor.description}
-                      </p>
+                      <p className="text-xs text-gray-600 text-center mb-3 line-clamp-2">{vendor.description}</p>
                     )}
 
-                    {/* Website Link */}
                     {vendor.website_url && (
                       <div className="text-center">
                         <a

@@ -2,9 +2,15 @@
 const nextConfig = {
   images: {
     domains: ['images.unsplash.com'],
-    unoptimized: true
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+      },
+    ],
+    unoptimized: false,
   },
-  trailingSlash: true
-}
+  trailingSlash: true,
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

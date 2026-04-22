@@ -11,6 +11,7 @@ import { Badge } from '@/app/components/ui/badge';
 import { Skeleton } from '@/app/components/ui/skeleton';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import ApplicationForm from '../../components/ApplicationForm';
+import { triggerRevalidate } from '@/app/lib/revalidate-client';
 
 interface Application {
   id: string;
@@ -72,6 +73,7 @@ export default function EditApplicationPage({ params }: { params: { id: string }
         return;
       }
 
+      await triggerRevalidate(['applications']);
       toast.success('Application updated successfully!');
       router.push('/admin/applications');
     } catch (error) {

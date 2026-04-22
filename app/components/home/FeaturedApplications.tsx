@@ -18,33 +18,44 @@ interface Application {
   display_order: number;
 }
 
-const FeaturedApplications = () => {
-  const [applications, setApplications] = useState<Application[]>([]);
-  const [loading, setLoading] = useState(true);
+interface FeaturedApplicationsProps {
+  initialApplications?: Application[];
+  heading?: string;
+  description?: string;
+}
+
+const FeaturedApplications = ({
+  initialApplications,
+  heading = "Featured Applications",
+  description = "Discover how our solutions serve diverse industries",
+}: FeaturedApplicationsProps) => {
+  const [applications, setApplications] = useState<Application[]>(initialApplications || []);
+  const [loading, setLoading] = useState(!initialApplications);
 
   useEffect(() => {
+    if (initialApplications) return;
+
+    const fetchApplications = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("applications")
+          .select("*")
+          .eq("is_active", true)
+          .order("display_order", { ascending: true })
+          .limit(3);
+
+        if (error) throw error;
+        setApplications(data || []);
+      } catch (error) {
+        console.error("Error fetching applications:", error);
+        setApplications([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchApplications();
-  }, []);
-
-  const fetchApplications = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('applications')
-        .select('*')
-        .eq('is_active', true)
-        .order('display_order', { ascending: true })
-        .limit(3);
-
-      if (error) throw error;
-      setApplications(data || []);
-    } catch (error) {
-      console.error('Error fetching applications:', error);
-      // Fallback to empty array to prevent crashes
-      setApplications([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [initialApplications]);
 
   if (loading) {
     return (
@@ -68,7 +79,7 @@ const FeaturedApplications = () => {
             viewport={{ once: true }}
             className="text-3xl font-bold mb-4"
           >
-            Featured Applications
+            {heading}
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -77,16 +88,12 @@ const FeaturedApplications = () => {
             transition={{ delay: 0.2 }}
             className="text-gray-600 max-w-2xl mx-auto"
           >
-            Discover how our solutions serve diverse industries
+            {description}
           </motion.p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
           {applications.map((app, index) => (
-            <ApplicationCard 
-              key={app.id} 
-              application={app} 
-              index={index} 
-            />
+            <ApplicationCard key={app.id} application={app} index={index} />
           ))}
         </div>
         <div className="text-center mt-12">

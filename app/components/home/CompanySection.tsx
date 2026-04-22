@@ -4,11 +4,22 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import CompanyOverview from "../about/CompanyOverview";
 
-const CompanySection = () => {
+interface CompanySectionProps {
+  companyOverview?: string;
+}
+
+const CompanySection = ({ companyOverview }: CompanySectionProps) => {
+  const paragraphs = companyOverview
+    ? companyOverview
+        .split(/\n\n+/)
+        .map((p) => p.trim())
+        .filter(Boolean)
+    : undefined;
+
   return (
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <CompanyOverview />
+        <CompanyOverview paragraphs={paragraphs} />
         <div className="text-center mt-8">
           <Link
             href="/about"

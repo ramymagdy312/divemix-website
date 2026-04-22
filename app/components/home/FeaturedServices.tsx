@@ -25,33 +25,44 @@ const iconMap: { [key: string]: any } = {
   FireExtinguisher,
 };
 
-const FeaturedServices = () => {
-  const [services, setServices] = useState<Service[]>([]);
-  const [loading, setLoading] = useState(true);
+interface FeaturedServicesProps {
+  initialServices?: Service[];
+  heading?: string;
+  description?: string;
+}
+
+const FeaturedServices = ({
+  initialServices,
+  heading = "Our Services",
+  description = "Comprehensive solutions for all your gas mixing and compression needs",
+}: FeaturedServicesProps) => {
+  const [services, setServices] = useState<Service[]>(initialServices || []);
+  const [loading, setLoading] = useState(!initialServices);
 
   useEffect(() => {
+    if (initialServices) return;
+
+    const fetchServices = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("services")
+          .select("*")
+          .eq("is_active", true)
+          .order("display_order", { ascending: true })
+          .limit(4);
+
+        if (error) throw error;
+        setServices(data || []);
+      } catch (error) {
+        console.error("Error fetching services:", error);
+        setServices([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchServices();
-  }, []);
-
-  const fetchServices = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('services')
-        .select('*')
-        .eq('is_active', true)
-        .order('display_order', { ascending: true })
-        .limit(4);
-
-      if (error) throw error;
-      setServices(data || []);
-    } catch (error) {
-      console.error('Error fetching services:', error);
-      // Fallback to empty array to prevent crashes
-      setServices([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [initialServices]);
 
   if (loading) {
     return (
@@ -75,7 +86,7 @@ const FeaturedServices = () => {
             viewport={{ once: true }}
             className="text-3xl font-bold mb-4"
           >
-            Our Services
+            {heading}
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -84,8 +95,7 @@ const FeaturedServices = () => {
             transition={{ delay: 0.2 }}
             className="text-gray-600 max-w-2xl mx-auto"
           >
-            Comprehensive solutions for all your gas mixing and compression
-            needs
+            {description}
           </motion.p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">

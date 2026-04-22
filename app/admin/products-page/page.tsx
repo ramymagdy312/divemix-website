@@ -1,27 +1,34 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import PageEditor from "../../components/admin/PageEditor";
+import SectionEditor from "../../components/admin/SectionEditor";
 import { supabase } from "../../lib/supabase";
+import { triggerRevalidate } from "../../lib/revalidate-client";
 
 export default function ProductsPageAdmin() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase
-      .from("products_page")
-      .select("*")
-      .single()
-      .then(({ data, error }) => {
+    const load = async () => {
+      try {
+        const { data } = await supabase
+          .from("products_page")
+          .select("*")
+          .single();
         if (data) setData(data);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+    load();
   }, []);
 
   const handleSave = async (updatedData: any) => {
     const { error } = await supabase.from("products_page").upsert(updatedData);
-    return !error;
+    if (error) return false;
+    await triggerRevalidate(["page:products", "seo:/products", "categories"]);
+    return true;
   };
 
   if (loading || !data) {
@@ -33,9 +40,9 @@ export default function ProductsPageAdmin() {
   }
 
   return (
-    <PageEditor
+    <SectionEditor
       title="Products Page"
-      breadcrumb="Products Page"
+      description="Manage products page hero and introduction"
       initialData={data}
       onSave={handleSave}
     />

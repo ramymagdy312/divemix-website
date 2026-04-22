@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Folder, 
   FolderOpen, 
@@ -50,7 +50,7 @@ const TreeFolderManager: React.FC<TreeFolderManagerProps> = ({
   const [newFolderName, setNewFolderName] = useState('');
 
   // Load folders recursively
-  const loadFolders = async (parentPath: string = '') => {
+  const loadFolders = useCallback(async (parentPath: string = '') => {
     try {
       const url = parentPath 
         ? `/api/upload/folders?path=${encodeURIComponent(parentPath)}`
@@ -66,10 +66,10 @@ const TreeFolderManager: React.FC<TreeFolderManagerProps> = ({
       console.error('Error loading folders:', error);
       return [];
     }
-  };
+  }, []);
 
   // Build tree structure from flat folder list
-  const buildTree = (folders: FolderInfo[]): TreeNode[] => {
+  const buildTree = useCallback((folders: FolderInfo[]): TreeNode[] => {
     const tree: TreeNode[] = [];
     const folderMap = new Map<string, TreeNode>();
 
@@ -102,10 +102,10 @@ const TreeFolderManager: React.FC<TreeFolderManagerProps> = ({
     });
 
     return tree;
-  };
+  }, [expandedFolders]);
 
   // Load all folders and build tree
-  const loadAllFolders = async () => {
+  const loadAllFolders = useCallback(async () => {
     setLoading(true);
     try {
       const allFolders: FolderInfo[] = [];
@@ -132,11 +132,11 @@ const TreeFolderManager: React.FC<TreeFolderManagerProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [expandedFolders, loadFolders, buildTree]);
 
   useEffect(() => {
     loadAllFolders();
-  }, [expandedFolders]);
+  }, [loadAllFolders]);
 
   // Toggle folder expansion
   const toggleExpansion = async (folderPath: string) => {

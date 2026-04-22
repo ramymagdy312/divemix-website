@@ -9,6 +9,7 @@ import toast from 'react-hot-toast';
 import { Button } from '@/app/components/ui/button';
 import { Badge } from '@/app/components/ui/badge';
 import ApplicationForm from '../components/ApplicationForm';
+import { triggerRevalidate } from '@/app/lib/revalidate-client';
 
 export default function NewApplicationPage() {
   const router = useRouter();
@@ -24,6 +25,7 @@ export default function NewApplicationPage() {
 
       if (error) throw error;
 
+      await triggerRevalidate(['applications']);
       toast.success('Application created successfully!');
       router.push('/admin/applications');
     } catch (error) {

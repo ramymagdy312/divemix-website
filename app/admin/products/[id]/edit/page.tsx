@@ -7,6 +7,7 @@ import { AlertCircle, ArrowLeft, Edit, Save } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import ProductForm from '../../components/ProductForm';
+import { triggerRevalidate } from '@/app/lib/revalidate-client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Button } from '@/app/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/app/components/ui/alert';
@@ -120,6 +121,7 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
         return;
       }
 
+      await triggerRevalidate(['categories']);
       toast.success('Product updated successfully!');
       router.push('/admin/products');
     } catch (error: any) {

@@ -5,7 +5,7 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData()
     const file = formData.get('file') as File | null
-    const folder = formData.get('folder') as string | null
+    const rawFolder = formData.get('folder') as string | null
 
     if (!file) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 })
@@ -21,9 +21,14 @@ export async function POST(req: NextRequest) {
 
     const buffer = Buffer.from(await file.arrayBuffer());
     const filename = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+
+    // Normalize folder values from clients:
+    // root-like values should map to uploads root.
+    const folder = (rawFolder || '').trim().replace(/^\/+|\/+$/g, '');
+    const isRootFolder = folder === '' || folder === 'root' || folder === '.';
     
     // Determine upload path based on folder (support nested paths)
-    const uploadPath = folder && folder !== 'root' 
+    const uploadPath = !isRootFolder
       ? `uploads/${folder}/${filename}` 
       : `uploads/${filename}`;
 
@@ -44,7 +49,7 @@ export async function POST(req: NextRequest) {
       success: true,
       url: publicData.publicUrl,
       filename: filename,
-      folder: folder || 'root',
+      folder: isRootFolder ? 'root' : folder,
       path: uploadPath
     });
   } catch (err) {

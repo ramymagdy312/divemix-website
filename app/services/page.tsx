@@ -1,20 +1,28 @@
+import type { Metadata } from "next";
 import ServiceGridDB from "../components/services/ServiceGridDB";
 import ServicesPageDB from "../components/services/ServicesPageDB";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import FloatingWhatsApp from "../components/FloatingWhatsApp";
+import MainLayout from "../components/layout/MainLayout";
+import { buildRouteMetadata } from "../lib/metadata";
+import { getPageContent, getServices } from "../lib/content";
 
-export default function Services() {
+export async function generateMetadata(): Promise<Metadata> {
+  return buildRouteMetadata("/services", {
+    title: "DiveMix Services",
+    description: "Discover DiveMix maintenance, installation, and support services.",
+  });
+}
+
+export default async function Services() {
+  const [pageData, services] = await Promise.all([
+    getPageContent("services"),
+    getServices(),
+  ]);
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <main className="flex-grow page-content">
-        <ServicesPageDB>
-          <ServiceGridDB />
-        </ServicesPageDB>
-      </main>
-      <Footer />
-      <FloatingWhatsApp />
-    </div>
+    <MainLayout>
+      <ServicesPageDB data={pageData}>
+        <ServiceGridDB initialServices={services as any} />
+      </ServicesPageDB>
+    </MainLayout>
   );
 }

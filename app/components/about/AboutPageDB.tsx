@@ -37,34 +37,33 @@ const iconMap = {
   Heart,
 };
 
-export default function AboutPageDB() {
-  const [data, setData] = useState<AboutPageData | null>(null);
-  const [loading, setLoading] = useState(true);
+export default function AboutPageDB({ initialData }: { initialData?: AboutPageData | null }) {
+  const [data, setData] = useState<AboutPageData | null>(initialData || null);
+  const [loading, setLoading] = useState(!initialData);
 
   useEffect(() => {
-    fetchAboutData();
-  }, []);
+    if (initialData) return;
 
-  const fetchAboutData = async () => {
-    try {
-      const { data: aboutPageData, error } = await supabase
-        .from('about_page')
-        .select('*')
-        .single();
+    const fetchAboutData = async () => {
+      try {
+        const { data: aboutPageData, error } = await supabase.from('about_page').select('*').single();
 
-      if (error) {
-        console.error('Error fetching about data:', error);
+        if (error) {
+          console.error('Error fetching about data:', error);
+          setData(null);
+        } else {
+          setData(aboutPageData as AboutPageData);
+        }
+      } catch (error) {
+        console.error('Error:', error);
         setData(null);
-      } else {
-        setData(aboutPageData);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error('Error:', error);
-      setData(null);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    fetchAboutData();
+  }, [initialData]);
 
   if (loading) {
     return (
@@ -85,41 +84,28 @@ export default function AboutPageDB() {
   return (
     <AnimatedElement animation="fadeIn">
       <div>
-        <PageHeader
-          title={data.title}
-          description={data.description}
-          backgroundImage={data.hero_image}
-        />
+        <PageHeader title={data.title} description={data.description} backgroundImage={data.hero_image} />
 
         <div className="py-20 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Company Overview */}
             <div className="mb-20">
               <div className="text-center mb-12">
                 <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Story</h2>
-                <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                  {data.company_overview}
-                </p>
+                <p className="text-lg text-gray-600 max-w-3xl mx-auto">{data.company_overview}</p>
               </div>
             </div>
 
-            {/* Vision & Mission */}
             <div className="grid md:grid-cols-2 gap-12 mb-20">
               <div className="bg-white p-8 rounded-lg shadow-sm">
                 <h2 className="text-2xl font-bold mb-4">Our Vision</h2>
-                <p className="text-gray-600">
-                  {data.vision}
-                </p>
+                <p className="text-gray-600">{data.vision}</p>
               </div>
               <div className="bg-white p-8 rounded-lg shadow-sm">
                 <h2 className="text-2xl font-bold mb-4">Our Mission</h2>
-                <p className="text-gray-600">
-                  {data.mission}
-                </p>
+                <p className="text-gray-600">{data.mission}</p>
               </div>
             </div>
 
-            {/* Core Values */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-20">
               {data.values.map((value, index) => {
                 const IconComponent = iconMap[value.icon as keyof typeof iconMap] || Star;
@@ -127,19 +113,14 @@ export default function AboutPageDB() {
                   <div key={index} className="text-center p-6 bg-white rounded-lg shadow-sm">
                     <IconComponent className="h-12 w-12 text-cyan-600 mx-auto mb-4" />
                     <h3 className="text-lg font-semibold mb-2">{value.title}</h3>
-                    <p className="text-gray-600">
-                      {value.description}
-                    </p>
+                    <p className="text-gray-600">{value.description}</p>
                   </div>
                 );
               })}
             </div>
 
-            {/* Timeline */}
             <div className="mb-20">
-              <h2 className="text-3xl font-bold text-center mb-12">
-                Our Journey
-              </h2>
+              <h2 className="text-3xl font-bold text-center mb-12">Our Journey</h2>
               <Timeline timelineData={data.timeline} />
             </div>
           </div>

@@ -34,6 +34,7 @@ export type Database = {
           description: string
           short_description: string
           category_id: string
+          subcategory_id?: string | null
           image_url: string
           images: string[]
           features: string[]
@@ -48,6 +49,7 @@ export type Database = {
           description: string
           short_description?: string
           category_id: string
+          subcategory_id?: string | null
           image_url?: string
           images?: string[]
           features?: string[]
@@ -62,6 +64,7 @@ export type Database = {
           description?: string
           short_description?: string
           category_id?: string
+          subcategory_id?: string | null
           image_url?: string
           images?: string[]
           features?: string[]
@@ -493,6 +496,198 @@ export type Database = {
           hero_image?: string
           intro_title?: string
           intro_description?: string
+          updated_at?: string
+        }
+      }
+      gallery_page: {
+        Row: {
+          id: string
+          title: string
+          description: string
+          hero_image: string
+          intro_title: string
+          intro_description: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          description: string
+          hero_image: string
+          intro_title: string
+          intro_description: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string
+          hero_image?: string
+          intro_title?: string
+          intro_description?: string
+          updated_at?: string
+        }
+      }
+      home_page: {
+        Row: {
+          id: string
+          hero_title: string
+          hero_subtitle: string
+          hero_image: string
+          hero_cta_primary: { label: string; href: string }
+          hero_cta_secondary: { label: string; href: string }
+          stats: { icon: string; value: string; label: string }[]
+          show_company_teaser: boolean
+          show_contact_cta: boolean
+          contact_cta_title: string
+          contact_cta_body: string
+          contact_cta_button: { label: string; href: string }
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          hero_title: string
+          hero_subtitle: string
+          hero_image: string
+          hero_cta_primary: { label: string; href: string }
+          hero_cta_secondary: { label: string; href: string }
+          stats: { icon: string; value: string; label: string }[]
+          show_company_teaser?: boolean
+          show_contact_cta?: boolean
+          contact_cta_title: string
+          contact_cta_body: string
+          contact_cta_button: { label: string; href: string }
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          hero_title?: string
+          hero_subtitle?: string
+          hero_image?: string
+          hero_cta_primary?: { label: string; href: string }
+          hero_cta_secondary?: { label: string; href: string }
+          stats?: { icon: string; value: string; label: string }[]
+          show_company_teaser?: boolean
+          show_contact_cta?: boolean
+          contact_cta_title?: string
+          contact_cta_body?: string
+          contact_cta_button?: { label: string; href: string }
+          updated_at?: string
+        }
+      }
+      nav_items: {
+        Row: {
+          id: string
+          label: string
+          href: string
+          sort_order: number
+          parent_id: string | null
+          is_external: boolean
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          label: string
+          href: string
+          sort_order?: number
+          parent_id?: string | null
+          is_external?: boolean
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          label?: string
+          href?: string
+          sort_order?: number
+          parent_id?: string | null
+          is_external?: boolean
+          is_active?: boolean
+          updated_at?: string
+        }
+      }
+      footer_content: {
+        Row: {
+          id: string
+          columns: { title: string; links: { label: string; href: string }[] }[]
+          powered_by_text: string
+          copyright_name: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          columns: { title: string; links: { label: string; href: string }[] }[]
+          powered_by_text?: string
+          copyright_name?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          columns?: { title: string; links: { label: string; href: string }[] }[]
+          powered_by_text?: string
+          copyright_name?: string
+          updated_at?: string
+        }
+      }
+      page_seo: {
+        Row: {
+          route: string
+          title: string
+          description: string
+          og_image: string | null
+          keywords: string[]
+          noindex: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          route: string
+          title: string
+          description: string
+          og_image?: string | null
+          keywords?: string[]
+          noindex?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          route?: string
+          title?: string
+          description?: string
+          og_image?: string | null
+          keywords?: string[]
+          noindex?: boolean
+          updated_at?: string
+        }
+      }
+      settings: {
+        Row: {
+          key: string
+          value: string
+          description: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          key: string
+          value: string
+          description?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          key?: string
+          value?: string
+          description?: string | null
           updated_at?: string
         }
       }

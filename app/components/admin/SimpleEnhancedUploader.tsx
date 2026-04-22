@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Upload, X, Image as ImageIcon, Loader2, Folder, Plus, Trash2, Minus, FolderOpen } from 'lucide-react';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
@@ -29,7 +29,7 @@ const SimpleEnhancedUploader: React.FC<ImageUploaderProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load server images
-  const loadServerImages = async (folder: string = selectedFolder) => {
+  const loadServerImages = useCallback(async (folder: string = selectedFolder) => {
     try {
       const url = folder === 'root' 
         ? '/api/upload/list' 
@@ -44,15 +44,15 @@ const SimpleEnhancedUploader: React.FC<ImageUploaderProps> = ({
     } catch (error) {
       console.error('Error loading server images:', error);
     }
-  };
+  }, [selectedFolder]);
 
   useEffect(() => {
     loadServerImages();
-  }, []);
+  }, [loadServerImages]);
 
   useEffect(() => {
     loadServerImages(selectedFolder);
-  }, [selectedFolder]);
+  }, [selectedFolder, loadServerImages]);
 
   const handleFolderSelect = (folder: string) => {
     setSelectedFolder(folder);

@@ -16,33 +16,43 @@ interface Category {
   display_order: number;
 }
 
-const FeaturedCategories = () => {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
+interface FeaturedCategoriesProps {
+  initialCategories?: Category[];
+  heading?: string;
+  description?: string;
+}
+
+const FeaturedCategories = ({
+  initialCategories,
+  heading = "Featured Categories",
+  description = "Explore our premium selection of gas mixing and compression solutions",
+}: FeaturedCategoriesProps) => {
+  const [categories, setCategories] = useState<Category[]>(initialCategories || []);
+  const [loading, setLoading] = useState(!initialCategories);
 
   useEffect(() => {
+    if (initialCategories) return;
+    const fetchCategories = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("product_categories")
+          .select("*")
+          .eq("is_active", true)
+          .order("display_order", { ascending: true })
+          .limit(3);
+
+        if (error) throw error;
+        setCategories(data || []);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        setCategories([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchCategories();
-  }, []);
-
-  const fetchCategories = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('product_categories')
-        .select('*')
-        .eq('is_active', true)
-        .order('display_order', { ascending: true })
-        .limit(3);
-
-      if (error) throw error;
-      setCategories(data || []);
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-      // Fallback to empty array to prevent crashes
-      setCategories([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [initialCategories]);
 
   if (loading) {
     return (
@@ -60,19 +70,13 @@ const FeaturedCategories = () => {
     <section className="py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">Featured Categories</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Explore our premium selection of gas mixing and compression solutions
-          </p>
+          <h2 className="text-3xl font-bold mb-4">{heading}</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto">{description}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
           {categories.map((category, index) => (
-            <CategoryCard 
-              key={category.id} 
-              category={category} 
-              index={index} 
-            />
+            <CategoryCard key={category.id} category={category} index={index} />
           ))}
         </div>
 
