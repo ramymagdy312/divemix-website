@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import * as LucideIcons from "lucide-react";
 import toast from "react-hot-toast";
 import { supabase } from "../../lib/supabase";
 import { triggerRevalidate } from "../../lib/revalidate-client";
 import FolderExplorerSingle from "../../components/admin/FolderExplorerSingle";
-import IconPickerModal from "../../components/admin/IconPickerModal";
+import { IconPicker, IconRenderer } from "../../components/admin/iconPicker";
 
 interface HomePageData {
   hero_title: string;
@@ -23,7 +22,6 @@ interface HomePageData {
 }
 
 type StatItem = { icon: string; value: string; label: string };
-const iconRegistry = LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>;
 
 const defaults: HomePageData = {
   hero_title: "Pioneering the Future of Gas Technology",
@@ -50,7 +48,6 @@ export default function HomePageAdmin() {
   const [data, setData] = useState<HomePageData>(defaults);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [iconPickerIndex, setIconPickerIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchHome = async () => {
@@ -103,9 +100,6 @@ export default function HomePageAdmin() {
       stats: prev.stats.filter((_, i) => i !== index),
     }));
   };
-
-  const selectedIconName =
-    iconPickerIndex !== null ? data.stats[iconPickerIndex]?.icon || "Award" : "Award";
 
   return (
     <div className="space-y-6 max-w-5xl">
@@ -192,20 +186,13 @@ export default function HomePageAdmin() {
             <div key={`${stat.label}-${index}`} className="border rounded-md p-3 grid gap-3 md:grid-cols-3">
               <div className="space-y-1">
                 <label className="text-xs text-muted-foreground">Icon</label>
-                <button
-                  type="button"
-                  onClick={() => setIconPickerIndex(index)}
-                  className="w-full border rounded-md px-2 py-2 text-sm hover:bg-muted flex items-center justify-between"
-                >
-                  <span className="inline-flex items-center gap-2">
-                    {(() => {
-                      const IconComp = iconRegistry[stat.icon] || LucideIcons.Award;
-                      return <IconComp className="h-4 w-4" />;
-                    })()}
-                    <span>{stat.icon}</span>
-                  </span>
-                  <span className="text-xs text-muted-foreground">Change</span>
-                </button>
+                <div className="flex items-center gap-2">
+                  <IconPicker
+                    value={stat.icon}
+                    onValueChange={(icon) => updateStat(index, { icon })}
+                  />
+                  <IconRenderer iconName={stat.icon} size="md" className="text-muted-foreground" />
+                </div>
               </div>
               <div className="space-y-1">
                 <label className="text-xs text-muted-foreground">Value</label>
@@ -279,18 +266,6 @@ export default function HomePageAdmin() {
       >
         {saving ? "Saving..." : "Save Home Page"}
       </button>
-
-      <IconPickerModal
-        open={iconPickerIndex !== null}
-        selectedIcon={selectedIconName}
-        onClose={() => setIconPickerIndex(null)}
-        onSelect={(iconName) => {
-          if (iconPickerIndex !== null) {
-            updateStat(iconPickerIndex, { icon: iconName });
-          }
-          setIconPickerIndex(null);
-        }}
-      />
     </div>
   );
 }

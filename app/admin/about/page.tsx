@@ -16,8 +16,7 @@ import { Textarea } from "@/app/components/ui/textarea";
 import { Plus, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 import Breadcrumb from "../../components/admin/Breadcrumb";
-import * as LucideIcons from "lucide-react";
-import IconPickerModal from "../../components/admin/IconPickerModal";
+import { IconPicker, IconRenderer } from "../../components/admin/iconPicker";
 
 import BasicInfoCard from "../../components/admin/BasicInfoCard";
 import PageEditorHeader from "../../components/admin/PageEditorHeader";
@@ -47,7 +46,6 @@ export default function AboutAdmin() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [editing, setEditing] = useState(false);
-  const [iconPickerIndex, setIconPickerIndex] = useState<number | null>(null);
   const valuesCount = data?.values?.length || 0;
   const timelineCount = data?.timeline?.length || 0;
 
@@ -333,24 +331,15 @@ export default function AboutAdmin() {
                   <div>
                     <Label htmlFor={`icon-${index}`}>Icon</Label>
                     {editing ? (
-                      <button
-                        type="button"
-                        onClick={() => setIconPickerIndex(index)}
-                        className="w-full border rounded-md px-3 py-2 text-sm hover:bg-muted flex items-center justify-between"
-                      >
-                        <span className="inline-flex items-center gap-2">
-                          {(() => {
-                            const IconComp =
-                              (LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[value.icon] ||
-                              LucideIcons.Star;
-                            return <IconComp className="h-4 w-4" />;
-                          })()}
-                          <span>{value.icon}</span>
-                        </span>
-                        <span className="text-xs text-muted-foreground">Change</span>
-                      </button>
+                      <IconPicker
+                        value={value.icon}
+                        onValueChange={(icon) => updateValue(index, "icon", icon)}
+                      />
                     ) : (
-                      <p className="text-sm text-muted-foreground mt-1">{value.icon}</p>
+                      <p className="text-sm text-muted-foreground mt-1 inline-flex items-center gap-2">
+                        <IconRenderer iconName={value.icon} size="sm" />
+                        {value.icon}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -471,17 +460,6 @@ export default function AboutAdmin() {
         </Card>
       </div>
 
-      <IconPickerModal
-        open={iconPickerIndex !== null}
-        selectedIcon={iconPickerIndex !== null ? data?.values?.[iconPickerIndex]?.icon : "Star"}
-        onClose={() => setIconPickerIndex(null)}
-        onSelect={(iconName) => {
-          if (iconPickerIndex !== null) {
-            updateValue(iconPickerIndex, "icon", iconName);
-          }
-          setIconPickerIndex(null);
-        }}
-      />
     </div>
   );
 }

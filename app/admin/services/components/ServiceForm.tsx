@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from 'react';
-import * as LucideIcons from "lucide-react";
 import { Plus, X } from 'lucide-react';
 import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
@@ -9,7 +8,7 @@ import { Label } from '@/app/components/ui/label';
 import { Textarea } from '@/app/components/ui/textarea';
 import { Switch } from '@/app/components/ui/switch';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
-import IconPickerModal from '@/app/components/admin/IconPickerModal';
+import { IconPicker, IconRenderer } from '@/app/components/admin/iconPicker';
 
 interface ServiceFormProps {
   initialData?: any;
@@ -18,7 +17,6 @@ interface ServiceFormProps {
 }
 
 export default function ServiceForm({ initialData, onSubmit, loading }: ServiceFormProps) {
-  const [iconPickerOpen, setIconPickerOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
     description: initialData?.description || '',
@@ -87,22 +85,13 @@ export default function ServiceForm({ initialData, onSubmit, loading }: ServiceF
           {/* Icon */}
           <div className="space-y-2">
             <Label htmlFor="icon">Icon</Label>
-            <button
-              type="button"
-              onClick={() => setIconPickerOpen(true)}
-              className="w-full border rounded-md px-3 py-2 text-sm hover:bg-muted flex items-center justify-between"
-            >
-              <span className="inline-flex items-center gap-2">
-                {(() => {
-                  const IconComp =
-                    (LucideIcons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[formData.icon] ||
-                    LucideIcons.Settings;
-                  return <IconComp className="h-4 w-4" />;
-                })()}
-                <span>{formData.icon}</span>
-              </span>
-              <span className="text-xs text-muted-foreground">Change</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <IconPicker
+                value={formData.icon}
+                onValueChange={(icon) => setFormData({ ...formData, icon })}
+              />
+              <IconRenderer iconName={formData.icon} size="md" className="text-muted-foreground" />
+            </div>
           </div>
 
           {/* Description */}
@@ -185,15 +174,6 @@ export default function ServiceForm({ initialData, onSubmit, loading }: ServiceF
           </div>
         </form>
       </CardContent>
-      <IconPickerModal
-        open={iconPickerOpen}
-        selectedIcon={formData.icon}
-        onClose={() => setIconPickerOpen(false)}
-        onSelect={(iconName) => {
-          setFormData({ ...formData, icon: iconName });
-          setIconPickerOpen(false);
-        }}
-      />
     </Card>
   );
 }

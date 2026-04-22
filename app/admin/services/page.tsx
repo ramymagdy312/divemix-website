@@ -28,6 +28,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/app/components/ui/alert-dialog';
+import { IconRenderer } from '@/app/components/admin/iconPicker';
 
 interface Service {
   id: string;
@@ -144,13 +145,19 @@ export default function ServicesPage() {
               {filteredServices.map((service) => (
                 <TableRow key={service.id}>
                   <TableCell>
-                    <div className="flex items-center space-x-3">
-                      <div className="h-12 w-12 bg-primary/10 rounded-md flex items-center justify-center">
-                        <span className="text-primary font-semibold text-lg">{service.icon}</span>
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="h-11 w-11 shrink-0 rounded-lg bg-primary/10 text-primary border border-primary/20 flex items-center justify-center">
+                        <IconRenderer
+                          iconName={service.icon}
+                          size="md"
+                          className="text-primary"
+                          fallback={<Wrench className="h-4 w-4 text-primary" />}
+                        />
                       </div>
-                      <div>
-                        <div className="font-medium">{service.name}</div>
-                        <div className="text-sm text-muted-foreground max-w-md truncate">
+                      <div className="min-w-0">
+                        <div className="font-medium leading-tight">{service.name}</div>
+                        <div className="text-xs text-muted-foreground mt-1">{service.icon}</div>
+                        <div className="text-sm text-muted-foreground max-w-md truncate mt-1">
                           {service.description}
                         </div>
                       </div>
