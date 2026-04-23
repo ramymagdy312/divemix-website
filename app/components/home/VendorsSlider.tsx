@@ -34,9 +34,8 @@ interface VendorsSliderProps {
 
 export default function VendorsSlider({
   initialVendors,
-  heading = "Our Trusted Partners",
-  description =
-    "We collaborate with industry-leading companies to deliver exceptional solutions and services to our clients.",
+  heading,
+  description,
 }: VendorsSliderProps) {
   const locale = useLocale() as Locale;
   const [vendors, setVendors] = useState<Vendor[]>(initialVendors || []);
@@ -98,8 +97,8 @@ export default function VendorsSlider({
     <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">{heading}</h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">{description}</p>
+          {heading && <h2 className="text-3xl font-bold text-gray-900 mb-4">{heading}</h2>}
+          {description && <p className="text-lg text-gray-600 max-w-2xl mx-auto">{description}</p>}
         </div>
 
         <div className="relative px-12">

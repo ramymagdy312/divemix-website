@@ -71,7 +71,11 @@ export default async function Home({ params }: { params: { locale: string } }) {
         <FeaturedServices initialServices={featuredServices as any} />
         <StatsSection stats={home.stats} />
         <FeaturedApplications initialApplications={featuredApplications as any} />
-        <VendorsSlider initialVendors={vendors as any} />
+        <VendorsSlider
+          initialVendors={vendors as any}
+          heading={home.vendors_section_title}
+          description={home.vendors_section_description}
+        />
 
         {home.show_contact_cta && (
           <ContactCTA

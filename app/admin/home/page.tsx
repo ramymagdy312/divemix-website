@@ -16,6 +16,8 @@ interface HomePageData {
   hero_image: string;
   hero_cta_primary: { label: I18nValue; href: string };
   hero_cta_secondary: { label: I18nValue; href: string };
+  vendors_section_title: I18nValue;
+  vendors_section_description: I18nValue;
   stats: { icon: string; value: string; label: I18nValue }[];
   show_company_teaser: boolean;
   show_contact_cta: boolean;
@@ -34,6 +36,10 @@ const defaults: HomePageData = {
   hero_image: "/img/hero/home.jpg",
   hero_cta_primary: { label: seedI18n("Explore Products"), href: "/products" },
   hero_cta_secondary: { label: seedI18n("Contact Us"), href: "/contact" },
+  vendors_section_title: seedI18n("Our Trusted Partners"),
+  vendors_section_description: seedI18n(
+    "We collaborate with industry-leading companies to deliver exceptional solutions and services to our clients."
+  ),
   stats: [
     { icon: "Award", value: "20+", label: seedI18n("Years Experience") },
     { icon: "Users", value: "1000+", label: seedI18n("Projects Completed") },
@@ -55,6 +61,8 @@ function normalizeRow(row: any): HomePageData {
     ...row,
     hero_title: normalizeI18n(row?.hero_title),
     hero_subtitle: normalizeI18n(row?.hero_subtitle),
+    vendors_section_title: normalizeI18n(row?.vendors_section_title),
+    vendors_section_description: normalizeI18n(row?.vendors_section_description),
     contact_cta_title: normalizeI18n(row?.contact_cta_title),
     contact_cta_body: normalizeI18n(row?.contact_cta_body),
     hero_cta_primary: {
@@ -200,6 +208,18 @@ export default function HomePageAdmin() {
             }
           />
         </div>
+
+        <I18nTextField
+          label="Vendors section title"
+          value={data.vendors_section_title}
+          onChange={(v) => setData((p) => ({ ...p, vendors_section_title: v }))}
+        />
+
+        <I18nTextarea
+          label="Vendors section description"
+          value={data.vendors_section_description}
+          onChange={(v) => setData((p) => ({ ...p, vendors_section_description: v }))}
+        />
 
         <div className="space-y-3">
           <div className="flex items-center justify-between">

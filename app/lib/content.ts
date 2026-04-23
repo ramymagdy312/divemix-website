@@ -21,6 +21,8 @@ export interface HomePageData {
   hero_image: string;
   hero_cta_primary: { label: string; href: string };
   hero_cta_secondary: { label: string; href: string };
+  vendors_section_title: string;
+  vendors_section_description: string;
   stats: { icon: string; value: string; label: string }[];
   show_company_teaser: boolean;
   show_contact_cta: boolean;
@@ -84,6 +86,9 @@ const defaultHome: HomePageData = {
   hero_image: '/img/hero/home.jpg',
   hero_cta_primary: { label: 'Explore Products', href: '/products' },
   hero_cta_secondary: { label: 'Contact Us', href: '/contact' },
+  vendors_section_title: 'Our Trusted Partners',
+  vendors_section_description:
+    'We collaborate with industry-leading companies to deliver exceptional solutions and services to our clients.',
   stats: [
     { icon: 'Award', value: '20+', label: 'Years Experience' },
     { icon: 'Users', value: '1000+', label: 'Projects Completed' },
