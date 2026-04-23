@@ -21,6 +21,7 @@ import BasicInfoCard from "../../components/admin/BasicInfoCard";
 import Breadcrumb from "../../components/admin/Breadcrumb";
 import PageEditorHeader from "../../components/admin/PageEditorHeader";
 import IntroductionCard from "../../components/IntroductionCard";
+import { triggerRevalidate } from "../../lib/revalidate-client";
 
 export default function ContactAdmin() {
   const [data, setData] = useState<any>(null);
@@ -66,6 +67,7 @@ export default function ContactAdmin() {
         toast.error("Error saving data");
       } else {
         setEditing(false);
+        await triggerRevalidate(["page:contact", "seo:/contact", "footer"]);
         toast.success("Contact page updated successfully!");
       }
     } catch (error) {

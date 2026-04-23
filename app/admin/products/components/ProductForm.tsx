@@ -2,14 +2,18 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "../../../lib/supabase";
-import { Plus, X, AlertCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import Link from "next/link";
 import FolderExplorer from "../../../components/admin/FolderExplorer";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
-import { Textarea } from "@/app/components/ui/textarea";
 import { Switch } from "@/app/components/ui/switch";
+import I18nTextField, { type I18nValue } from "../../../components/admin/i18n/I18nTextField";
+import I18nTextarea from "../../../components/admin/i18n/I18nTextarea";
+import I18nListField from "../../../components/admin/i18n/I18nListField";
+import { normalizeI18n, resolveI18n, seedI18n } from "../../../lib/i18n/resolve";
+import { defaultLocale } from "../../../lib/i18n/config";
 import {
   Select,
   SelectContent,
@@ -28,7 +32,7 @@ import { Alert, AlertDescription } from "@/app/components/ui/alert";
 
 interface Subcategory {
   id: string;
-  name: string;
+  name: any;
   slug: string;
 }
 
@@ -84,13 +88,24 @@ export default function ProductForm({
     return [];
   };
 
-  const [formData, setFormData] = useState({
-    name: initialData?.name || "",
-    description: initialData?.description || "",
-    short_description: initialData?.short_description || "",
+  const [formData, setFormData] = useState<{
+    name: I18nValue;
+    description: I18nValue;
+    short_description: I18nValue;
+    subcategory_id: string;
+    images: string[];
+    features: I18nValue[];
+    is_active: boolean;
+    display_order: number;
+  }>({
+    name: normalizeI18n(initialData?.name),
+    description: normalizeI18n(initialData?.description),
+    short_description: normalizeI18n(initialData?.short_description),
     subcategory_id: initialData?.subcategory_id || "",
     images: getInitialImages(),
-    features: initialData?.features || [""],
+    features: Array.isArray(initialData?.features) && initialData.features.length > 0
+      ? initialData.features.map((f: any) => normalizeI18n(f))
+      : [seedI18n("")],
     is_active:
       initialData?.is_active !== undefined ? initialData.is_active : true,
     display_order: initialData?.display_order || 1,
@@ -137,7 +152,7 @@ export default function ProductForm({
       (img: string) => img.trim() !== ""
     );
     const cleanedFeatures = formData.features.filter(
-      (feature: string) => feature.trim() !== ""
+      (feature: I18nValue) => (feature.en || "").trim() !== ""
     );
 
     const cleanedData = {
@@ -145,40 +160,14 @@ export default function ProductForm({
       description: formData.description,
       short_description: formData.short_description,
       subcategory_id: formData.subcategory_id,
-      image_url: cleanedImages[0] || null, // Primary image
-      images: cleanedImages, // All images array
+      image_url: cleanedImages[0] || null,
+      images: cleanedImages,
       features: cleanedFeatures,
       is_active: formData.is_active,
       display_order: formData.display_order,
     };
 
     onSubmit(cleanedData);
-  };
-
-  const addFeature = () => {
-    setFormData({
-      ...formData,
-      features: [...formData.features, ""],
-    });
-  };
-
-  const removeFeature = (index: number) => {
-    const newFeatures = formData.features.filter(
-      (_: string, i: number) => i !== index
-    );
-    setFormData({
-      ...formData,
-      features: newFeatures,
-    });
-  };
-
-  const updateFeature = (index: number, value: string) => {
-    const newFeatures = [...formData.features];
-    newFeatures[index] = value;
-    setFormData({
-      ...formData,
-      features: newFeatures,
-    });
   };
 
   return (
@@ -207,37 +196,20 @@ export default function ProductForm({
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Product Name */}
-            <div className="space-y-2">
-              <Label htmlFor="product-name">Product Name *</Label>
-              <Input
-                id="product-name"
-                type="text"
-                required
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                placeholder="Enter product name"
-              />
-            </div>
+            <I18nTextField
+              label="Product Name *"
+              value={formData.name}
+              onChange={(v) => setFormData({ ...formData, name: v })}
+              placeholder="Enter product name"
+              required
+            />
 
-            {/* Short Description */}
-            <div className="space-y-2">
-              <Label htmlFor="short-description">Short Description</Label>
-              <Input
-                id="short-description"
-                type="text"
-                value={formData.short_description}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    short_description: e.target.value,
-                  })
-                }
-                placeholder="Brief product description"
-              />
-            </div>
+            <I18nTextField
+              label="Short Description"
+              value={formData.short_description}
+              onChange={(v) => setFormData({ ...formData, short_description: v })}
+              placeholder="Brief product description"
+            />
 
             {/* Subcategory */}
             <div className="space-y-2">
@@ -255,7 +227,7 @@ export default function ProductForm({
                 <SelectContent>
                   {subcategories.map((subcategory) => (
                     <SelectItem key={subcategory.id} value={subcategory.id}>
-                      {subcategory.name}
+                      {resolveI18n(subcategory.name, defaultLocale)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -268,20 +240,14 @@ export default function ProductForm({
               )}
             </div>
 
-            {/* Full Description */}
-            <div className="space-y-2">
-              <Label htmlFor="description">Full Description *</Label>
-              <Textarea
-                id="description"
-                required
-                rows={4}
-                value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
-                placeholder="Detailed product description"
-              />
-            </div>
+            <I18nTextarea
+              label="Full Description *"
+              value={formData.description}
+              onChange={(v) => setFormData({ ...formData, description: v })}
+              placeholder="Detailed product description"
+              rows={4}
+              required
+            />
 
             {/* Images Section */}
             <div className="space-y-4">
@@ -298,43 +264,12 @@ export default function ProductForm({
               />
             </div>
 
-            {/* Features Section */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label>Product Features</Label>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={addFeature}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Feature
-                </Button>
-              </div>
-
-              <div className="space-y-2">
-                {formData.features.map((feature: string, index: number) => (
-                  <div key={index} className="flex gap-2">
-                    <Input
-                      value={feature}
-                      onChange={(e) => updateFeature(index, e.target.value)}
-                      placeholder={`Feature ${index + 1}`}
-                    />
-                    {formData.features.length > 1 && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => removeFeature(index)}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
+            <I18nListField
+              label="Product Features"
+              values={formData.features}
+              onChange={(features) => setFormData({ ...formData, features })}
+              placeholder="Feature"
+            />
 
             {/* Settings */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

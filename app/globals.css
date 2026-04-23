@@ -2,6 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Arabic font stack, loaded from Google Fonts via CDN to keep setup simple. */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700;800&display=swap');
+
+html[dir="rtl"],
+html[lang="ar"] {
+  font-family: 'Cairo', 'Tajawal', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+html[dir="rtl"] body {
+  text-align: right;
+}
+
+/* Flip common directional icons in RTL where applicable via utility class */
+html[dir="rtl"] .rtl-flip {
+  transform: scaleX(-1);
+}
+
+/*
+ * Automatically reverse Tailwind's `space-x-*` utilities under RTL so that
+ * existing LTR layouts using `space-x-N` still render correctly without needing
+ * to audit every `flex` row. Tailwind exposes --tw-space-x-reverse for this.
+ */
+html[dir="rtl"] [class*="space-x-"] > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+}
+
+/* Mirror chevrons/arrows that convey direction. Components can opt-out with
+   the `no-rtl-flip` class or by setting dir="ltr" on an ancestor. */
+html[dir="rtl"] .lucide-chevron-right,
+html[dir="rtl"] .lucide-chevron-left,
+html[dir="rtl"] .lucide-arrow-right,
+html[dir="rtl"] .lucide-arrow-left {
+  transform: scaleX(-1);
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -94,6 +129,21 @@
   from {
     opacity: 0;
     transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+html[dir="rtl"] .nav-item {
+  animation-name: slideInRtl;
+}
+
+@keyframes slideInRtl {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
   }
   to {
     opacity: 1;

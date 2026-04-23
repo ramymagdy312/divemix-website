@@ -13,16 +13,18 @@ import { Button } from '@/app/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/app/components/ui/alert';
 import { Badge } from '@/app/components/ui/badge';
 import { Skeleton } from '@/app/components/ui/skeleton';
+import { resolveI18n } from '@/app/lib/i18n/resolve';
+import { defaultLocale } from '@/app/lib/i18n/config';
 
 interface Product {
   id: string;
-  name: string;
-  description: string;
-  short_description?: string;
+  name: any;
+  description: any;
+  short_description?: any;
   category_id: string;
   image_url: string;
   images?: string[];
-  features?: string[];
+  features?: any[];
   is_active: boolean;
   display_order: number;
 }
@@ -225,7 +227,7 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
           </p>
           {initialData && (
             <div className="text-sm text-muted-foreground">
-              Product ID: {initialData.id} • {initialData.name}
+              Product ID: {initialData.id} • {resolveI18n(initialData.name, defaultLocale)}
             </div>
           )}
         </div>

@@ -16,6 +16,7 @@ import {
   ChevronRight,
   MessageCircle,
   Mail,
+  Languages,
 } from "lucide-react";
 
 import {
@@ -52,6 +53,7 @@ const navigation = [
     icon: Settings,
   },
   { name: "Vendors", href: "/admin/vendors", icon: Users },
+  { name: "Languages", href: "/admin/languages", icon: Languages },
   { name: "Settings", href: "/admin/settings", icon: Mail },
   // { name: "Users", href: "/admin/users", icon: Users },
 ];

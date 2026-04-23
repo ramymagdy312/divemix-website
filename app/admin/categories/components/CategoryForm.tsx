@@ -5,8 +5,12 @@ import FolderExplorerSingle from "../../../components/admin/FolderExplorerSingle
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
-import { Textarea } from "@/app/components/ui/textarea";
 import { Switch } from "@/app/components/ui/switch";
+import I18nTextField, { type I18nValue } from "@/app/components/admin/i18n/I18nTextField";
+import I18nTextarea from "@/app/components/admin/i18n/I18nTextarea";
+import I18nListField from "@/app/components/admin/i18n/I18nListField";
+import { normalizeI18n, resolveI18n } from "@/app/lib/i18n/resolve";
+import { defaultLocale } from "@/app/lib/i18n/config";
 import {
   Card,
   CardContent,
@@ -24,7 +28,6 @@ import {
 import { Badge } from "@/app/components/ui/badge";
 import { X } from "lucide-react";
 import { supabase } from "../../../lib/supabase";
-import { ProductCategory } from "../../../types/database";
 
 interface CategoryFormProps {
   initialData?: any;
@@ -41,19 +44,30 @@ export default function CategoryForm({
     { id: string; name: string }[]
   >([]);
 
-  const [formData, setFormData] = useState({
-    name: initialData?.name || "",
-    description: initialData?.description || "",
+  const [formData, setFormData] = useState<{
+    name: I18nValue;
+    description: I18nValue;
+    slug: string;
+    image_url: string;
+    parent_id: string | null;
+    features: I18nValue[];
+    images: string[];
+    is_active: boolean;
+    display_order: number;
+  }>({
+    name: normalizeI18n(initialData?.name),
+    description: normalizeI18n(initialData?.description),
     slug: initialData?.slug || "",
     image_url: initialData?.image_url || "",
     parent_id: initialData?.parent_id || null,
-    features: initialData?.features || [],
+    features: Array.isArray(initialData?.features)
+      ? initialData.features.map((f: any) => normalizeI18n(f))
+      : [],
     images: initialData?.images || [],
     is_active:
       initialData?.is_active !== undefined ? initialData.is_active : true,
     display_order: initialData?.display_order || 1,
   });
-  const [newFeature, setNewFeature] = useState("");
   const [newImage, setNewImage] = useState("");
 
   useEffect(() => {
@@ -69,8 +83,12 @@ export default function CategoryForm({
         .order("name");
 
       if (!error && data) {
-        console.error("parent categories:", data);
-        setParentCategories(data);
+        setParentCategories(
+          (data as any[]).map((r) => ({
+            id: r.id,
+            name: resolveI18n(r.name, defaultLocale),
+          }))
+        );
       }
     } catch (error) {
       console.error("Error fetching parent categories:", error);
@@ -80,10 +98,10 @@ export default function CategoryForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Generate slug from name if not provided
+    const nameEn = (formData.name?.en || "").trim();
     const slug =
       formData.slug ||
-      formData.name
+      nameEn
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/(^-|-$)/g, "");
@@ -94,26 +112,6 @@ export default function CategoryForm({
     };
 
     onSubmit(submitData);
-  };
-
-  const addFeature = () => {
-    if (newFeature.trim()) {
-      setFormData({
-        ...formData,
-        features: [...formData.features, newFeature.trim()],
-      });
-      setNewFeature("");
-    }
-  };
-
-  const removeFeature = (index: number) => {
-    const newFeatures = formData.features.filter(
-      (_: string, i: number) => i !== index
-    );
-    setFormData({
-      ...formData,
-      features: newFeatures,
-    });
   };
 
   const addImage = () => {
@@ -146,19 +144,13 @@ export default function CategoryForm({
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="category-name">Category Name *</Label>
-            <Input
-              id="category-name"
-              type="text"
-              required
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              placeholder="Enter category name"
-            />
-          </div>
+          <I18nTextField
+            label="Category Name *"
+            value={formData.name}
+            onChange={(v) => setFormData({ ...formData, name: v })}
+            placeholder="Enter category name"
+            required
+          />
 
           <div className="space-y-2">
             <Label htmlFor="parent-category">Parent Category</Label>
@@ -191,19 +183,14 @@ export default function CategoryForm({
             </p>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="description">Description *</Label>
-            <Textarea
-              id="description"
-              required
-              rows={4}
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-              placeholder="Enter category description"
-            />
-          </div>
+          <I18nTextarea
+            label="Description *"
+            value={formData.description}
+            onChange={(v) => setFormData({ ...formData, description: v })}
+            placeholder="Enter category description"
+            rows={4}
+            required
+          />
 
           <div className="space-y-2">
             <Label htmlFor="slug">Slug (URL-friendly name)</Label>
@@ -231,42 +218,12 @@ export default function CategoryForm({
             />
           </div>
 
-          {/* Features Section */}
-          <div className="space-y-2">
-            <Label>Features</Label>
-            <div className="flex space-x-2">
-              <Input
-                type="text"
-                value={newFeature}
-                onChange={(e) => setNewFeature(e.target.value)}
-                placeholder="Add a feature"
-                onKeyPress={(e) =>
-                  e.key === "Enter" && (e.preventDefault(), addFeature())
-                }
-              />
-              <Button type="button" onClick={addFeature} variant="outline">
-                Add
-              </Button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {formData.features.map((feature: string, index: number) => (
-                <Badge
-                  key={index}
-                  variant="secondary"
-                  className="flex items-center gap-1"
-                >
-                  {feature}
-                  <button
-                    type="button"
-                    onClick={() => removeFeature(index)}
-                    className="ml-1 hover:bg-gray-300 rounded-full p-0.5"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </Badge>
-              ))}
-            </div>
-          </div>
+          <I18nListField
+            label="Features"
+            values={formData.features}
+            onChange={(features) => setFormData({ ...formData, features })}
+            placeholder="Feature"
+          />
 
           {/* Images Section */}
           <div className="space-y-2">

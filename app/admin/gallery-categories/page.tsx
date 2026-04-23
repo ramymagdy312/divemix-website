@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
+import { resolveI18n } from '../../lib/i18n/resolve';
+import { defaultLocale } from '../../lib/i18n/config';
 
 import { Edit, Save, X, Plus, Trash2, Eye, EyeOff, Image as ImageIcon } from 'lucide-react';
 import Breadcrumb from '../../components/admin/Breadcrumb';
@@ -305,20 +307,23 @@ export default function GalleryCategoriesAdmin() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {(data || []).map((category: any) => (
+              {(data || []).map((category: any) => {
+                const nameText = resolveI18n(category.name, defaultLocale);
+                const descText = resolveI18n(category.description, defaultLocale);
+                return (
                 <TableRow key={category.id}>
                   <TableCell>
                     {editingId === category.id ? (
                       <Input
                         type="text"
-                        value={category.name}
+                        value={nameText}
                         onChange={(e) => handleCategoryChange(category.id, 'name', e.target.value)}
                       />
                     ) : (
                       <div>
-                        <div className="font-medium">{category.name}</div>
-                        {category.description && (
-                          <div className="text-sm text-muted-foreground">{category.description}</div>
+                        <div className="font-medium">{nameText}</div>
+                        {descText && (
+                          <div className="text-sm text-muted-foreground">{descText}</div>
                         )}
                       </div>
                     )}
@@ -410,7 +415,7 @@ export default function GalleryCategoriesAdmin() {
                           <AlertDialogHeader>
                             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                             <AlertDialogDescription>
-                              This action cannot be undone. This will permanently delete the category "{category.name}".
+                              This action cannot be undone. This will permanently delete the category &quot;{nameText}&quot;.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
@@ -426,7 +431,8 @@ export default function GalleryCategoriesAdmin() {
                     )}
                   </TableCell>
                 </TableRow>
-              ))}
+                );
+              })}
             </TableBody>
           </Table>
         </CardContent>

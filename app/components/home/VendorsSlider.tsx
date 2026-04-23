@@ -1,7 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useLocale } from "next-intl";
 import { supabase } from "../../lib/supabase";
+import { deepResolveI18n } from "../../lib/i18n/resolve";
+import type { Locale } from "../../lib/i18n/config";
 import Image from "next/image";
 import { ExternalLink } from "lucide-react";
 import {
@@ -35,6 +38,7 @@ export default function VendorsSlider({
   description =
     "We collaborate with industry-leading companies to deliver exceptional solutions and services to our clients.",
 }: VendorsSliderProps) {
+  const locale = useLocale() as Locale;
   const [vendors, setVendors] = useState<Vendor[]>(initialVendors || []);
   const [loading, setLoading] = useState(!initialVendors);
 
@@ -54,7 +58,7 @@ export default function VendorsSlider({
           return;
         }
 
-        setVendors(data || []);
+        setVendors(deepResolveI18n(data || [], locale));
       } catch (error) {
         console.error("Error:", error);
       } finally {
@@ -63,7 +67,7 @@ export default function VendorsSlider({
     };
 
     fetchVendors();
-  }, [initialVendors]);
+  }, [initialVendors, locale]);
 
   if (loading) {
     return (

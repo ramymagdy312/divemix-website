@@ -1,10 +1,13 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
+import { useLocale } from "next-intl";
 import { supabase } from "../../lib/supabase";
+import { deepResolveI18n } from "../../lib/i18n/resolve";
+import type { Locale } from "../../lib/i18n/config";
 import ServiceCard from "../services/ServiceCard";
 import { Settings, Wrench, Droplets, FireExtinguisher } from "lucide-react";
 
@@ -36,6 +39,7 @@ const FeaturedServices = ({
   heading = "Our Services",
   description = "Comprehensive solutions for all your gas mixing and compression needs",
 }: FeaturedServicesProps) => {
+  const locale = useLocale() as Locale;
   const [services, setServices] = useState<Service[]>(initialServices || []);
   const [loading, setLoading] = useState(!initialServices);
 
@@ -52,7 +56,7 @@ const FeaturedServices = ({
           .limit(4);
 
         if (error) throw error;
-        setServices(data || []);
+        setServices(deepResolveI18n(data || [], locale));
       } catch (error) {
         console.error("Error fetching services:", error);
         setServices([]);
@@ -62,7 +66,7 @@ const FeaturedServices = ({
     };
 
     fetchServices();
-  }, [initialServices]);
+  }, [initialServices, locale]);
 
   if (loading) {
     return (

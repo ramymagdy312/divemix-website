@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { supabase } from "../../lib/supabase";
 import { triggerRevalidate } from "../../lib/revalidate-client";
+import I18nTextField, { type I18nValue } from "../../components/admin/i18n/I18nTextField";
+import { normalizeI18n, seedI18n } from "../../lib/i18n/resolve";
 
 interface NavItem {
   id?: string;
-  label: string;
+  label: I18nValue;
   href: string;
   sort_order: number;
   is_external: boolean;
@@ -26,7 +28,16 @@ export default function NavigationAdminPage() {
           .from("nav_items")
           .select("*")
           .order("sort_order", { ascending: true });
-        setItems((data || []) as NavItem[]);
+        setItems(
+          ((data || []) as any[]).map((row) => ({
+            id: row.id,
+            label: normalizeI18n(row.label),
+            href: row.href,
+            sort_order: row.sort_order,
+            is_external: !!row.is_external,
+            is_active: row.is_active !== false,
+          }))
+        );
       } finally {
         setLoading(false);
       }
@@ -37,7 +48,13 @@ export default function NavigationAdminPage() {
   const addItem = () => {
     setItems((prev) => [
       ...prev,
-      { label: "New Link", href: "/", sort_order: prev.length + 1, is_external: false, is_active: true },
+      {
+        label: seedI18n("New Link"),
+        href: "/",
+        sort_order: prev.length + 1,
+        is_external: false,
+        is_active: true,
+      },
     ]);
   };
 
@@ -68,7 +85,9 @@ export default function NavigationAdminPage() {
       return;
     }
 
-    const { error } = await supabase.from("nav_items").insert(normalized.map(({ id, ...rest }) => rest));
+    const { error } = await supabase
+      .from("nav_items")
+      .insert(normalized.map(({ id, ...rest }) => rest) as any);
     if (error) {
       toast.error(error.message);
       setSaving(false);
@@ -86,42 +105,59 @@ export default function NavigationAdminPage() {
     <div className="space-y-6 max-w-5xl">
       <div>
         <h1 className="text-2xl font-bold">Navigation</h1>
-        <p className="text-gray-600">Manage main navbar links and order.</p>
+        <p className="text-gray-600">Manage main navbar links and order (multilingual).</p>
       </div>
 
       <div className="space-y-3">
         {items.map((item, index) => (
-          <div key={`${item.label}-${index}`} className="border rounded-md p-3 grid grid-cols-12 gap-2 items-center">
-            <input
-              className="border rounded px-2 py-1 col-span-3"
-              value={item.label}
-              onChange={(e) => updateItem(index, { label: e.target.value })}
-            />
-            <input
-              className="border rounded px-2 py-1 col-span-4"
-              value={item.href}
-              onChange={(e) => updateItem(index, { href: e.target.value })}
-            />
-            <label className="col-span-2 text-xs inline-flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={item.is_external}
-                onChange={(e) => updateItem(index, { is_external: e.target.checked })}
+          <div key={index} className="border rounded-md p-3 grid gap-3">
+            <div className="grid md:grid-cols-2 gap-3">
+              <I18nTextField
+                label="Label"
+                value={item.label}
+                onChange={(v) => updateItem(index, { label: v })}
               />
-              external
-            </label>
-            <label className="col-span-1 text-xs inline-flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={item.is_active}
-                onChange={(e) => updateItem(index, { is_active: e.target.checked })}
-              />
-              active
-            </label>
-            <div className="col-span-2 flex justify-end gap-1">
-              <button className="px-2 py-1 border rounded" onClick={() => move(index, -1)} type="button">?</button>
-              <button className="px-2 py-1 border rounded" onClick={() => move(index, 1)} type="button">?</button>
-              <button className="px-2 py-1 border rounded text-red-600" onClick={() => removeItem(index)} type="button">Delete</button>
+              <div>
+                <label className="text-sm font-medium block mb-1.5">Href</label>
+                <input
+                  className="border rounded px-2 py-1.5 w-full"
+                  value={item.href}
+                  onChange={(e) => updateItem(index, { href: e.target.value })}
+                />
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-4 items-center">
+              <label className="text-sm inline-flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={item.is_external}
+                  onChange={(e) => updateItem(index, { is_external: e.target.checked })}
+                />
+                external
+              </label>
+              <label className="text-sm inline-flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={item.is_active}
+                  onChange={(e) => updateItem(index, { is_active: e.target.checked })}
+                />
+                active
+              </label>
+              <div className="ml-auto flex gap-1">
+                <button className="px-2 py-1 border rounded" onClick={() => move(index, -1)} type="button">
+                  Up
+                </button>
+                <button className="px-2 py-1 border rounded" onClick={() => move(index, 1)} type="button">
+                  Down
+                </button>
+                <button
+                  className="px-2 py-1 border rounded text-red-600"
+                  onClick={() => removeItem(index)}
+                  type="button"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           </div>
         ))}

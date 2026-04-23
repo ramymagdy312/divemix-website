@@ -7,12 +7,12 @@ import { supabase } from '../../../../lib/supabase';
 import FolderExplorerSingle from '../../../../components/admin/FolderExplorerSingle';
 import toast from 'react-hot-toast';
 import { Button } from '@/app/components/ui/button';
-import { Input } from '@/app/components/ui/input';
-import { Label } from '@/app/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Alert, AlertDescription } from '@/app/components/ui/alert';
-import { ArrowLeft, Image as ImageIcon } from 'lucide-react';
-import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
+import I18nTextField, { type I18nValue } from '@/app/components/admin/i18n/I18nTextField';
+import { normalizeI18n, resolveI18n } from '@/app/lib/i18n/resolve';
+import { defaultLocale } from '@/app/lib/i18n/config';
+import { triggerRevalidate } from '@/app/lib/revalidate-client';
 
 export default function EditGalleryImagePage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -20,8 +20,13 @@ export default function EditGalleryImagePage({ params }: { params: { id: string 
   const [initialData, setInitialData] = useState(null);
   const [fetchLoading, setFetchLoading] = useState(true);
   const [data, setData] = useState<any>(null);
-  const [formData, setFormData] = useState({
-    title: '',
+  const [formData, setFormData] = useState<{
+    title: I18nValue;
+    url: string;
+    category: string;
+    category_id: string;
+  }>({
+    title: normalizeI18n(null),
     url: '',
     category: '',
     category_id: '',
@@ -70,7 +75,7 @@ export default function EditGalleryImagePage({ params }: { params: { id: string 
       
       setInitialData(data);
       setFormData({
-        title: data.title || '',
+        title: normalizeI18n(data.title),
         url: data.url || '',
         category: data.category || '',
         category_id: data.category_id || '',
@@ -90,7 +95,7 @@ export default function EditGalleryImagePage({ params }: { params: { id: string 
     try {
       const { error } = await supabase
         .from('gallery_images')
-        .update(formData)
+        .update(formData as any)
         .eq('id', params.id);
 
       if (error) {
@@ -99,6 +104,7 @@ export default function EditGalleryImagePage({ params }: { params: { id: string 
         return;
       }
 
+      await triggerRevalidate(['gallery']);
       toast.success('Image updated successfully!');
       router.push('/admin/gallery');
     } catch (error) {
@@ -142,18 +148,13 @@ export default function EditGalleryImagePage({ params }: { params: { id: string 
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6 bg-white shadow rounded-lg p-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Image Title
-          </label>
-          <input
-            type="text"
-            required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-cyan-500 focus:border-cyan-500"
-            value={formData.title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-          />
-        </div>
+        <I18nTextField
+          label="Image Title *"
+          value={formData.title}
+          onChange={(v) => setFormData({ ...formData, title: v })}
+          placeholder="Enter image title"
+          required
+        />
 
         <div>
           <FolderExplorerSingle
@@ -183,7 +184,7 @@ export default function EditGalleryImagePage({ params }: { params: { id: string 
             <option value="">Select Category</option>
             {(data || []).map((category: any) => (
               <option key={category.id} value={category.id}>
-                {category.name}
+                {resolveI18n(category.name, defaultLocale)}
               </option>
             ))}
           </select>

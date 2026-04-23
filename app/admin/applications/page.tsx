@@ -29,14 +29,16 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/app/components/ui/alert-dialog';
+import { resolveI18n } from '@/app/lib/i18n/resolve';
+import { defaultLocale } from '@/app/lib/i18n/config';
 
 interface Application {
   id: string;
-  name: string;
-  description: string;
+  name: any;
+  description: any;
   image_url?: string;
-  use_cases?: string[];
-  benefits?: string[];
+  use_cases?: any[];
+  benefits?: any[];
   is_active: boolean;
   display_order: number;
   created_at: string;
@@ -84,10 +86,12 @@ export default function ApplicationsPage() {
     }
   };
 
-  const filteredApplications = applications.filter(app =>
-    app.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    app.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredApplications = applications.filter(app => {
+    const name = resolveI18n(app.name, defaultLocale).toLowerCase();
+    const desc = resolveI18n(app.description, defaultLocale).toLowerCase();
+    const q = searchTerm.toLowerCase();
+    return name.includes(q) || desc.includes(q);
+  });
 
   if (loading) {
     return (
@@ -157,16 +161,16 @@ export default function ApplicationsPage() {
                       {application.image_url && (
                         <Image
                           src={application.image_url}
-                          alt={application.name}
+                          alt={resolveI18n(application.name, defaultLocale)}
                           width={48}
                           height={48}
                           className="h-12 w-12 object-cover rounded-md"
                         />
                       )}
                       <div>
-                        <div className="font-medium">{application.name}</div>
+                        <div className="font-medium">{resolveI18n(application.name, defaultLocale)}</div>
                         <div className="text-sm text-muted-foreground max-w-md truncate">
-                          {application.description}
+                          {resolveI18n(application.description, defaultLocale)}
                         </div>
                       </div>
                     </div>
@@ -214,7 +218,7 @@ export default function ApplicationsPage() {
                           <AlertDialogHeader>
                             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                             <AlertDialogDescription>
-                              This action cannot be undone. This will permanently delete the application "{application.name}".
+                              This action cannot be undone. This will permanently delete the application &quot;{resolveI18n(application.name, defaultLocale)}&quot;.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>

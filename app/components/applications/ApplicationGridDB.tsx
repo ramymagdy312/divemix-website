@@ -1,7 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useLocale } from "next-intl";
 import { supabase } from "../../lib/supabase";
+import { deepResolveI18n } from "../../lib/i18n/resolve";
+import type { Locale } from "../../lib/i18n/config";
 import ApplicationCard from "./ApplicationCard";
 import AnimatedElement from "../common/AnimatedElement";
 import StatsCounter from "../common/StatsCounter";
@@ -22,6 +25,7 @@ interface Application {
 }
 
 const ApplicationGridDB: React.FC<{ initialApplications?: Application[] }> = ({ initialApplications }) => {
+  const locale = useLocale() as Locale;
   const [applications, setApplications] = useState<Application[]>(initialApplications || []);
   const [loading, setLoading] = useState(!initialApplications);
 
@@ -37,7 +41,7 @@ const ApplicationGridDB: React.FC<{ initialApplications?: Application[] }> = ({ 
           .order("display_order", { ascending: true });
 
         if (error) throw error;
-        setApplications(data || []);
+        setApplications(deepResolveI18n(data || [], locale));
       } catch (error) {
         console.error("Error fetching applications:", error);
         setApplications([]);
@@ -47,7 +51,7 @@ const ApplicationGridDB: React.FC<{ initialApplications?: Application[] }> = ({ 
     };
 
     fetchApplications();
-  }, [initialApplications]);
+  }, [initialApplications, locale]);
 
   if (loading) {
     return <EnhancedLoader message="Loading applications..." variant="pulse" size="lg" />;

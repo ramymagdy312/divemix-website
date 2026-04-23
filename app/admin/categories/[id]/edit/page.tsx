@@ -13,6 +13,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/app/components/ui/alert";
 import { Skeleton } from "@/app/components/ui/skeleton";
 import { ProductCategory } from "../../../../types/database";
 import { triggerRevalidate } from "@/app/lib/revalidate-client";
+import { resolveI18n } from "@/app/lib/i18n/resolve";
+import { defaultLocale } from "@/app/lib/i18n/config";
 
 // Fallback category data for demo
 const fallbackCategories: { [key: string]: ProductCategory } = {
@@ -225,7 +227,7 @@ export default function EditCategoryPage({
         </p>
         {initialData && (
           <div className="mt-2 text-sm text-gray-500">
-            Category ID: {initialData.id} • {initialData.name}
+            Category ID: {initialData.id} • {resolveI18n(initialData.name as any, defaultLocale)}
           </div>
         )}
       </div>

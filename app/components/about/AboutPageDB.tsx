@@ -1,8 +1,11 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useLocale } from 'next-intl';
 import { Shield, Award, Users, Focus, Star, Heart } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { deepResolveI18n } from '../../lib/i18n/resolve';
+import type { Locale } from '../../lib/i18n/config';
 
 import PageHeader from '../common/PageHeader';
 import Timeline from './Timeline';
@@ -38,6 +41,7 @@ const iconMap = {
 };
 
 export default function AboutPageDB({ initialData }: { initialData?: AboutPageData | null }) {
+  const locale = useLocale() as Locale;
   const [data, setData] = useState<AboutPageData | null>(initialData || null);
   const [loading, setLoading] = useState(!initialData);
 
@@ -52,7 +56,7 @@ export default function AboutPageDB({ initialData }: { initialData?: AboutPageDa
           console.error('Error fetching about data:', error);
           setData(null);
         } else {
-          setData(aboutPageData as AboutPageData);
+          setData(deepResolveI18n(aboutPageData, locale) as AboutPageData);
         }
       } catch (error) {
         console.error('Error:', error);
@@ -63,7 +67,7 @@ export default function AboutPageDB({ initialData }: { initialData?: AboutPageDa
     };
 
     fetchAboutData();
-  }, [initialData]);
+  }, [initialData, locale]);
 
   if (loading) {
     return (

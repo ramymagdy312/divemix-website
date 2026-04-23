@@ -6,43 +6,78 @@ import { supabase } from "../../lib/supabase";
 import { triggerRevalidate } from "../../lib/revalidate-client";
 import FolderExplorerSingle from "../../components/admin/FolderExplorerSingle";
 import { IconPicker, IconRenderer } from "../../components/admin/iconPicker";
+import I18nTextField, { type I18nValue } from "../../components/admin/i18n/I18nTextField";
+import I18nTextarea from "../../components/admin/i18n/I18nTextarea";
+import { normalizeI18n, seedI18n } from "../../lib/i18n/resolve";
 
 interface HomePageData {
-  hero_title: string;
-  hero_subtitle: string;
+  hero_title: I18nValue;
+  hero_subtitle: I18nValue;
   hero_image: string;
-  hero_cta_primary: { label: string; href: string };
-  hero_cta_secondary: { label: string; href: string };
-  stats: { icon: string; value: string; label: string }[];
+  hero_cta_primary: { label: I18nValue; href: string };
+  hero_cta_secondary: { label: I18nValue; href: string };
+  stats: { icon: string; value: string; label: I18nValue }[];
   show_company_teaser: boolean;
   show_contact_cta: boolean;
-  contact_cta_title: string;
-  contact_cta_body: string;
-  contact_cta_button: { label: string; href: string };
+  contact_cta_title: I18nValue;
+  contact_cta_body: I18nValue;
+  contact_cta_button: { label: I18nValue; href: string };
 }
 
-type StatItem = { icon: string; value: string; label: string };
+type StatItem = { icon: string; value: string; label: I18nValue };
 
 const defaults: HomePageData = {
-  hero_title: "Pioneering the Future of Gas Technology",
-  hero_subtitle:
-    "Leading the industry with innovative solutions for gas mixing and compression systems. Trust DiveMix for reliability, precision, and excellence.",
+  hero_title: seedI18n("Pioneering the Future of Gas Technology"),
+  hero_subtitle: seedI18n(
+    "Leading the industry with innovative solutions for gas mixing and compression systems. Trust DiveMix for reliability, precision, and excellence."
+  ),
   hero_image: "/img/hero/home.jpg",
-  hero_cta_primary: { label: "Explore Products", href: "/products" },
-  hero_cta_secondary: { label: "Contact Us", href: "/contact" },
+  hero_cta_primary: { label: seedI18n("Explore Products"), href: "/products" },
+  hero_cta_secondary: { label: seedI18n("Contact Us"), href: "/contact" },
   stats: [
-    { icon: "Award", value: "20+", label: "Years Experience" },
-    { icon: "Users", value: "1000+", label: "Projects Completed" },
-    { icon: "Globe", value: "50+", label: "Countries Served" },
-    { icon: "Clock", value: "24/7", label: "Support Available" },
+    { icon: "Award", value: "20+", label: seedI18n("Years Experience") },
+    { icon: "Users", value: "1000+", label: seedI18n("Projects Completed") },
+    { icon: "Globe", value: "50+", label: seedI18n("Countries Served") },
+    { icon: "Clock", value: "24/7", label: seedI18n("Support Available") },
   ],
   show_company_teaser: true,
   show_contact_cta: false,
-  contact_cta_title: "Ready to Get Started?",
-  contact_cta_body:
-    "Contact our team of experts for a consultation and discover how we can help optimize your operations",
-  contact_cta_button: { label: "Contact Us Today", href: "/contact" },
+  contact_cta_title: seedI18n("Ready to Get Started?"),
+  contact_cta_body: seedI18n(
+    "Contact our team of experts for a consultation and discover how we can help optimize your operations"
+  ),
+  contact_cta_button: { label: seedI18n("Contact Us Today"), href: "/contact" },
 };
+
+function normalizeRow(row: any): HomePageData {
+  return {
+    ...defaults,
+    ...row,
+    hero_title: normalizeI18n(row?.hero_title),
+    hero_subtitle: normalizeI18n(row?.hero_subtitle),
+    contact_cta_title: normalizeI18n(row?.contact_cta_title),
+    contact_cta_body: normalizeI18n(row?.contact_cta_body),
+    hero_cta_primary: {
+      label: normalizeI18n(row?.hero_cta_primary?.label),
+      href: row?.hero_cta_primary?.href || defaults.hero_cta_primary.href,
+    },
+    hero_cta_secondary: {
+      label: normalizeI18n(row?.hero_cta_secondary?.label),
+      href: row?.hero_cta_secondary?.href || defaults.hero_cta_secondary.href,
+    },
+    contact_cta_button: {
+      label: normalizeI18n(row?.contact_cta_button?.label),
+      href: row?.contact_cta_button?.href || defaults.contact_cta_button.href,
+    },
+    stats: Array.isArray(row?.stats)
+      ? row.stats.map((s: any) => ({
+          icon: s.icon || "Award",
+          value: s.value || "",
+          label: normalizeI18n(s.label),
+        }))
+      : defaults.stats,
+  };
+}
 
 export default function HomePageAdmin() {
   const [data, setData] = useState<HomePageData>(defaults);
@@ -53,7 +88,7 @@ export default function HomePageAdmin() {
     const fetchHome = async () => {
       try {
         const { data: row } = await supabase.from("home_page").select("*").single();
-        if (row) setData({ ...defaults, ...row });
+        if (row) setData(normalizeRow(row));
       } finally {
         setLoading(false);
       }
@@ -64,7 +99,7 @@ export default function HomePageAdmin() {
 
   const save = async () => {
     setSaving(true);
-    const { error } = await supabase.from("home_page").upsert(data);
+    const { error } = await supabase.from("home_page").upsert(data as any);
     if (error) {
       toast.error(error.message);
       setSaving(false);
@@ -90,7 +125,7 @@ export default function HomePageAdmin() {
   const addStat = () => {
     setData((prev) => ({
       ...prev,
-      stats: [...prev.stats, { icon: "Award", value: "", label: "" }],
+      stats: [...prev.stats, { icon: "Award", value: "", label: seedI18n("") }],
     }));
   };
 
@@ -109,60 +144,62 @@ export default function HomePageAdmin() {
       </div>
 
       <div className="grid gap-4">
-        <label className="text-sm font-medium">Hero title</label>
-        <input
-          className="border rounded-md px-3 py-2"
+        <I18nTextField
+          label="Hero title"
           value={data.hero_title}
-          onChange={(e) => setData((p) => ({ ...p, hero_title: e.target.value }))}
+          onChange={(v) => setData((p) => ({ ...p, hero_title: v }))}
         />
 
-        <label className="text-sm font-medium">Hero subtitle</label>
-        <textarea
-          className="border rounded-md px-3 py-2 min-h-[90px]"
+        <I18nTextarea
+          label="Hero subtitle"
           value={data.hero_subtitle}
-          onChange={(e) => setData((p) => ({ ...p, hero_subtitle: e.target.value }))}
+          onChange={(v) => setData((p) => ({ ...p, hero_subtitle: v }))}
         />
 
-        <label className="text-sm font-medium">Hero image</label>
-        <FolderExplorerSingle
-          image={data.hero_image}
-          onImageChange={(image) => setData((p) => ({ ...p, hero_image: image }))}
-          label="Hero Image"
-        />
+        <div>
+          <label className="text-sm font-medium block mb-1.5">Hero image</label>
+          <FolderExplorerSingle
+            image={data.hero_image}
+            onImageChange={(image) => setData((p) => ({ ...p, hero_image: image }))}
+            label="Hero Image"
+          />
+        </div>
 
-        <label className="text-sm font-medium">Primary CTA label</label>
-        <input
-          className="border rounded-md px-3 py-2"
+        <I18nTextField
+          label="Primary CTA label"
           value={data.hero_cta_primary.label}
-          onChange={(e) =>
-            setData((p) => ({ ...p, hero_cta_primary: { ...p.hero_cta_primary, label: e.target.value } }))
+          onChange={(v) =>
+            setData((p) => ({ ...p, hero_cta_primary: { ...p.hero_cta_primary, label: v } }))
           }
         />
-        <label className="text-sm font-medium">Primary CTA href</label>
-        <input
-          className="border rounded-md px-3 py-2"
-          value={data.hero_cta_primary.href}
-          onChange={(e) =>
-            setData((p) => ({ ...p, hero_cta_primary: { ...p.hero_cta_primary, href: e.target.value } }))
-          }
-        />
+        <div>
+          <label className="text-sm font-medium block mb-1.5">Primary CTA href</label>
+          <input
+            className="border rounded-md px-3 py-2 w-full"
+            value={data.hero_cta_primary.href}
+            onChange={(e) =>
+              setData((p) => ({ ...p, hero_cta_primary: { ...p.hero_cta_primary, href: e.target.value } }))
+            }
+          />
+        </div>
 
-        <label className="text-sm font-medium">Secondary CTA label</label>
-        <input
-          className="border rounded-md px-3 py-2"
+        <I18nTextField
+          label="Secondary CTA label"
           value={data.hero_cta_secondary.label}
-          onChange={(e) =>
-            setData((p) => ({ ...p, hero_cta_secondary: { ...p.hero_cta_secondary, label: e.target.value } }))
+          onChange={(v) =>
+            setData((p) => ({ ...p, hero_cta_secondary: { ...p.hero_cta_secondary, label: v } }))
           }
         />
-        <label className="text-sm font-medium">Secondary CTA href</label>
-        <input
-          className="border rounded-md px-3 py-2"
-          value={data.hero_cta_secondary.href}
-          onChange={(e) =>
-            setData((p) => ({ ...p, hero_cta_secondary: { ...p.hero_cta_secondary, href: e.target.value } }))
-          }
-        />
+        <div>
+          <label className="text-sm font-medium block mb-1.5">Secondary CTA href</label>
+          <input
+            className="border rounded-md px-3 py-2 w-full"
+            value={data.hero_cta_secondary.href}
+            onChange={(e) =>
+              setData((p) => ({ ...p, hero_cta_secondary: { ...p.hero_cta_secondary, href: e.target.value } }))
+            }
+          />
+        </div>
 
         <div className="space-y-3">
           <div className="flex items-center justify-between">
@@ -183,7 +220,7 @@ export default function HomePageAdmin() {
           )}
 
           {data.stats.map((stat, index) => (
-            <div key={`${stat.label}-${index}`} className="border rounded-md p-3 grid gap-3 md:grid-cols-3">
+            <div key={index} className="border rounded-md p-3 grid gap-3 md:grid-cols-3">
               <div className="space-y-1">
                 <label className="text-xs text-muted-foreground">Icon</label>
                 <div className="flex items-center gap-2">
@@ -204,22 +241,18 @@ export default function HomePageAdmin() {
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-xs text-muted-foreground">Label</label>
-                <div className="flex gap-2">
-                  <input
-                    className="w-full border rounded-md px-2 py-2 text-sm"
-                    value={stat.label}
-                    onChange={(e) => updateStat(index, { label: e.target.value })}
-                    placeholder="e.g. Years Experience"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeStat(index)}
-                    className="px-3 py-2 text-sm rounded-md border border-red-300 text-red-700 hover:bg-red-50"
-                  >
-                    Delete
-                  </button>
-                </div>
+                <I18nTextField
+                  label="Label"
+                  value={stat.label}
+                  onChange={(v) => updateStat(index, { label: v })}
+                />
+                <button
+                  type="button"
+                  onClick={() => removeStat(index)}
+                  className="mt-2 px-3 py-1 text-xs rounded-md border border-red-300 text-red-700 hover:bg-red-50"
+                >
+                  Delete
+                </button>
               </div>
             </div>
           ))}
@@ -244,18 +277,36 @@ export default function HomePageAdmin() {
           </label>
         </div>
 
-        <label className="text-sm font-medium">Contact CTA title</label>
-        <input
-          className="border rounded-md px-3 py-2"
+        <I18nTextField
+          label="Contact CTA title"
           value={data.contact_cta_title}
-          onChange={(e) => setData((p) => ({ ...p, contact_cta_title: e.target.value }))}
+          onChange={(v) => setData((p) => ({ ...p, contact_cta_title: v }))}
         />
-        <label className="text-sm font-medium">Contact CTA body</label>
-        <textarea
-          className="border rounded-md px-3 py-2 min-h-[90px]"
+        <I18nTextarea
+          label="Contact CTA body"
           value={data.contact_cta_body}
-          onChange={(e) => setData((p) => ({ ...p, contact_cta_body: e.target.value }))}
+          onChange={(v) => setData((p) => ({ ...p, contact_cta_body: v }))}
         />
+        <I18nTextField
+          label="Contact CTA button label"
+          value={data.contact_cta_button.label}
+          onChange={(v) =>
+            setData((p) => ({ ...p, contact_cta_button: { ...p.contact_cta_button, label: v } }))
+          }
+        />
+        <div>
+          <label className="text-sm font-medium block mb-1.5">Contact CTA button href</label>
+          <input
+            className="border rounded-md px-3 py-2 w-full"
+            value={data.contact_cta_button.href}
+            onChange={(e) =>
+              setData((p) => ({
+                ...p,
+                contact_cta_button: { ...p.contact_cta_button, href: e.target.value },
+              }))
+            }
+          />
+        </div>
       </div>
 
       <button

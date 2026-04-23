@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { Mail, Phone, MapPin, Clock, Globe, Award, Users, Shield, Zap } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { createClient } from "@/app/lib/supabase";
 import Logo from "./common/Logo";
 import type { FooterContent, SiteSettings } from "@/app/lib/content";

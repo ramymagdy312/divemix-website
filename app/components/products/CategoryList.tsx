@@ -1,7 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useLocale } from "next-intl";
 import { supabase } from "../../lib/supabase";
+import { deepResolveI18n } from "../../lib/i18n/resolve";
+import type { Locale } from "../../lib/i18n/config";
 import SearchBar from "./SearchBar";
 import CategoryCard from "./CategoryCard";
 import { useSearch } from "../../hooks/useSearch";
@@ -25,6 +28,7 @@ interface Category {
 }
 
 const CategoryList = ({ initialCategories }: { initialCategories?: Category[] }) => {
+  const locale = useLocale() as Locale;
   const [categories, setCategories] = useState<Category[]>(initialCategories || []);
   const [loading, setLoading] = useState(!initialCategories);
 
@@ -44,7 +48,7 @@ const CategoryList = ({ initialCategories }: { initialCategories?: Category[] })
           console.error("Error fetching categories:", error);
           setCategories([]);
         } else {
-          setCategories(data || []);
+          setCategories(deepResolveI18n(data || [], locale));
         }
       } catch (error) {
         console.error("Error:", error);
@@ -55,7 +59,7 @@ const CategoryList = ({ initialCategories }: { initialCategories?: Category[] })
     };
 
     fetchCategories();
-  }, [initialCategories]);
+  }, [initialCategories, locale]);
 
   const { searchTerm, setSearchTerm, filteredItems } = useSearch(categories, ["name", "description"]);
 

@@ -12,13 +12,15 @@ import { Skeleton } from '@/app/components/ui/skeleton';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import ServiceForm from '../../components/ServiceForm';
 import { triggerRevalidate } from '@/app/lib/revalidate-client';
+import { resolveI18n } from '@/app/lib/i18n/resolve';
+import { defaultLocale } from '@/app/lib/i18n/config';
 
 interface Service {
   id: string;
-  name: string;
-  description: string;
+  name: any;
+  description: any;
   icon: string;
-  features: string[];
+  features: any[];
   is_active: boolean;
   display_order: number;
 }
@@ -150,7 +152,7 @@ export default function EditServicePage({ params }: { params: { id: string } }) 
           </p>
           {initialData && (
             <div className="text-sm text-muted-foreground">
-              Service ID: {initialData.id} • {initialData.name}
+              Service ID: {initialData.id} • {resolveI18n(initialData.name, defaultLocale)}
             </div>
           )}
         </div>

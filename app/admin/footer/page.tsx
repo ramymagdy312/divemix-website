@@ -18,20 +18,22 @@ import {
   SelectValue,
 } from "@/app/components/ui/select";
 import { Separator } from "@/app/components/ui/separator";
-import { Clock, Edit3, Plus, Settings as SettingsIcon, Trash2 } from "lucide-react";
+import { Edit3, Plus, Settings as SettingsIcon, Trash2 } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import IconPickerModal from "../../components/admin/IconPickerModal";
+import I18nTextField, { type I18nValue } from "../../components/admin/i18n/I18nTextField";
+import { normalizeI18n, seedI18n } from "../../lib/i18n/resolve";
 
 interface FooterColumn {
-  title: string;
-  links: { label: string; href: string }[];
+  title: I18nValue;
+  links: { label: I18nValue; href: string }[];
 }
 
 interface FooterData {
   id?: string;
   columns: FooterColumn[];
-  powered_by_text: string;
-  copyright_name: string;
+  powered_by_text: I18nValue;
+  copyright_name: I18nValue;
 }
 
 interface Setting {
@@ -43,31 +45,67 @@ interface Setting {
 interface SupportItem {
   id: string;
   icon: string;
-  title: string;
-  subtitle: string;
+  title: I18nValue;
+  subtitle: I18nValue;
   enabled: boolean;
 }
 
 const defaults: FooterData = {
   columns: [
     {
-      title: "Company",
+      title: seedI18n("Company"),
       links: [
-        { label: "About Us", href: "/about" },
-        { label: "Gallery", href: "/gallery" },
+        { label: seedI18n("About Us"), href: "/about" },
+        { label: seedI18n("Gallery"), href: "/gallery" },
       ],
     },
     {
-      title: "Our Services",
+      title: seedI18n("Our Services"),
       links: [
-        { label: "Products", href: "/products" },
-        { label: "Services", href: "/services" },
+        { label: seedI18n("Products"), href: "/products" },
+        { label: seedI18n("Services"), href: "/services" },
       ],
     },
   ],
-  powered_by_text: "DevsDiamond",
-  copyright_name: "Divemix",
+  powered_by_text: seedI18n("DevsDiamond"),
+  copyright_name: seedI18n("Divemix"),
 };
+
+/** Parse a settings value that might be either plain string or JSON-encoded i18n. */
+function parseSettingI18n(raw: string | undefined, fallback: string): I18nValue {
+  if (!raw) return seedI18n(fallback);
+  const trimmed = raw.trim();
+  if (trimmed.startsWith("{") && trimmed.endsWith("}")) {
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (parsed && typeof parsed === "object") {
+        return normalizeI18n(parsed);
+      }
+    } catch {
+      // fall through
+    }
+  }
+  return seedI18n(raw);
+}
+
+function normalizeFooterRow(row: any): FooterData {
+  return {
+    id: row.id,
+    columns: Array.isArray(row.columns)
+      ? row.columns.map((col: any) => ({
+          title: normalizeI18n(col.title),
+          links: Array.isArray(col.links)
+            ? col.links.map((l: any) => ({
+                label: normalizeI18n(l.label),
+                href: l.href || "/",
+              }))
+            : [],
+        }))
+      : defaults.columns,
+    powered_by_text: normalizeI18n(row.powered_by_text) || defaults.powered_by_text,
+    copyright_name: normalizeI18n(row.copyright_name) || defaults.copyright_name,
+  };
+}
 
 export default function FooterAdminPage() {
   const [data, setData] = useState<FooterData>(defaults);
@@ -75,41 +113,58 @@ export default function FooterAdminPage() {
   const [supportItems, setSupportItems] = useState<SupportItem[]>([]);
   const [editingItem, setEditingItem] = useState<SupportItem | null>(null);
   const [iconPickerItemId, setIconPickerItemId] = useState<string | null>(null);
+  const [branchesTitleI18n, setBranchesTitleI18n] = useState<I18nValue>(seedI18n("Our Branches"));
+  const [supportSectionTitleI18n, setSupportSectionTitleI18n] = useState<I18nValue>(seedI18n("Support"));
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    Promise.all([
-      supabase
-        .from("footer_content")
-        .select("*")
-        .order("updated_at", { ascending: false })
-        .limit(1),
-      supabase.from("settings").select("*").order("key"),
-    ])
-      .then(([footerResult, settingsResult]) => {
+    const load = async () => {
+      try {
+        const [footerResult, settingsResult] = await Promise.all([
+          supabase
+            .from("footer_content")
+            .select("*")
+            .order("updated_at", { ascending: false })
+            .limit(1),
+          supabase.from("settings").select("*").order("key"),
+        ]);
         const row = footerResult.data?.[0];
-        if (row) {
-          setData({
-            id: row.id,
-            columns: row.columns || defaults.columns,
-            powered_by_text: row.powered_by_text || defaults.powered_by_text,
-            copyright_name: row.copyright_name || defaults.copyright_name,
-          });
-        }
+        if (row) setData(normalizeFooterRow(row));
 
-        const settingsData = settingsResult.data || [];
+        const settingsData = (settingsResult.data || []) as Setting[];
         setSettings(settingsData);
-        const supportItemsSetting = settingsData.find((s) => s.key === "support_items");
-        if (supportItemsSetting?.value) {
+
+        const support = settingsData.find((s) => s.key === "support_items");
+        if (support?.value) {
           try {
-            setSupportItems(JSON.parse(supportItemsSetting.value));
+            const parsed = JSON.parse(support.value);
+            if (Array.isArray(parsed)) {
+              setSupportItems(
+                parsed.map((item: any) => ({
+                  id: item.id || `item_${Math.random()}`,
+                  icon: item.icon || "Clock",
+                  title: normalizeI18n(item.title),
+                  subtitle: normalizeI18n(item.subtitle),
+                  enabled: item.enabled !== false,
+                }))
+              );
+            }
           } catch {
             setSupportItems([]);
           }
         }
-      })
-      .finally(() => setLoading(false));
+
+        const branchTitle = settingsData.find((s) => s.key === "footer_branches_title");
+        setBranchesTitleI18n(parseSettingI18n(branchTitle?.value, "Our Branches"));
+
+        const supportTitle = settingsData.find((s) => s.key === "support_section_title");
+        setSupportSectionTitleI18n(parseSettingI18n(supportTitle?.value, "Support"));
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
   }, []);
 
   const getSetting = (key: string, fallback: string) =>
@@ -130,7 +185,7 @@ export default function FooterAdminPage() {
   const addColumn = () => {
     setData((prev) => ({
       ...prev,
-      columns: [...prev.columns, { title: "New Column", links: [{ label: "", href: "" }] }],
+      columns: [...prev.columns, { title: seedI18n("New Column"), links: [{ label: seedI18n(""), href: "" }] }],
     }));
   };
 
@@ -141,12 +196,10 @@ export default function FooterAdminPage() {
     }));
   };
 
-  const updateColumnTitle = (columnIndex: number, title: string) => {
+  const updateColumnTitle = (columnIndex: number, title: I18nValue) => {
     setData((prev) => ({
       ...prev,
-      columns: prev.columns.map((col, idx) =>
-        idx === columnIndex ? { ...col, title } : col
-      ),
+      columns: prev.columns.map((col, idx) => (idx === columnIndex ? { ...col, title } : col)),
     }));
   };
 
@@ -154,9 +207,7 @@ export default function FooterAdminPage() {
     setData((prev) => ({
       ...prev,
       columns: prev.columns.map((col, idx) =>
-        idx === columnIndex
-          ? { ...col, links: [...col.links, { label: "", href: "" }] }
-          : col
+        idx === columnIndex ? { ...col, links: [...col.links, { label: seedI18n(""), href: "" }] } : col
       ),
     }));
   };
@@ -165,28 +216,33 @@ export default function FooterAdminPage() {
     setData((prev) => ({
       ...prev,
       columns: prev.columns.map((col, idx) =>
-        idx === columnIndex
-          ? { ...col, links: col.links.filter((_, li) => li !== linkIndex) }
-          : col
+        idx === columnIndex ? { ...col, links: col.links.filter((_, li) => li !== linkIndex) } : col
       ),
     }));
   };
 
-  const updateLink = (
-    columnIndex: number,
-    linkIndex: number,
-    field: "label" | "href",
-    value: string
-  ) => {
+  const updateLinkLabel = (columnIndex: number, linkIndex: number, label: I18nValue) => {
     setData((prev) => ({
       ...prev,
       columns: prev.columns.map((col, idx) =>
         idx === columnIndex
           ? {
               ...col,
-              links: col.links.map((link, li) =>
-                li === linkIndex ? { ...link, [field]: value } : link
-              ),
+              links: col.links.map((link, li) => (li === linkIndex ? { ...link, label } : link)),
+            }
+          : col
+      ),
+    }));
+  };
+
+  const updateLinkHref = (columnIndex: number, linkIndex: number, href: string) => {
+    setData((prev) => ({
+      ...prev,
+      columns: prev.columns.map((col, idx) =>
+        idx === columnIndex
+          ? {
+              ...col,
+              links: col.links.map((link, li) => (li === linkIndex ? { ...link, href } : link)),
             }
           : col
       ),
@@ -197,8 +253,8 @@ export default function FooterAdminPage() {
     const newItem: SupportItem = {
       id: `item_${Date.now()}`,
       icon: "Clock",
-      title: "New Item",
-      subtitle: "Description",
+      title: seedI18n("New Item"),
+      subtitle: seedI18n("Description"),
       enabled: true,
     };
     setSupportItems((prev) => [...prev, newItem]);
@@ -229,17 +285,17 @@ export default function FooterAdminPage() {
     };
 
     const result = data.id
-      ? await supabase.from("footer_content").update(payload).eq("id", data.id)
-      : await supabase.from("footer_content").insert(payload).select("id").single();
-    const { error } = result;
+      ? await supabase.from("footer_content").update(payload as any).eq("id", data.id)
+      : await supabase.from("footer_content").insert(payload as any).select("id").single();
+    const { error } = result as any;
     if (error) {
       toast.error(error.message);
       setSaving(false);
       return;
     }
 
-    if (!data.id && "data" in result && result.data?.id) {
-      setData((prev) => ({ ...prev, id: result.data.id as string }));
+    if (!data.id && "data" in (result as any) && (result as any).data?.id) {
+      setData((prev) => ({ ...prev, id: (result as any).data.id as string }));
     }
 
     const footerSettingsPayload = [
@@ -250,13 +306,13 @@ export default function FooterAdminPage() {
       },
       {
         key: "footer_branches_title",
-        value: getSetting("footer_branches_title", "Our Branches"),
-        description: "Title for branches section in footer",
+        value: JSON.stringify(branchesTitleI18n),
+        description: "Title for branches section in footer (i18n JSON)",
       },
       {
         key: "support_section_title",
-        value: getSetting("support_section_title", "Support"),
-        description: "Title for support section in footer",
+        value: JSON.stringify(supportSectionTitleI18n),
+        description: "Title for support section in footer (i18n JSON)",
       },
       {
         key: "support_section_enabled",
@@ -290,7 +346,7 @@ export default function FooterAdminPage() {
       <div>
         <h1 className="text-2xl font-bold">Footer</h1>
         <p className="text-gray-600">
-          Manage footer columns, links, and attribution in a visual editor.
+          Manage footer columns, links, and attribution (multilingual).
         </p>
       </div>
 
@@ -298,9 +354,7 @@ export default function FooterAdminPage() {
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
             <CardTitle>Footer Columns</CardTitle>
-            <CardDescription>
-              Add columns and links without writing JSON.
-            </CardDescription>
+            <CardDescription>Add columns and links per language.</CardDescription>
           </div>
           <Button type="button" onClick={addColumn}>
             <Plus className="h-4 w-4 mr-2" />
@@ -310,20 +364,18 @@ export default function FooterAdminPage() {
         <CardContent className="space-y-4">
           {data.columns.length === 0 ? (
             <div className="text-sm text-muted-foreground border rounded-md p-4">
-              No columns added yet. Click "Add Column".
+              No columns added yet. Click &quot;Add Column&quot;.
             </div>
           ) : (
             data.columns.map((column, columnIndex) => (
               <Card key={columnIndex}>
                 <CardHeader className="py-4">
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="flex-1 space-y-2">
-                      <Label htmlFor={`column-title-${columnIndex}`}>Column Title</Label>
-                      <Input
-                        id={`column-title-${columnIndex}`}
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <I18nTextField
+                        label="Column Title"
                         value={column.title}
-                        onChange={(e) => updateColumnTitle(columnIndex, e.target.value)}
-                        placeholder="e.g. Company"
+                        onChange={(v) => updateColumnTitle(columnIndex, v)}
                       />
                     </div>
                     <Button
@@ -344,25 +396,16 @@ export default function FooterAdminPage() {
                       key={`${columnIndex}-${linkIndex}`}
                       className="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-3 items-end"
                     >
+                      <I18nTextField
+                        label="Label"
+                        value={link.label}
+                        onChange={(v) => updateLinkLabel(columnIndex, linkIndex, v)}
+                      />
                       <div className="space-y-2">
-                        <Label htmlFor={`link-label-${columnIndex}-${linkIndex}`}>Label</Label>
+                        <Label>URL / Path</Label>
                         <Input
-                          id={`link-label-${columnIndex}-${linkIndex}`}
-                          value={link.label}
-                          onChange={(e) =>
-                            updateLink(columnIndex, linkIndex, "label", e.target.value)
-                          }
-                          placeholder="e.g. About Us"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor={`link-href-${columnIndex}-${linkIndex}`}>URL / Path</Label>
-                        <Input
-                          id={`link-href-${columnIndex}-${linkIndex}`}
                           value={link.href}
-                          onChange={(e) =>
-                            updateLink(columnIndex, linkIndex, "href", e.target.value)
-                          }
+                          onChange={(e) => updateLinkHref(columnIndex, linkIndex, e.target.value)}
                           placeholder="e.g. /about"
                         />
                       </div>
@@ -394,9 +437,7 @@ export default function FooterAdminPage() {
             <SettingsIcon className="h-5 w-5 mr-2 text-purple-600" />
             Footer Display Settings
           </CardTitle>
-          <CardDescription>
-            Manage footer branches visibility and section titles.
-          </CardDescription>
+          <CardDescription>Manage footer branches visibility and section titles.</CardDescription>
         </CardHeader>
         <CardContent className="grid md:grid-cols-2 gap-4">
           <div className="space-y-2">
@@ -420,21 +461,12 @@ export default function FooterAdminPage() {
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="footer-branches-title">Footer Branches Section Title</Label>
-            <Input
-              id="footer-branches-title"
-              value={getSetting("footer_branches_title", "Our Branches")}
-              onChange={(e) =>
-                updateSetting(
-                  "footer_branches_title",
-                  e.target.value,
-                  "Title for branches section in footer"
-                )
-              }
-              placeholder="Our Branches"
-            />
-          </div>
+          <I18nTextField
+            label="Footer Branches Section Title"
+            value={branchesTitleI18n}
+            onChange={(v) => setBranchesTitleI18n(v)}
+            placeholder="Our Branches"
+          />
         </CardContent>
       </Card>
 
@@ -446,9 +478,7 @@ export default function FooterAdminPage() {
                 <SettingsIcon className="h-5 w-5 mr-2 text-orange-600" />
                 Support Section
               </CardTitle>
-              <CardDescription>
-                Configure support/info section and manage support items.
-              </CardDescription>
+              <CardDescription>Configure support/info section and manage support items.</CardDescription>
             </div>
             <Button type="button" onClick={addSupportItem}>
               <Plus className="h-4 w-4 mr-2" />
@@ -458,16 +488,11 @@ export default function FooterAdminPage() {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="grid md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="support-section-title">Section Title</Label>
-              <Input
-                id="support-section-title"
-                value={getSetting("support_section_title", "Support")}
-                onChange={(e) =>
-                  updateSetting("support_section_title", e.target.value, "Title for support section in footer")
-                }
-              />
-            </div>
+            <I18nTextField
+              label="Section Title"
+              value={supportSectionTitleI18n}
+              onChange={(v) => setSupportSectionTitleI18n(v)}
+            />
             <div className="space-y-2">
               <Label>Show Support Section</Label>
               <Select
@@ -504,19 +529,19 @@ export default function FooterAdminPage() {
               <div className="grid gap-4">
                 {supportItems.map((item) => {
                   const IconComponent = getIconComponent(item.icon);
+                  const titleText = (item.title as any)?.en || "";
+                  const subtitleText = (item.subtitle as any)?.en || "";
                   return (
                     <Card key={item.id}>
                       <CardContent className="p-4">
                         {editingItem?.id === item.id ? (
                           <div className="space-y-4">
                             <div className="grid md:grid-cols-2 gap-4">
-                              <div className="space-y-2">
-                                <Label>Title</Label>
-                                <Input
-                                  value={item.title}
-                                  onChange={(e) => updateSupportItem(item.id, { title: e.target.value })}
-                                />
-                              </div>
+                              <I18nTextField
+                                label="Title"
+                                value={item.title}
+                                onChange={(v) => updateSupportItem(item.id, { title: v })}
+                              />
                               <div className="space-y-2">
                                 <Label>Icon</Label>
                                 <button
@@ -532,13 +557,11 @@ export default function FooterAdminPage() {
                                 </button>
                               </div>
                             </div>
-                            <div className="space-y-2">
-                              <Label>Subtitle/Description</Label>
-                              <Input
-                                value={item.subtitle}
-                                onChange={(e) => updateSupportItem(item.id, { subtitle: e.target.value })}
-                              />
-                            </div>
+                            <I18nTextField
+                              label="Subtitle/Description"
+                              value={item.subtitle}
+                              onChange={(v) => updateSupportItem(item.id, { subtitle: v })}
+                            />
                             <div className="flex justify-end space-x-2">
                               <Button variant="outline" onClick={() => setEditingItem(null)}>
                                 Cancel
@@ -560,9 +583,9 @@ export default function FooterAdminPage() {
                               </div>
                               <div>
                                 <h4 className={`font-medium ${item.enabled ? "" : "text-muted-foreground"}`}>
-                                  {item.title}
+                                  {titleText}
                                 </h4>
-                                <p className="text-sm text-muted-foreground">{item.subtitle}</p>
+                                <p className="text-sm text-muted-foreground">{subtitleText}</p>
                               </div>
                             </div>
                             <div className="flex items-center space-x-2">
@@ -600,40 +623,23 @@ export default function FooterAdminPage() {
       <Card>
         <CardHeader>
           <CardTitle>Attribution</CardTitle>
-          <CardDescription>
-            Update footer brand text and copyright name.
-          </CardDescription>
+          <CardDescription>Update footer brand text and copyright name.</CardDescription>
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="powered-by-text">Powered by text</Label>
-            <Input
-              id="powered-by-text"
-              value={data.powered_by_text}
-              onChange={(e) =>
-                setData((prev) => ({ ...prev, powered_by_text: e.target.value }))
-              }
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="copyright-name">Copyright name</Label>
-            <Input
-              id="copyright-name"
-              value={data.copyright_name}
-              onChange={(e) =>
-                setData((prev) => ({ ...prev, copyright_name: e.target.value }))
-              }
-            />
-          </div>
+          <I18nTextField
+            label="Powered by text"
+            value={data.powered_by_text}
+            onChange={(v) => setData((prev) => ({ ...prev, powered_by_text: v }))}
+          />
+          <I18nTextField
+            label="Copyright name"
+            value={data.copyright_name}
+            onChange={(v) => setData((prev) => ({ ...prev, copyright_name: v }))}
+          />
         </CardContent>
       </Card>
 
-      <Button
-        type="button"
-        onClick={save}
-        disabled={saving}
-        className="w-fit"
-      >
+      <Button type="button" onClick={save} disabled={saving} className="w-fit">
         {saving ? "Saving..." : "Save Footer"}
       </Button>
 

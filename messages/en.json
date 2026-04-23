@@ -1,0 +1,102 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Try Again",
+    "readMore": "Read More",
+    "learnMore": "Learn More",
+    "viewAll": "View All",
+    "viewDetails": "View Details",
+    "getStarted": "Get Started",
+    "contactUs": "Contact Us",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "save": "Save",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "close": "Close",
+    "search": "Search",
+    "noResults": "No results found",
+    "required": "Required",
+    "optional": "Optional"
+  },
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "services": "Services",
+    "applications": "Applications",
+    "gallery": "Gallery",
+    "contact": "Contact",
+    "about": "About",
+    "menu": "Menu"
+  },
+  "home": {
+    "featuredProducts": "Featured Products",
+    "ourServices": "Our Services",
+    "applications": "Industry Applications",
+    "ourPartners": "Our Partners",
+    "partnersDescription": "Trusted by leading companies worldwide"
+  },
+  "products": {
+    "title": "Products",
+    "viewProducts": "View Products",
+    "features": "Features",
+    "specifications": "Specifications",
+    "relatedProducts": "Related Products",
+    "inquireNow": "Inquire Now"
+  },
+  "services": {
+    "title": "Services",
+    "learnMore": "Learn More"
+  },
+  "applications": {
+    "title": "Applications"
+  },
+  "gallery": {
+    "title": "Gallery",
+    "viewImage": "View Image",
+    "allCategories": "All Categories"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "form": {
+      "name": "Your Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "subject": "Subject",
+      "message": "Your Message",
+      "submit": "Send Message",
+      "sending": "Sending...",
+      "success": "Your message has been sent successfully!",
+      "error": "Failed to send message. Please try again."
+    },
+    "branches": "Our Branches",
+    "whatsapp": "Chat on WhatsApp",
+    "getInTouch": "Get In Touch"
+  },
+  "about": {
+    "title": "About Us",
+    "vision": "Our Vision",
+    "mission": "Our Mission",
+    "coreValues": "Core Values",
+    "timeline": "Our Journey"
+  },
+  "footer": {
+    "copyright": "All rights reserved.",
+    "poweredBy": "Powered by",
+    "quickLinks": "Quick Links",
+    "followUs": "Follow Us"
+  },
+  "language": {
+    "switch": "Change Language",
+    "en": "English",
+    "ar": "Arabic",
+    "de": "German"
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "description": "The page you are looking for does not exist.",
+    "backHome": "Back to Home"
+  }
+}

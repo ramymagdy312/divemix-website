@@ -1,7 +1,10 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useLocale } from 'next-intl';
 import { supabase } from '../../lib/supabase';
+import { deepResolveI18n } from '../../lib/i18n/resolve';
+import type { Locale } from '../../lib/i18n/config';
 import PageHeader from '../common/PageHeader';
 import AnimatedElement from '../common/AnimatedElement';
 import type { PageData } from '@/app/lib/content';
@@ -12,6 +15,7 @@ interface ProductsPageDBProps {
 }
 
 export default function ProductsPageDB({ children, data: initialData }: ProductsPageDBProps) {
+  const locale = useLocale() as Locale;
   const [data, setData] = useState<PageData | null>(initialData || null);
   const [loading, setLoading] = useState(!initialData);
 
@@ -24,7 +28,7 @@ export default function ProductsPageDB({ children, data: initialData }: Products
           console.error('Error fetching products page data:', error);
           setData(null);
         } else {
-          setData(pageData as PageData);
+          setData(deepResolveI18n(pageData, locale) as PageData);
         }
       } catch (error) {
         console.error('Error:', error);
@@ -35,7 +39,7 @@ export default function ProductsPageDB({ children, data: initialData }: Products
     };
 
     fetchProductsPageData();
-  }, [initialData]);
+  }, [initialData, locale]);
 
   if (loading) {
     return (

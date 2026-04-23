@@ -2,7 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
 import { supabase } from "../../lib/supabase";
+import { deepResolveI18n } from "../../lib/i18n/resolve";
+import type { Locale } from "../../lib/i18n/config";
 
 import ProductList from "./ProductList";
 import ProductHero from "./ProductHero";
@@ -24,6 +27,7 @@ interface CategoryDetailFallbackProps {
 
 const CategoryDetailFallback: React.FC<CategoryDetailFallbackProps> = ({ categoryId }) => {
   const router = useRouter();
+  const locale = useLocale() as Locale;
   const [category, setCategory] = useState<Category | null>(null);
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,7 +35,7 @@ const CategoryDetailFallback: React.FC<CategoryDetailFallbackProps> = ({ categor
   useEffect(() => {
     fetchCategoryAndProducts();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categoryId]);
+  }, [categoryId, locale]);
 
   const fetchCategoryAndProducts = async () => {
     try {
@@ -53,14 +57,14 @@ const CategoryDetailFallback: React.FC<CategoryDetailFallbackProps> = ({ categor
         console.error('Error fetching category:', categoryResult.error);
         setCategory(null);
       } else {
-        setCategory(categoryResult.data);
+        setCategory(deepResolveI18n(categoryResult.data, locale) as Category);
       }
 
       if (productsResult.error) {
         console.error('Error fetching products:', productsResult.error);
         setProducts([]);
       } else {
-        setProducts(productsResult.data || []);
+        setProducts(deepResolveI18n(productsResult.data || [], locale));
       }
     } catch (error) {
       console.error('Error:', error);

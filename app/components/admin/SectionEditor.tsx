@@ -3,13 +3,16 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import FolderExplorerSingle from "./FolderExplorerSingle";
+import I18nTextField, { type I18nValue } from "./i18n/I18nTextField";
+import I18nTextarea from "./i18n/I18nTextarea";
+import { normalizeI18n } from "@/app/lib/i18n/resolve";
 
 type SectionData = {
-  title: string;
-  description: string;
+  title: unknown;
+  description: unknown;
   hero_image: string;
-  intro_title: string;
-  intro_description: string;
+  intro_title: unknown;
+  intro_description: unknown;
 };
 
 interface SectionEditorProps {
@@ -25,10 +28,16 @@ export default function SectionEditor({
   initialData,
   onSave,
 }: SectionEditorProps) {
-  const [form, setForm] = useState<SectionData>(initialData);
+  const [form, setForm] = useState<SectionData>({
+    ...initialData,
+    title: normalizeI18n(initialData.title as any),
+    description: normalizeI18n(initialData.description as any),
+    intro_title: normalizeI18n(initialData.intro_title as any),
+    intro_description: normalizeI18n(initialData.intro_description as any),
+  });
   const [saving, setSaving] = useState(false);
 
-  const update = (key: keyof SectionData, value: string) => {
+  const updateI18n = (key: keyof SectionData, value: I18nValue) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -51,39 +60,37 @@ export default function SectionEditor({
       </div>
 
       <div className="grid gap-4">
-        <label className="text-sm font-medium text-gray-700">Title</label>
-        <input
-          className="border rounded-md px-3 py-2"
+        <I18nTextField
+          label="Title"
           value={form.title}
-          onChange={(e) => update("title", e.target.value)}
+          onChange={(v) => updateI18n("title", v)}
         />
 
-        <label className="text-sm font-medium text-gray-700">Description</label>
-        <textarea
-          className="border rounded-md px-3 py-2 min-h-[90px]"
+        <I18nTextarea
+          label="Description"
           value={form.description}
-          onChange={(e) => update("description", e.target.value)}
+          onChange={(v) => updateI18n("description", v)}
         />
 
-        <label className="text-sm font-medium text-gray-700">Hero image</label>
-        <FolderExplorerSingle
-          image={form.hero_image}
-          onImageChange={(image) => update("hero_image", image)}
-          label="Hero Image"
-        />
+        <div>
+          <label className="text-sm font-medium text-gray-700 block mb-1.5">Hero image</label>
+          <FolderExplorerSingle
+            image={form.hero_image}
+            onImageChange={(image) => setForm((p) => ({ ...p, hero_image: image }))}
+            label="Hero Image"
+          />
+        </div>
 
-        <label className="text-sm font-medium text-gray-700">Intro title</label>
-        <input
-          className="border rounded-md px-3 py-2"
+        <I18nTextField
+          label="Intro title"
           value={form.intro_title}
-          onChange={(e) => update("intro_title", e.target.value)}
+          onChange={(v) => updateI18n("intro_title", v)}
         />
 
-        <label className="text-sm font-medium text-gray-700">Intro description</label>
-        <textarea
-          className="border rounded-md px-3 py-2 min-h-[90px]"
+        <I18nTextarea
+          label="Intro description"
           value={form.intro_description}
-          onChange={(e) => update("intro_description", e.target.value)}
+          onChange={(v) => updateI18n("intro_description", v)}
         />
       </div>
 

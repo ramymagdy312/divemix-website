@@ -1,0 +1,102 @@
+{
+  "common": {
+    "loading": "جارٍ التحميل...",
+    "error": "حدث خطأ ما",
+    "retry": "حاول مرة أخرى",
+    "readMore": "اقرأ المزيد",
+    "learnMore": "اعرف المزيد",
+    "viewAll": "عرض الكل",
+    "viewDetails": "عرض التفاصيل",
+    "getStarted": "ابدأ الآن",
+    "contactUs": "اتصل بنا",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "submit": "إرسال",
+    "close": "إغلاق",
+    "search": "بحث",
+    "noResults": "لا توجد نتائج",
+    "required": "مطلوب",
+    "optional": "اختياري"
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "products": "المنتجات",
+    "services": "الخدمات",
+    "applications": "التطبيقات",
+    "gallery": "المعرض",
+    "contact": "تواصل معنا",
+    "about": "من نحن",
+    "menu": "القائمة"
+  },
+  "home": {
+    "featuredProducts": "منتجات مميزة",
+    "ourServices": "خدماتنا",
+    "applications": "تطبيقات صناعية",
+    "ourPartners": "شركاؤنا",
+    "partnersDescription": "نثق بنا شركات رائدة حول العالم"
+  },
+  "products": {
+    "title": "المنتجات",
+    "viewProducts": "عرض المنتجات",
+    "features": "المميزات",
+    "specifications": "المواصفات",
+    "relatedProducts": "منتجات ذات صلة",
+    "inquireNow": "استفسر الآن"
+  },
+  "services": {
+    "title": "الخدمات",
+    "learnMore": "اعرف المزيد"
+  },
+  "applications": {
+    "title": "التطبيقات"
+  },
+  "gallery": {
+    "title": "المعرض",
+    "viewImage": "عرض الصورة",
+    "allCategories": "كل الفئات"
+  },
+  "contact": {
+    "title": "تواصل معنا",
+    "form": {
+      "name": "الاسم",
+      "email": "البريد الإلكتروني",
+      "phone": "رقم الهاتف",
+      "subject": "الموضوع",
+      "message": "رسالتك",
+      "submit": "إرسال الرسالة",
+      "sending": "جارٍ الإرسال...",
+      "success": "تم إرسال رسالتك بنجاح!",
+      "error": "فشل إرسال الرسالة. يرجى المحاولة مرة أخرى."
+    },
+    "branches": "فروعنا",
+    "whatsapp": "محادثة على واتساب",
+    "getInTouch": "ابقَ على تواصل"
+  },
+  "about": {
+    "title": "من نحن",
+    "vision": "رؤيتنا",
+    "mission": "مهمتنا",
+    "coreValues": "قيمنا الأساسية",
+    "timeline": "رحلتنا"
+  },
+  "footer": {
+    "copyright": "جميع الحقوق محفوظة.",
+    "poweredBy": "مدعوم من",
+    "quickLinks": "روابط سريعة",
+    "followUs": "تابعنا"
+  },
+  "language": {
+    "switch": "تغيير اللغة",
+    "en": "الإنجليزية",
+    "ar": "العربية",
+    "de": "الألمانية"
+  },
+  "notFound": {
+    "title": "الصفحة غير موجودة",
+    "description": "الصفحة التي تبحث عنها غير موجودة.",
+    "backHome": "العودة للرئيسية"
+  }
+}

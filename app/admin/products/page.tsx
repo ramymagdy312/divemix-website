@@ -30,21 +30,23 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/app/components/ui/alert-dialog';
+import { resolveI18n } from '@/app/lib/i18n/resolve';
+import { defaultLocale } from '@/app/lib/i18n/config';
 
 interface Product {
   id: string;
-  name: string;
-  description: string;
-  short_description?: string;
+  name: any;
+  description: any;
+  short_description?: any;
   category_id: string;
   image_url?: string;
   price?: number;
-  features?: string[];
+  features?: any[];
   is_active: boolean;
   display_order: number;
   created_at: string;
   product_categories?: {
-    name: string;
+    name: any;
   };
 }
 
@@ -171,10 +173,12 @@ export default function ProductsPage() {
     }
   };
 
-  const filteredProducts = products.filter(product =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredProducts = products.filter(product => {
+    const name = resolveI18n(product.name, defaultLocale).toLowerCase();
+    const desc = resolveI18n(product.description, defaultLocale).toLowerCase();
+    const q = searchTerm.toLowerCase();
+    return name.includes(q) || desc.includes(q);
+  });
 
   if (loading) {
     return (
@@ -266,16 +270,16 @@ export default function ProductsPage() {
                       {product.image_url && (
                         <Image
                           src={product.image_url}
-                          alt={product.name}
+                          alt={resolveI18n(product.name, defaultLocale)}
                           width={48}
                           height={48}
                           className="h-12 w-12 object-cover rounded-md"
                         />
                       )}
                       <div>
-                        <div className="font-medium">{product.name}</div>
+                        <div className="font-medium">{resolveI18n(product.name, defaultLocale)}</div>
                         <div className="text-sm text-muted-foreground max-w-md truncate">
-                          {product.description}
+                          {resolveI18n(product.description, defaultLocale)}
                         </div>
                         {usingFallback && (
                           <Badge variant="outline" className="mt-1">
@@ -287,7 +291,9 @@ export default function ProductsPage() {
                   </TableCell>
                   <TableCell>
                     <Badge variant="secondary">
-                      {product.product_categories?.name || 'No Category'}
+                      {product.product_categories?.name
+                        ? resolveI18n(product.product_categories.name, defaultLocale)
+                        : 'No Category'}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -321,7 +327,7 @@ export default function ProductsPage() {
                           <AlertDialogHeader>
                             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                             <AlertDialogDescription>
-                              This action cannot be undone. This will permanently delete the product "{product.name}".
+                              This action cannot be undone. This will permanently delete the product &quot;{resolveI18n(product.name, defaultLocale)}&quot;.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>

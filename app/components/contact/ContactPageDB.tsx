@@ -1,7 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useLocale } from "next-intl";
 import { supabase } from "../../lib/supabase";
+import { deepResolveI18n } from "../../lib/i18n/resolve";
+import type { Locale } from "../../lib/i18n/config";
 import ContactIntro from "./ContactIntro";
 import ContactForm from "./ContactForm";
 import BranchList from "./BranchList";
@@ -34,6 +37,7 @@ interface ContactPageData {
 }
 
 export default function ContactPageDB({ initialData }: { initialData?: ContactPageData | null }) {
+  const locale = useLocale() as Locale;
   const [data, setData] = useState<ContactPageData | null>(initialData || null);
   const [branches, setBranches] = useState<Branch[]>([]);
   const [loading, setLoading] = useState(!initialData);
@@ -75,8 +79,9 @@ export default function ContactPageDB({ initialData }: { initialData?: ContactPa
           console.error("Error fetching contact data:", error);
           setData(null);
         } else {
-          setData(contactPageData as ContactPageData);
-          convertBranches(contactPageData?.branches || []);
+          const resolved = deepResolveI18n(contactPageData, locale) as ContactPageData;
+          setData(resolved);
+          convertBranches(resolved?.branches || []);
         }
       } catch (error) {
         console.error("Error:", error);
@@ -87,7 +92,7 @@ export default function ContactPageDB({ initialData }: { initialData?: ContactPa
     };
 
     fetchContactData();
-  }, [initialData, selectedBranchId]);
+  }, [initialData, selectedBranchId, locale]);
 
   const handleBranchSelect = (branchId: string) => {
     setSelectedBranchId(branchId);

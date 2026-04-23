@@ -1,7 +1,10 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import { useLocale } from "next-intl";
 import { supabase } from "../../lib/supabase";
+import { deepResolveI18n } from "../../lib/i18n/resolve";
+import type { Locale } from "../../lib/i18n/config";
 import ProductCard from "./ProductCard";
 import SearchBar from "./SearchBar";
 import { useSearch } from "../../hooks/useSearch";
@@ -40,6 +43,7 @@ interface ProductListDBProps {
 }
 
 const ProductListDB: React.FC<ProductListDBProps> = ({ subcategory_id }) => {
+  const locale = useLocale() as Locale;
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -87,14 +91,7 @@ const ProductListDB: React.FC<ProductListDBProps> = ({ subcategory_id }) => {
       console.log("Fetched products:", data);
 
       if (error) throw error;
-      setProducts(data || []);
-
-      // If no products found, this is not an error, just empty results
-
-      console.log("Fetched products:", data);
-      if (!data || data.length === 0) {
-        console.log("No products found for category:", subcategory_id);
-      }
+      setProducts(deepResolveI18n(data || [], locale));
     } catch (error: any) {
       console.error("Error fetching products:", error);
       setError(error.message);
@@ -102,7 +99,7 @@ const ProductListDB: React.FC<ProductListDBProps> = ({ subcategory_id }) => {
     } finally {
       setLoading(false);
     }
-  }, [subcategory_id]);
+  }, [subcategory_id, locale]);
 
   useEffect(() => {
     fetchProducts();

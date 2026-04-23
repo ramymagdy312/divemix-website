@@ -1,0 +1,102 @@
+{
+  "common": {
+    "loading": "Wird geladen...",
+    "error": "Etwas ist schiefgelaufen",
+    "retry": "Erneut versuchen",
+    "readMore": "Mehr lesen",
+    "learnMore": "Mehr erfahren",
+    "viewAll": "Alle anzeigen",
+    "viewDetails": "Details anzeigen",
+    "getStarted": "Loslegen",
+    "contactUs": "Kontakt",
+    "back": "Zurück",
+    "next": "Weiter",
+    "previous": "Zurück",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "submit": "Senden",
+    "close": "Schließen",
+    "search": "Suchen",
+    "noResults": "Keine Ergebnisse gefunden",
+    "required": "Erforderlich",
+    "optional": "Optional"
+  },
+  "nav": {
+    "home": "Startseite",
+    "products": "Produkte",
+    "services": "Dienstleistungen",
+    "applications": "Anwendungen",
+    "gallery": "Galerie",
+    "contact": "Kontakt",
+    "about": "Über uns",
+    "menu": "Menü"
+  },
+  "home": {
+    "featuredProducts": "Ausgewählte Produkte",
+    "ourServices": "Unsere Dienstleistungen",
+    "applications": "Branchenanwendungen",
+    "ourPartners": "Unsere Partner",
+    "partnersDescription": "Vertrauen führender Unternehmen weltweit"
+  },
+  "products": {
+    "title": "Produkte",
+    "viewProducts": "Produkte ansehen",
+    "features": "Merkmale",
+    "specifications": "Spezifikationen",
+    "relatedProducts": "Ähnliche Produkte",
+    "inquireNow": "Jetzt anfragen"
+  },
+  "services": {
+    "title": "Dienstleistungen",
+    "learnMore": "Mehr erfahren"
+  },
+  "applications": {
+    "title": "Anwendungen"
+  },
+  "gallery": {
+    "title": "Galerie",
+    "viewImage": "Bild anzeigen",
+    "allCategories": "Alle Kategorien"
+  },
+  "contact": {
+    "title": "Kontakt",
+    "form": {
+      "name": "Ihr Name",
+      "email": "E-Mail-Adresse",
+      "phone": "Telefonnummer",
+      "subject": "Betreff",
+      "message": "Ihre Nachricht",
+      "submit": "Nachricht senden",
+      "sending": "Wird gesendet...",
+      "success": "Ihre Nachricht wurde erfolgreich gesendet!",
+      "error": "Nachricht konnte nicht gesendet werden. Bitte erneut versuchen."
+    },
+    "branches": "Unsere Standorte",
+    "whatsapp": "WhatsApp-Chat",
+    "getInTouch": "Kontakt aufnehmen"
+  },
+  "about": {
+    "title": "Über uns",
+    "vision": "Unsere Vision",
+    "mission": "Unsere Mission",
+    "coreValues": "Grundwerte",
+    "timeline": "Unsere Geschichte"
+  },
+  "footer": {
+    "copyright": "Alle Rechte vorbehalten.",
+    "poweredBy": "Bereitgestellt von",
+    "quickLinks": "Schnelllinks",
+    "followUs": "Folgen Sie uns"
+  },
+  "language": {
+    "switch": "Sprache ändern",
+    "en": "Englisch",
+    "ar": "Arabisch",
+    "de": "Deutsch"
+  },
+  "notFound": {
+    "title": "Seite nicht gefunden",
+    "description": "Die gesuchte Seite existiert nicht.",
+    "backHome": "Zurück zur Startseite"
+  }
+}

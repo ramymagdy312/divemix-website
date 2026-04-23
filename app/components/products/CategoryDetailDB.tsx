@@ -3,7 +3,10 @@
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
+import { useLocale } from "next-intl";
 import { supabase } from "../../lib/supabase";
+import { deepResolveI18n } from "../../lib/i18n/resolve";
+import type { Locale } from "../../lib/i18n/config";
 import CategoryDetailFallback from "./CategoryDetailFallback";
 import ProductHero from "./ProductHero";
 import ProductListDB from "./ProductListDB";
@@ -24,10 +27,12 @@ interface Category {
 
 interface CategoryDetailDBProps {
   categoryId: string;
+  locale?: string;
 }
 
-const CategoryDetailDB: React.FC<CategoryDetailDBProps> = ({ categoryId }) => {
+const CategoryDetailDB: React.FC<CategoryDetailDBProps> = ({ categoryId, locale = "en" }) => {
   const router = useRouter();
+  const activeLocale = useLocale() as Locale;
   const [category, setCategory] = useState<Category | null>(null);
   const [subcategories, setSubcategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,7 +41,6 @@ const CategoryDetailDB: React.FC<CategoryDetailDBProps> = ({ categoryId }) => {
   const fetchCategory = useCallback(async () => {
     try {
       setError(null);
-      console.log("Fetching category with ID/slug:", categoryId);
 
       const { data, error } = await supabase
         .from("product_categories")
@@ -45,13 +49,10 @@ const CategoryDetailDB: React.FC<CategoryDetailDBProps> = ({ categoryId }) => {
         .eq("is_active", true)
         .single();
 
-      console.log("Category query result:", { data, error });
-
       if (error) throw error;
-      setCategory(data);
-      console.log("Category set successfully:", data);
+      const resolvedCategory = deepResolveI18n(data, activeLocale) as Category;
+      setCategory(resolvedCategory);
 
-      // Fetch subcategories
       const { data: subData, error: subError } = await supabase
         .from("product_categories")
         .select("*")
@@ -63,7 +64,7 @@ const CategoryDetailDB: React.FC<CategoryDetailDBProps> = ({ categoryId }) => {
         console.error("Error fetching subcategories:", subError);
         setSubcategories([]);
       } else {
-        setSubcategories(subData || []);
+        setSubcategories(deepResolveI18n(subData || [], activeLocale));
       }
     } catch (error: any) {
       console.error("Error fetching category:", error);
@@ -73,7 +74,7 @@ const CategoryDetailDB: React.FC<CategoryDetailDBProps> = ({ categoryId }) => {
     } finally {
       setLoading(false);
     }
-  }, [categoryId]);
+  }, [categoryId, activeLocale]);
 
   useEffect(() => {
     fetchCategory();
@@ -103,7 +104,7 @@ const CategoryDetailDB: React.FC<CategoryDetailDBProps> = ({ categoryId }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center space-x-4 mb-8">
           <button
-            onClick={() => router.push("/products")}
+            onClick={() => router.push(`/${locale}/products`)}
             className="flex items-center justify-center w-10 h-10 rounded-full bg-cyan-50 text-cyan-600 hover:bg-cyan-100 transition-colors"
           >
             <ArrowLeft className="h-5 w-5" />

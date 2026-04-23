@@ -17,13 +17,15 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { supabase } from "../../lib/supabase";
+import { resolveI18n } from "@/app/lib/i18n/resolve";
+import { defaultLocale } from "@/app/lib/i18n/config";
 
 interface Vendor {
   id: string;
-  name: string;
+  name: any;
   logo_url: string;
   website_url?: string;
-  description?: string;
+  description?: any;
   display_order: number;
   is_active: boolean;
   created_at: string;
@@ -186,14 +188,14 @@ export default function VendorsPage() {
                         <div className="relative h-12 w-12 mr-4">
                           <Image
                             src={vendor.logo_url}
-                            alt={`${vendor.name} logo`}
+                            alt={`${resolveI18n(vendor.name, defaultLocale)} logo`}
                             fill
                             className="object-contain rounded"
                           />
                         </div>
                         <div>
                           <div className="text-sm font-medium text-foreground">
-                            {vendor.name}
+                            {resolveI18n(vendor.name, defaultLocale)}
                           </div>
                           <div className="text-sm text-muted-foreground">
                             Added{" "}
@@ -204,7 +206,7 @@ export default function VendorsPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-sm text-foreground max-w-xs truncate">
-                        {vendor.description || "No description"}
+                        {resolveI18n(vendor.description, defaultLocale) || "No description"}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">

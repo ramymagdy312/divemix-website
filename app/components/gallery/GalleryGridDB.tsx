@@ -1,38 +1,41 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useLocale } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../../lib/supabase';
+import { deepResolveI18n } from '../../lib/i18n/resolve';
+import type { Locale } from '../../lib/i18n/config';
 import GalleryImage from './GalleryImage';
 import ImageModal from './ImageModal';
 import CategoryFilter from './CategoryFilter';
 import type { GalleryImage as GalleryImageType } from '../../types/gallery';
 
 const GalleryGridDB = () => {
+  const locale = useLocale() as Locale;
   const [images, setImages] = useState<GalleryImageType[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<GalleryImageType | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  
+
   useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('gallery_images')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        setImages(deepResolveI18n(data || [], locale));
+      } catch (error) {
+        console.error('Error fetching gallery images:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchImages();
-  }, []);
-
-  const fetchImages = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('gallery_images')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setImages(data || []);
-    } catch (error) {
-      console.error('Error fetching gallery images:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [locale]);
 
   const categories = ['all', ...new Set(images.map(img => img.category))];
   

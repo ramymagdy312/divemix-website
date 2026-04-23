@@ -5,16 +5,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/app/components/ui/card";
-import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
-import { Textarea } from "@/app/components/ui/textarea";
 import Image from "next/image";
 import FolderExplorerSingle from "./FolderExplorerSingle";
+import I18nTextField, { type I18nValue } from "./i18n/I18nTextField";
+import I18nTextarea from "./i18n/I18nTextarea";
+import { resolveI18n } from "@/app/lib/i18n/resolve";
+import { defaultLocale } from "@/app/lib/i18n/config";
 
 interface BasicInfoCardProps {
   data: {
-    title: string;
-    description: string;
+    title: unknown;
+    description: unknown;
     hero_image: string;
   };
   editing: boolean;
@@ -26,6 +28,9 @@ export default function BasicInfoCard({
   editing,
   setData,
 }: BasicInfoCardProps) {
+  const titlePreview = resolveI18n(data.title as any, defaultLocale);
+  const descPreview = resolveI18n(data.description as any, defaultLocale);
+
   return (
     <Card>
       <CardHeader>
@@ -37,16 +42,17 @@ export default function BasicInfoCard({
       <CardContent className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label htmlFor="page-title">Page Title</Label>
             {editing ? (
-              <Input
-                id="page-title"
-                type="text"
+              <I18nTextField
+                label="Page Title"
                 value={data.title}
-                onChange={(e) => setData({ ...data, title: e.target.value })}
+                onChange={(v: I18nValue) => setData({ ...data, title: v })}
               />
             ) : (
-              <p className="text-sm font-medium">{data.title}</p>
+              <>
+                <Label>Page Title</Label>
+                <p className="text-sm font-medium">{titlePreview}</p>
+              </>
             )}
           </div>
           <div className="space-y-2">
@@ -78,18 +84,18 @@ export default function BasicInfoCard({
           </div>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="description">Description</Label>
           {editing ? (
-            <Textarea
-              id="description"
+            <I18nTextarea
+              label="Description"
               value={data.description}
-              onChange={(e) =>
-                setData({ ...data, description: e.target.value })
-              }
+              onChange={(v: I18nValue) => setData({ ...data, description: v })}
               rows={3}
             />
           ) : (
-            <p className="text-sm">{data.description}</p>
+            <>
+              <Label>Description</Label>
+              <p className="text-sm">{descPreview}</p>
+            </>
           )}
         </div>
       </CardContent>

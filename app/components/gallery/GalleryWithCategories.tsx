@@ -1,7 +1,10 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useLocale } from 'next-intl';
 import { supabase } from '../../lib/supabase';
+import { deepResolveI18n } from '../../lib/i18n/resolve';
+import type { Locale } from '../../lib/i18n/config';
 
 import Image from 'next/image';
 import AnimatedElement from '../common/AnimatedElement';
@@ -25,6 +28,7 @@ interface Category {
 }
 
 export default function GalleryWithCategories() {
+  const locale = useLocale() as Locale;
   const [categories, setCategories] = useState<Category[]>([]);
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -33,7 +37,8 @@ export default function GalleryWithCategories() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [locale]);
 
   useEffect(() => {
     filterImages();
@@ -62,14 +67,14 @@ export default function GalleryWithCategories() {
         console.error('Error fetching categories:', categoriesResult.error);
         setCategories([]);
       } else {
-        setCategories(categoriesResult.data || []);
+        setCategories(deepResolveI18n(categoriesResult.data || [], locale));
       }
 
       if (imagesResult.error) {
         console.error('Error fetching images:', imagesResult.error);
         setImages([]);
       } else {
-        setImages(imagesResult.data || []);
+        setImages(deepResolveI18n(imagesResult.data || [], locale));
       }
     } catch (error) {
       console.error('Error:', error);

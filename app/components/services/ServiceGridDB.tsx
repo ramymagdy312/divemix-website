@@ -1,7 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useLocale } from "next-intl";
 import { supabase } from "../../lib/supabase";
+import { deepResolveI18n } from "../../lib/i18n/resolve";
+import type { Locale } from "../../lib/i18n/config";
 import ServiceCard from "./ServiceCard";
 import AnimatedElement from "../common/AnimatedElement";
 import StatsCounter from "../common/StatsCounter";
@@ -32,6 +35,7 @@ const iconMap: { [key: string]: any } = {
 };
 
 const ServiceGridDB: React.FC<{ initialServices?: Service[] }> = ({ initialServices }) => {
+  const locale = useLocale() as Locale;
   const [services, setServices] = useState<Service[]>(initialServices || []);
   const [loading, setLoading] = useState(!initialServices);
 
@@ -47,7 +51,7 @@ const ServiceGridDB: React.FC<{ initialServices?: Service[] }> = ({ initialServi
           .order("display_order", { ascending: true });
 
         if (error) throw error;
-        setServices(data || []);
+        setServices(deepResolveI18n(data || [], locale));
       } catch (error) {
         console.error("Error fetching services:", error);
         setServices([]);
@@ -57,7 +61,7 @@ const ServiceGridDB: React.FC<{ initialServices?: Service[] }> = ({ initialServi
     };
 
     fetchServices();
-  }, [initialServices]);
+  }, [initialServices, locale]);
 
   if (loading) {
     return <EnhancedLoader message="Loading services..." variant="dots" size="md" />;

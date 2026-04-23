@@ -44,6 +44,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { supabase } from "../../lib/supabase";
 import IconPickerModal from "../../components/admin/IconPickerModal";
+import { triggerRevalidate } from "../../lib/revalidate-client";
 
 interface Setting {
   key: string;
@@ -243,6 +244,7 @@ export default function SettingsPage() {
         return;
       }
 
+      await triggerRevalidate(["settings", "footer"]);
       toast.success("Settings saved successfully!");
     } catch (error) {
       console.error("Error:", error);

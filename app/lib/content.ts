@@ -1,5 +1,7 @@
 import { unstable_cache } from 'next/cache';
 import { createServerSupabaseClient } from './supabase-server';
+import { deepResolveI18n, resolveI18n } from './i18n/resolve';
+import { defaultLocale, locales, type Locale } from './i18n/config';
 
 export type PageSlug = 'products' | 'services' | 'applications' | 'about' | 'contact' | 'gallery';
 
@@ -105,25 +107,45 @@ const pageTableBySlug: Record<PageSlug, string> = {
   gallery: 'gallery_page',
 };
 
-export const getHomeContent = unstable_cache(
-  async (): Promise<HomePageData> => {
-    const supabase = createServerSupabaseClient();
-    const { data } = await supabase.from('home_page').select('*').single();
-    if (!data) return defaultHome;
-    return {
-      ...defaultHome,
-      ...data,
-      hero_cta_primary: data.hero_cta_primary || defaultHome.hero_cta_primary,
-      hero_cta_secondary: data.hero_cta_secondary || defaultHome.hero_cta_secondary,
-      stats: Array.isArray(data.stats) ? data.stats : defaultHome.stats,
-      contact_cta_button: data.contact_cta_button || defaultHome.contact_cta_button,
-    };
-  },
-  ['content-home'],
-  { tags: ['page:home'], revalidate: 1 }
-);
+/**
+ * Builds a per-locale cache tag (e.g. page:home:ar). Entities that are language-neutral
+ * at the DB level still vary after resolving, so we always include locale in tags.
+ */
+export function localeTag(base: string, locale: Locale): string {
+  return `${base}:${locale}`;
+}
 
-export async function getPageContent(slug: PageSlug): Promise<PageData | null> {
+/**
+ * Returns an array of cache tags fanning out across all locales for a base tag.
+ * Use from admin save handlers to invalidate every language version at once.
+ */
+export function allLocaleTags(base: string): string[] {
+  return [base, ...locales.map((l) => `${base}:${l}`)];
+}
+
+export function getHomeContent(locale: Locale = defaultLocale) {
+  const fetcher = unstable_cache(
+    async (): Promise<HomePageData> => {
+      const supabase = createServerSupabaseClient();
+      const { data } = await supabase.from('home_page').select('*').single();
+      if (!data) return defaultHome;
+      const resolved = deepResolveI18n(data, locale);
+      return {
+        ...defaultHome,
+        ...resolved,
+        hero_cta_primary: resolved.hero_cta_primary || defaultHome.hero_cta_primary,
+        hero_cta_secondary: resolved.hero_cta_secondary || defaultHome.hero_cta_secondary,
+        stats: Array.isArray(resolved.stats) ? resolved.stats : defaultHome.stats,
+        contact_cta_button: resolved.contact_cta_button || defaultHome.contact_cta_button,
+      };
+    },
+    [`content-home-${locale}`],
+    { tags: ['page:home', localeTag('page:home', locale)], revalidate: 1 }
+  );
+  return fetcher();
+}
+
+export async function getPageContent(slug: PageSlug, locale: Locale = defaultLocale): Promise<PageData | null> {
   const table = pageTableBySlug[slug];
   const cached = unstable_cache(
     async () => {
@@ -132,56 +154,61 @@ export async function getPageContent(slug: PageSlug): Promise<PageData | null> {
         .from(table)
         .select('id,title,description,hero_image,intro_title,intro_description')
         .single();
-      return (data as PageData | null) || null;
+      if (!data) return null;
+      return deepResolveI18n(data, locale) as PageData;
     },
-    [`content-page-${slug}`],
-    { tags: [`page:${slug}`], revalidate: 1 }
+    [`content-page-${slug}-${locale}`],
+    { tags: [`page:${slug}`, localeTag(`page:${slug}`, locale)], revalidate: 1 }
   );
   return cached();
 }
 
-export const getNav = unstable_cache(
-  async (): Promise<NavItem[]> => {
-    const supabase = createServerSupabaseClient();
-    const { data } = await supabase
-      .from('nav_items')
-      .select('*')
-      .eq('is_active', true)
-      .order('sort_order', { ascending: true });
+export function getNav(locale: Locale = defaultLocale) {
+  const fetcher = unstable_cache(
+    async (): Promise<NavItem[]> => {
+      const supabase = createServerSupabaseClient();
+      const { data } = await supabase
+        .from('nav_items')
+        .select('*')
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true });
 
-    if (!data || data.length === 0) {
-      return [
-        { id: '1', label: 'Home', href: '/', sort_order: 1, parent_id: null, is_external: false, is_active: true },
-        { id: '2', label: 'Products', href: '/products', sort_order: 2, parent_id: null, is_external: false, is_active: true },
-        { id: '3', label: 'Services', href: '/services', sort_order: 3, parent_id: null, is_external: false, is_active: true },
-        { id: '4', label: 'Applications', href: '/applications', sort_order: 4, parent_id: null, is_external: false, is_active: true },
-        { id: '5', label: 'Gallery', href: '/gallery', sort_order: 5, parent_id: null, is_external: false, is_active: true },
-        { id: '6', label: 'Contact', href: '/contact', sort_order: 6, parent_id: null, is_external: false, is_active: true },
-        { id: '7', label: 'About', href: '/about', sort_order: 7, parent_id: null, is_external: false, is_active: true },
-      ];
-    }
+      if (!data || data.length === 0) {
+        return [
+          { id: '1', label: 'Home', href: '/', sort_order: 1, parent_id: null, is_external: false, is_active: true },
+          { id: '2', label: 'Products', href: '/products', sort_order: 2, parent_id: null, is_external: false, is_active: true },
+          { id: '3', label: 'Services', href: '/services', sort_order: 3, parent_id: null, is_external: false, is_active: true },
+          { id: '4', label: 'Applications', href: '/applications', sort_order: 4, parent_id: null, is_external: false, is_active: true },
+          { id: '5', label: 'Gallery', href: '/gallery', sort_order: 5, parent_id: null, is_external: false, is_active: true },
+          { id: '6', label: 'Contact', href: '/contact', sort_order: 6, parent_id: null, is_external: false, is_active: true },
+          { id: '7', label: 'About', href: '/about', sort_order: 7, parent_id: null, is_external: false, is_active: true },
+        ];
+      }
 
-    return data as NavItem[];
-  },
-  ['content-nav'],
-  { tags: ['nav'], revalidate: 1 }
-);
+      return data.map((item: { label: unknown } & Record<string, unknown>) => ({
+        ...item,
+        label: resolveI18n(item.label as any, locale),
+      })) as NavItem[];
+    },
+    [`content-nav-${locale}`],
+    { tags: ['nav', localeTag('nav', locale)], revalidate: 1 }
+  );
+  return fetcher();
+}
 
-export const getFooter = unstable_cache(
-  async (): Promise<FooterContent> => {
-    const supabase = createServerSupabaseClient();
-    const { data: rows } = await supabase
-      .from('footer_content')
-      .select('*')
-      .order('updated_at', { ascending: false })
-      .limit(1);
-    const data = rows?.[0];
+export function getFooter(locale: Locale = defaultLocale) {
+  const fetcher = unstable_cache(
+    async (): Promise<FooterContent> => {
+      const supabase = createServerSupabaseClient();
+      const { data: rows } = await supabase
+        .from('footer_content')
+        .select('*')
+        .order('updated_at', { ascending: false })
+        .limit(1);
+      const data = rows?.[0];
 
-    return {
-      id: data?.id || 'default',
-      columns:
-        data?.columns ||
-        [
+      const defaults = {
+        columns: [
           {
             title: 'Company',
             links: [
@@ -199,143 +226,223 @@ export const getFooter = unstable_cache(
             ],
           },
         ],
-      powered_by_text: data?.powered_by_text || 'DevsDiamond',
-      copyright_name: data?.copyright_name || 'Divemix',
-    };
-  },
-  ['content-footer'],
-  { tags: ['footer'], revalidate: 1 }
-);
+        powered_by_text: 'DevsDiamond',
+        copyright_name: 'Divemix',
+      };
 
-export const getSettings = unstable_cache(
-  async (): Promise<SiteSettings> => {
-    const supabase = createServerSupabaseClient();
-    const { data } = await supabase.from('settings').select('key, value');
-    const settings: SiteSettings = {};
-    for (const row of data || []) {
-      settings[row.key] = row.value;
-    }
-    return settings;
-  },
-  ['content-settings'],
-  { tags: ['settings'], revalidate: 1 }
-);
+      if (!data) {
+        return { id: 'default', ...defaults };
+      }
 
-export async function getPageSeo(route: string): Promise<PageSeo | null> {
+      const resolved = deepResolveI18n(data, locale) as {
+        id: string;
+        columns?: FooterColumn[] | null;
+        powered_by_text?: string | null;
+        copyright_name?: string | null;
+      };
+
+      return {
+        id: resolved.id || 'default',
+        columns: resolved.columns && resolved.columns.length > 0 ? resolved.columns : defaults.columns,
+        powered_by_text: resolved.powered_by_text || defaults.powered_by_text,
+        copyright_name: resolved.copyright_name || defaults.copyright_name,
+      };
+    },
+    [`content-footer-${locale}`],
+    { tags: ['footer', localeTag('footer', locale)], revalidate: 1 }
+  );
+  return fetcher();
+}
+
+/** Settings values may be plain strings or JSON-encoded i18n objects; we resolve both. */
+export function getSettings(locale: Locale = defaultLocale) {
+  const fetcher = unstable_cache(
+    async (): Promise<SiteSettings> => {
+      const supabase = createServerSupabaseClient();
+      const { data } = await supabase.from('settings').select('key, value');
+      const settings: SiteSettings = {};
+      for (const row of data || []) {
+        const raw = row.value ?? '';
+        // Try to parse JSON; if it's an i18n object, resolve it, else keep as string
+        let resolved = raw;
+        const trimmed = raw.trim?.() ?? '';
+        if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+          try {
+            const parsed = JSON.parse(trimmed);
+            if (parsed && typeof parsed === 'object') {
+              const keys = Object.keys(parsed);
+              const isI18n = keys.length > 0 && keys.every((k) => k === 'en' || k === 'ar' || k === 'de');
+              if (isI18n) {
+                resolved = resolveI18n(parsed, locale);
+              }
+            }
+          } catch {
+            // not JSON, keep raw
+          }
+        }
+        settings[row.key] = resolved;
+      }
+      return settings;
+    },
+    [`content-settings-${locale}`],
+    { tags: ['settings', localeTag('settings', locale)], revalidate: 1 }
+  );
+  return fetcher();
+}
+
+export async function getPageSeo(route: string, locale: Locale = defaultLocale): Promise<PageSeo | null> {
   const normalized = route || '/';
   const cached = unstable_cache(
     async () => {
       const supabase = createServerSupabaseClient();
       const { data } = await supabase.from('page_seo').select('*').eq('route', normalized).single();
-      return (data as PageSeo | null) || null;
+      if (!data) return null;
+      const row = data as Record<string, unknown>;
+      const keywordsRaw = row.keywords;
+      let keywords: string[] = [];
+      if (Array.isArray(keywordsRaw)) {
+        keywords = keywordsRaw.map((k) => resolveI18n(k as any, locale));
+      } else if (keywordsRaw && typeof keywordsRaw === 'object') {
+        const k = (keywordsRaw as Record<string, unknown>)[locale] ?? (keywordsRaw as Record<string, unknown>)[defaultLocale];
+        if (Array.isArray(k)) keywords = k as string[];
+      }
+      return {
+        route: String(row.route),
+        title: resolveI18n(row.title as any, locale),
+        description: resolveI18n(row.description as any, locale),
+        og_image: (row.og_image as string | null) || null,
+        keywords,
+        noindex: Boolean(row.noindex),
+      } as PageSeo;
     },
-    [`content-seo-${normalized}`],
-    { tags: [`seo:${normalized}`], revalidate: 1 }
+    [`content-seo-${normalized}-${locale}`],
+    { tags: [`seo:${normalized}`, localeTag(`seo:${normalized}`, locale)], revalidate: 1 }
   );
   return cached();
 }
 
-export const getActiveCategories = unstable_cache(
-  async () => {
-    const supabase = createServerSupabaseClient();
-    const { data } = await supabase
-      .from('product_categories')
-      .select('*')
-      .is('parent_id', null)
-      .eq('is_active', true)
-      .order('display_order', { ascending: true });
-    return data || [];
-  },
-  ['entity-categories'],
-  { tags: ['categories'], revalidate: 1 }
-);
+export function getActiveCategories(locale: Locale = defaultLocale) {
+  const fetcher = unstable_cache(
+    async () => {
+      const supabase = createServerSupabaseClient();
+      const { data } = await supabase
+        .from('product_categories')
+        .select('*')
+        .is('parent_id', null)
+        .eq('is_active', true)
+        .order('display_order', { ascending: true });
+      return (data || []).map((row) => deepResolveI18n(row, locale));
+    },
+    [`entity-categories-${locale}`],
+    { tags: ['categories', localeTag('categories', locale)], revalidate: 1 }
+  );
+  return fetcher();
+}
 
-export const getFeaturedCategories = unstable_cache(
-  async () => {
-    const supabase = createServerSupabaseClient();
-    const { data } = await supabase
-      .from('product_categories')
-      .select('*')
-      .eq('is_active', true)
-      .order('display_order', { ascending: true })
-      .limit(3);
-    return data || [];
-  },
-  ['entity-categories-featured'],
-  { tags: ['categories'], revalidate: 1 }
-);
+export function getFeaturedCategories(locale: Locale = defaultLocale) {
+  const fetcher = unstable_cache(
+    async () => {
+      const supabase = createServerSupabaseClient();
+      const { data } = await supabase
+        .from('product_categories')
+        .select('*')
+        .eq('is_active', true)
+        .order('display_order', { ascending: true })
+        .limit(3);
+      return (data || []).map((row) => deepResolveI18n(row, locale));
+    },
+    [`entity-categories-featured-${locale}`],
+    { tags: ['categories', localeTag('categories', locale)], revalidate: 1 }
+  );
+  return fetcher();
+}
 
-export const getFeaturedServices = unstable_cache(
-  async () => {
-    const supabase = createServerSupabaseClient();
-    const { data } = await supabase
-      .from('services')
-      .select('*')
-      .eq('is_active', true)
-      .order('display_order', { ascending: true })
-      .limit(4);
-    return data || [];
-  },
-  ['entity-services-featured'],
-  { tags: ['services'], revalidate: 1 }
-);
+export function getFeaturedServices(locale: Locale = defaultLocale) {
+  const fetcher = unstable_cache(
+    async () => {
+      const supabase = createServerSupabaseClient();
+      const { data } = await supabase
+        .from('services')
+        .select('*')
+        .eq('is_active', true)
+        .order('display_order', { ascending: true })
+        .limit(4);
+      return (data || []).map((row) => deepResolveI18n(row, locale));
+    },
+    [`entity-services-featured-${locale}`],
+    { tags: ['services', localeTag('services', locale)], revalidate: 1 }
+  );
+  return fetcher();
+}
 
-export const getServices = unstable_cache(
-  async () => {
-    const supabase = createServerSupabaseClient();
-    const { data } = await supabase
-      .from('services')
-      .select('*')
-      .eq('is_active', true)
-      .order('display_order', { ascending: true });
-    return data || [];
-  },
-  ['entity-services'],
-  { tags: ['services'], revalidate: 1 }
-);
+export function getServices(locale: Locale = defaultLocale) {
+  const fetcher = unstable_cache(
+    async () => {
+      const supabase = createServerSupabaseClient();
+      const { data } = await supabase
+        .from('services')
+        .select('*')
+        .eq('is_active', true)
+        .order('display_order', { ascending: true });
+      return (data || []).map((row) => deepResolveI18n(row, locale));
+    },
+    [`entity-services-${locale}`],
+    { tags: ['services', localeTag('services', locale)], revalidate: 1 }
+  );
+  return fetcher();
+}
 
-export const getFeaturedApplications = unstable_cache(
-  async () => {
-    const supabase = createServerSupabaseClient();
-    const { data } = await supabase
-      .from('applications')
-      .select('*')
-      .eq('is_active', true)
-      .order('display_order', { ascending: true })
-      .limit(3);
-    return data || [];
-  },
-  ['entity-applications-featured'],
-  { tags: ['applications'], revalidate: 1 }
-);
+export function getFeaturedApplications(locale: Locale = defaultLocale) {
+  const fetcher = unstable_cache(
+    async () => {
+      const supabase = createServerSupabaseClient();
+      const { data } = await supabase
+        .from('applications')
+        .select('*')
+        .eq('is_active', true)
+        .order('display_order', { ascending: true })
+        .limit(3);
+      return (data || []).map((row) => deepResolveI18n(row, locale));
+    },
+    [`entity-applications-featured-${locale}`],
+    { tags: ['applications', localeTag('applications', locale)], revalidate: 1 }
+  );
+  return fetcher();
+}
 
-export const getApplications = unstable_cache(
-  async () => {
-    const supabase = createServerSupabaseClient();
-    const { data } = await supabase
-      .from('applications')
-      .select('*')
-      .eq('is_active', true)
-      .order('display_order', { ascending: true });
-    return data || [];
-  },
-  ['entity-applications'],
-  { tags: ['applications'], revalidate: 1 }
-);
+export function getApplications(locale: Locale = defaultLocale) {
+  const fetcher = unstable_cache(
+    async () => {
+      const supabase = createServerSupabaseClient();
+      const { data } = await supabase
+        .from('applications')
+        .select('*')
+        .eq('is_active', true)
+        .order('display_order', { ascending: true });
+      return (data || []).map((row) => deepResolveI18n(row, locale));
+    },
+    [`entity-applications-${locale}`],
+    { tags: ['applications', localeTag('applications', locale)], revalidate: 1 }
+  );
+  return fetcher();
+}
 
-export const getVendors = unstable_cache(
-  async () => {
-    const supabase = createServerSupabaseClient();
-    const { data } = await supabase
-      .from('vendors')
-      .select('*')
-      .eq('is_active', true)
-      .order('display_order', { ascending: true });
-    return data || [];
-  },
-  ['entity-vendors'],
-  { tags: ['vendors'], revalidate: 1 }
-);
+export function getVendors(locale: Locale = defaultLocale) {
+  const fetcher = unstable_cache(
+    async () => {
+      const supabase = createServerSupabaseClient();
+      const { data } = await supabase
+        .from('vendors')
+        .select('*')
+        .eq('is_active', true)
+        .order('display_order', { ascending: true });
+      return (data || []).map((row) => deepResolveI18n(row, locale));
+    },
+    [`entity-vendors-${locale}`],
+    { tags: ['vendors', localeTag('vendors', locale)], revalidate: 1 }
+  );
+  return fetcher();
+}
 
 export const getProductCategorySlugs = unstable_cache(
   async () => {
@@ -350,22 +457,30 @@ export const getProductCategorySlugs = unstable_cache(
   { tags: ['categories'], revalidate: 1 }
 );
 
-export const getAboutPageData = unstable_cache(
-  async () => {
-    const supabase = createServerSupabaseClient();
-    const { data } = await supabase.from('about_page').select('*').single();
-    return data;
-  },
-  ['page-about'],
-  { tags: ['page:about'], revalidate: 1 }
-);
+export function getAboutPageData(locale: Locale = defaultLocale) {
+  const fetcher = unstable_cache(
+    async () => {
+      const supabase = createServerSupabaseClient();
+      const { data } = await supabase.from('about_page').select('*').single();
+      if (!data) return null;
+      return deepResolveI18n(data, locale);
+    },
+    [`page-about-${locale}`],
+    { tags: ['page:about', localeTag('page:about', locale)], revalidate: 1 }
+  );
+  return fetcher();
+}
 
-export const getContactPageData = unstable_cache(
-  async () => {
-    const supabase = createServerSupabaseClient();
-    const { data } = await supabase.from('contact_page').select('*').single();
-    return data;
-  },
-  ['page-contact'],
-  { tags: ['page:contact'], revalidate: 1 }
-);
+export function getContactPageData(locale: Locale = defaultLocale) {
+  const fetcher = unstable_cache(
+    async () => {
+      const supabase = createServerSupabaseClient();
+      const { data } = await supabase.from('contact_page').select('*').single();
+      if (!data) return null;
+      return deepResolveI18n(data, locale);
+    },
+    [`page-contact-${locale}`],
+    { tags: ['page:contact', localeTag('page:contact', locale)], revalidate: 1 }
+  );
+  return fetcher();
+}

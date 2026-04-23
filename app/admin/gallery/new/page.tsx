@@ -14,13 +14,22 @@ import { Label } from '@/app/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
 import { Badge } from '@/app/components/ui/badge';
 import { Separator } from '@/app/components/ui/separator';
+import I18nTextField, { type I18nValue } from '@/app/components/admin/i18n/I18nTextField';
+import { resolveI18n, seedI18n } from '@/app/lib/i18n/resolve';
+import { defaultLocale } from '@/app/lib/i18n/config';
+import { triggerRevalidate } from '@/app/lib/revalidate-client';
 
 export default function NewGalleryImagePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<any>([]);
-  const [formData, setFormData] = useState({
-    title: '',
+  const [formData, setFormData] = useState<{
+    title: I18nValue;
+    url: string;
+    category: string;
+    category_id: string;
+  }>({
+    title: seedI18n(''),
     url: '',
     category: '',
     category_id: '',
@@ -58,10 +67,11 @@ export default function NewGalleryImagePage() {
     try {
       const { error } = await supabase
         .from('gallery_images')
-        .insert([formData]);
+        .insert([formData as any]);
 
       if (error) throw error;
 
+      await triggerRevalidate(['gallery']);
       router.push('/admin/gallery');
     } catch (error) {
       console.error('Error creating image:', error);
@@ -105,17 +115,13 @@ export default function NewGalleryImagePage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Image Title */}
-            <div className="space-y-2">
-              <Label htmlFor="title">Image Title *</Label>
-              <Input
-                id="title"
-                required
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                placeholder="Enter image title"
-              />
-            </div>
+            <I18nTextField
+              label="Image Title *"
+              value={formData.title}
+              onChange={(v) => setFormData({ ...formData, title: v })}
+              placeholder="Enter image title"
+              required
+            />
 
             <Separator />
 
@@ -151,7 +157,7 @@ export default function NewGalleryImagePage() {
                 <SelectContent>
                   {categories.map((category: any) => (
                     <SelectItem key={category.id} value={category.id}>
-                      {category.name}
+                      {resolveI18n(category.name, defaultLocale)}
                     </SelectItem>
                   ))}
                 </SelectContent>

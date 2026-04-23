@@ -11,16 +11,20 @@ import toast from 'react-hot-toast';
 import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';
-import { Textarea } from '@/app/components/ui/textarea';
 import { Switch } from '@/app/components/ui/switch';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
+import I18nTextField, { type I18nValue } from '@/app/components/admin/i18n/I18nTextField';
+import I18nTextarea from '@/app/components/admin/i18n/I18nTextarea';
+import { normalizeI18n, resolveI18n } from '@/app/lib/i18n/resolve';
+import { defaultLocale } from '@/app/lib/i18n/config';
+import { triggerRevalidate } from '@/app/lib/revalidate-client';
 
 interface Vendor {
   id: string;
-  name: string;
+  name: any;
   logo_url: string;
   website_url?: string;
-  description?: string;
+  description?: any;
   display_order: number;
   is_active: boolean;
 }
@@ -33,11 +37,18 @@ export default function EditVendorPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [vendor, setVendor] = useState<Vendor | null>(null);
-  const [formData, setFormData] = useState({
-    name: '',
+  const [formData, setFormData] = useState<{
+    name: I18nValue;
+    logo_url: string;
+    website_url: string;
+    description: I18nValue;
+    display_order: number;
+    is_active: boolean;
+  }>({
+    name: normalizeI18n(null),
     logo_url: '',
     website_url: '',
-    description: '',
+    description: normalizeI18n(null),
     display_order: 1,
     is_active: true
   });
@@ -59,10 +70,10 @@ export default function EditVendorPage() {
 
       setVendor(data);
       setFormData({
-        name: data.name,
+        name: normalizeI18n(data.name),
         logo_url: data.logo_url,
         website_url: data.website_url || '',
-        description: data.description || '',
+        description: normalizeI18n(data.description),
         display_order: data.display_order,
         is_active: data.is_active
       });
@@ -86,8 +97,7 @@ export default function EditVendorPage() {
     setSaving(true);
 
     try {
-      // Validate required fields
-      if (!formData.name.trim()) {
+      if (!(formData.name.en || '').trim()) {
         toast.error('Vendor name is required');
         return;
       }
@@ -100,14 +110,14 @@ export default function EditVendorPage() {
       const { error } = await supabase
         .from('vendors')
         .update({
-          name: formData.name.trim(),
+          name: formData.name,
           logo_url: formData.logo_url,
           website_url: formData.website_url.trim() || null,
-          description: formData.description.trim() || null,
+          description: formData.description,
           display_order: formData.display_order,
           is_active: formData.is_active,
           updated_at: new Date().toISOString()
-        })
+        } as any)
         .eq('id', vendorId);
 
       if (error) {
@@ -116,6 +126,7 @@ export default function EditVendorPage() {
         return;
       }
 
+      await triggerRevalidate(['vendors']);
       toast.success('Vendor updated successfully!');
       router.push('/admin/vendors');
     } catch (error) {
@@ -152,7 +163,7 @@ export default function EditVendorPage() {
     <div>
       <Breadcrumb items={[
         { name: 'Vendors', href: '/admin/vendors' },
-        { name: vendor.name }
+        { name: resolveI18n(vendor.name as any, defaultLocale) }
       ]} />
       
       <div className="flex items-center mb-8">
@@ -180,20 +191,13 @@ export default function EditVendorPage() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Vendor Name */}
-              <div className="space-y-2">
-                <Label htmlFor="vendor-name">
-                  Vendor Name *
-                </Label>
-                <Input
-                  id="vendor-name"
-                  type="text"
-                  required
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Enter vendor name"
-                />
-              </div>
+              <I18nTextField
+                label="Vendor Name *"
+                value={formData.name}
+                onChange={(v) => setFormData({ ...formData, name: v })}
+                placeholder="Enter vendor name"
+                required
+              />
 
               {/* Website URL */}
               <div className="space-y-2">
@@ -242,17 +246,13 @@ export default function EditVendorPage() {
               </div>
             </div>
 
-            {/* Description */}
-            <div className="mt-6 space-y-2">
-              <Label htmlFor="description">
-                Description
-              </Label>
-              <Textarea
-                id="description"
-                rows={3}
+            <div className="mt-6">
+              <I18nTextarea
+                label="Description"
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(v) => setFormData({ ...formData, description: v })}
                 placeholder="Brief description of the vendor or partnership"
+                rows={3}
               />
             </div>
           </CardContent>

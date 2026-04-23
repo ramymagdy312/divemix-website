@@ -11,19 +11,28 @@ import toast from 'react-hot-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
-import { Textarea } from '@/app/components/ui/textarea';
 import { Label } from '@/app/components/ui/label';
 import { Badge } from '@/app/components/ui/badge';
-import { Separator } from '@/app/components/ui/separator';
+import I18nTextField, { type I18nValue } from '@/app/components/admin/i18n/I18nTextField';
+import I18nTextarea from '@/app/components/admin/i18n/I18nTextarea';
+import { seedI18n } from '@/app/lib/i18n/resolve';
+import { triggerRevalidate } from '@/app/lib/revalidate-client';
 
 export default function NewVendorPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
+  const [formData, setFormData] = useState<{
+    name: I18nValue;
+    logo_url: string;
+    website_url: string;
+    description: I18nValue;
+    display_order: number;
+    is_active: boolean;
+  }>({
+    name: seedI18n(''),
     logo_url: '',
     website_url: '',
-    description: '',
+    description: seedI18n(''),
     display_order: 1,
     is_active: true
   });
@@ -33,8 +42,7 @@ export default function NewVendorPage() {
     setLoading(true);
 
     try {
-      // Validate required fields
-      if (!formData.name.trim()) {
+      if (!(formData.name.en || '').trim()) {
         toast.error('Vendor name is required');
         return;
       }
@@ -47,13 +55,13 @@ export default function NewVendorPage() {
       const { error } = await supabase
         .from('vendors')
         .insert([{
-          name: formData.name.trim(),
+          name: formData.name,
           logo_url: formData.logo_url,
           website_url: formData.website_url.trim() || null,
-          description: formData.description.trim() || null,
+          description: formData.description,
           display_order: formData.display_order,
           is_active: formData.is_active
-        }]);
+        } as any]);
 
       if (error) {
         console.error('Error creating vendor:', error);
@@ -61,6 +69,7 @@ export default function NewVendorPage() {
         return;
       }
 
+      await triggerRevalidate(['vendors']);
       toast.success('Vendor created successfully!');
       router.push('/admin/vendors');
     } catch (error) {
@@ -111,19 +120,14 @@ export default function NewVendorPage() {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid gap-6 md:grid-cols-2">
-              {/* Vendor Name */}
-              <div className="space-y-2">
-                <Label htmlFor="name">Vendor Name *</Label>
-                <Input
-                  id="name"
-                  required
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Enter vendor name"
-                />
-              </div>
+              <I18nTextField
+                label="Vendor Name *"
+                value={formData.name}
+                onChange={(v) => setFormData({ ...formData, name: v })}
+                placeholder="Enter vendor name"
+                required
+              />
 
-              {/* Website URL */}
               <div className="space-y-2">
                 <Label htmlFor="website_url">Website URL</Label>
                 <Input
@@ -163,17 +167,13 @@ export default function NewVendorPage() {
               </div>
             </div>
 
-            {/* Description */}
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                rows={3}
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Brief description of the vendor or partnership"
-              />
-            </div>
+            <I18nTextarea
+              label="Description"
+              value={formData.description}
+              onChange={(v) => setFormData({ ...formData, description: v })}
+              placeholder="Brief description of the vendor or partnership"
+              rows={3}
+            />
           </CardContent>
         </Card>
 

@@ -21,10 +21,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/app/components/ui/alert-dialog';
+import { resolveI18n } from '@/app/lib/i18n/resolve';
+import { defaultLocale } from '@/app/lib/i18n/config';
 
 interface GalleryImage {
   id: string;
-  title: string;
+  title: any;
   url: string;
   category: string;
   created_at: string;
@@ -71,10 +73,13 @@ export default function GalleryPage() {
     }
   };
 
-  const filteredImages = images.filter(image =>
-    image.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    image.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredImages = images.filter(image => {
+    const title = resolveI18n(image.title, defaultLocale).toLowerCase();
+    const q = searchTerm.toLowerCase();
+    return (
+      title.includes(q) || image.category.toLowerCase().includes(q)
+    );
+  });
 
   if (loading) {
     return (
@@ -129,13 +134,13 @@ export default function GalleryPage() {
             <div className="aspect-square relative">
               <Image
                 src={image.url}
-                alt={image.title}
+                alt={resolveI18n(image.title, defaultLocale)}
                 fill
                 className="object-cover"
               />
             </div>
             <CardContent className="p-4">
-              <h3 className="font-medium truncate">{image.title}</h3>
+              <h3 className="font-medium truncate">{resolveI18n(image.title, defaultLocale)}</h3>
               <Badge variant="secondary" className="mt-1">
                 {image.category}
               </Badge>

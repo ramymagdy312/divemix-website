@@ -1,9 +1,12 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useLocale } from "next-intl";
 import { supabase } from "../../lib/supabase";
+import { deepResolveI18n } from "../../lib/i18n/resolve";
+import type { Locale } from "../../lib/i18n/config";
 import CategoryCard from "../products/CategoryCard";
 
 interface Category {
@@ -27,6 +30,7 @@ const FeaturedCategories = ({
   heading = "Featured Categories",
   description = "Explore our premium selection of gas mixing and compression solutions",
 }: FeaturedCategoriesProps) => {
+  const locale = useLocale() as Locale;
   const [categories, setCategories] = useState<Category[]>(initialCategories || []);
   const [loading, setLoading] = useState(!initialCategories);
 
@@ -42,7 +46,7 @@ const FeaturedCategories = ({
           .limit(3);
 
         if (error) throw error;
-        setCategories(data || []);
+        setCategories(deepResolveI18n(data || [], locale));
       } catch (error) {
         console.error("Error fetching categories:", error);
         setCategories([]);
@@ -52,7 +56,7 @@ const FeaturedCategories = ({
     };
 
     fetchCategories();
-  }, [initialCategories]);
+  }, [initialCategories, locale]);
 
   if (loading) {
     return (

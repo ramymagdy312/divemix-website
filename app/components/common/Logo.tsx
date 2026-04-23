@@ -1,14 +1,20 @@
-import Link from 'next/link';
 import Image from 'next/image';
+import { Link } from '@/i18n/routing';
+import { defaultLocale, type Locale } from '@/app/lib/i18n/config';
 
 interface LogoProps {
   src?: string;
   alt?: string;
+  locale?: Locale;
 }
 
-const Logo: React.FC<LogoProps> = ({ src = '/img/logoWhite.png', alt = 'DiveMix Logo' }) => {
+const Logo: React.FC<LogoProps> = ({
+  src = '/img/logoWhite.png',
+  alt = 'DiveMix Logo',
+  locale = defaultLocale,
+}) => {
   return (
-    <Link href="/" className="flex items-center space-x-2">
+    <Link href="/" locale={locale} className="flex items-center space-x-2">
       <Image
         src={src}
         alt={alt}

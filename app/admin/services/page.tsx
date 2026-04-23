@@ -29,13 +29,15 @@ import {
   AlertDialogTrigger,
 } from '@/app/components/ui/alert-dialog';
 import { IconRenderer } from '@/app/components/admin/iconPicker';
+import { resolveI18n } from '@/app/lib/i18n/resolve';
+import { defaultLocale } from '@/app/lib/i18n/config';
 
 interface Service {
   id: string;
-  name: string;
-  description: string;
+  name: any;
+  description: any;
   icon: string;
-  features: string[];
+  features: any[];
   is_active: boolean;
   display_order: number;
   created_at: string;
@@ -83,10 +85,12 @@ export default function ServicesPage() {
     }
   };
 
-  const filteredServices = services.filter(service =>
-    service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    service.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredServices = services.filter(service => {
+    const name = resolveI18n(service.name, defaultLocale).toLowerCase();
+    const desc = resolveI18n(service.description, defaultLocale).toLowerCase();
+    const q = searchTerm.toLowerCase();
+    return name.includes(q) || desc.includes(q);
+  });
 
   if (loading) {
     return (
@@ -155,10 +159,10 @@ export default function ServicesPage() {
                         />
                       </div>
                       <div className="min-w-0">
-                        <div className="font-medium leading-tight">{service.name}</div>
+                        <div className="font-medium leading-tight">{resolveI18n(service.name, defaultLocale)}</div>
                         <div className="text-xs text-muted-foreground mt-1">{service.icon}</div>
                         <div className="text-sm text-muted-foreground max-w-md truncate mt-1">
-                          {service.description}
+                          {resolveI18n(service.description, defaultLocale)}
                         </div>
                       </div>
                     </div>
@@ -190,7 +194,7 @@ export default function ServicesPage() {
                           <AlertDialogHeader>
                             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                             <AlertDialogDescription>
-                              This action cannot be undone. This will permanently delete the service "{service.name}".
+                              This action cannot be undone. This will permanently delete the service &quot;{resolveI18n(service.name, defaultLocale)}&quot;.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>

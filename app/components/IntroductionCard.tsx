@@ -6,15 +6,18 @@ import {
   CardDescription,
   CardContent,
 } from "@/app/components/ui/card";
-import { Label } from "@/app/components/ui/label";
-import { Input } from "@/app/components/ui/input";
-import { Textarea } from "@/app/components/ui/textarea";
+import I18nTextField, {
+  type I18nValue,
+} from "./admin/i18n/I18nTextField";
+import I18nTextarea from "./admin/i18n/I18nTextarea";
+import { resolveI18n } from "@/app/lib/i18n/resolve";
+import { defaultLocale } from "@/app/lib/i18n/config";
 
 interface IntroductionCardProps {
   editing: boolean;
   data: {
-    intro_title: string;
-    intro_description: string;
+    intro_title: unknown;
+    intro_description: unknown;
   };
   setData: (data: any) => void;
 }
@@ -24,6 +27,9 @@ export default function IntroductionCard({
   data,
   setData,
 }: IntroductionCardProps) {
+  const titlePreview = resolveI18n(data.intro_title as any, defaultLocale);
+  const descPreview = resolveI18n(data.intro_description as any, defaultLocale);
+
   return (
     <Card>
       <CardHeader>
@@ -33,36 +39,35 @@ export default function IntroductionCard({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="space-y-2">
-          <Label htmlFor="intro-title">Intro Title</Label>
-          {editing ? (
-            <Input
-              id="intro-title"
-              type="text"
-              value={data.intro_title}
-              onChange={(e) =>
-                setData({ ...data, intro_title: e.target.value })
-              }
-            />
-          ) : (
-            <p className="text-sm font-medium">{data.intro_title}</p>
-          )}
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="intro-description">Intro Description</Label>
-          {editing ? (
-            <Textarea
-              id="intro-description"
-              value={data.intro_description}
-              onChange={(e) =>
-                setData({ ...data, intro_description: e.target.value })
-              }
-              rows={4}
-            />
-          ) : (
-            <p className="text-sm">{data.intro_description}</p>
-          )}
-        </div>
+        {editing ? (
+          <I18nTextField
+            label="Intro Title"
+            value={data.intro_title}
+            onChange={(v: I18nValue) =>
+              setData({ ...data, intro_title: v })
+            }
+          />
+        ) : (
+          <div className="space-y-2">
+            <div className="text-sm font-medium text-gray-700">Intro Title</div>
+            <p className="text-sm font-medium">{titlePreview}</p>
+          </div>
+        )}
+        {editing ? (
+          <I18nTextarea
+            label="Intro Description"
+            value={data.intro_description}
+            onChange={(v: I18nValue) =>
+              setData({ ...data, intro_description: v })
+            }
+            rows={4}
+          />
+        ) : (
+          <div className="space-y-2">
+            <div className="text-sm font-medium text-gray-700">Intro Description</div>
+            <p className="text-sm">{descPreview}</p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

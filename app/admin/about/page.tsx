@@ -10,35 +10,63 @@ import {
   CardHeader,
   CardTitle,
 } from "@/app/components/ui/card";
-import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
-import { Textarea } from "@/app/components/ui/textarea";
 import { Plus, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 import Breadcrumb from "../../components/admin/Breadcrumb";
 import { IconPicker, IconRenderer } from "../../components/admin/iconPicker";
+import I18nTextField, { type I18nValue } from "../../components/admin/i18n/I18nTextField";
+import I18nTextarea from "../../components/admin/i18n/I18nTextarea";
+import { normalizeI18n, seedI18n } from "../../lib/i18n/resolve";
+import { triggerRevalidate } from "../../lib/revalidate-client";
 
 import BasicInfoCard from "../../components/admin/BasicInfoCard";
 import PageEditorHeader from "../../components/admin/PageEditorHeader";
 
 interface AboutPageData {
   id: string;
-  title: string;
-  description: string;
+  title: I18nValue;
+  description: I18nValue;
   hero_image: string;
-  vision: string;
-  mission: string;
-  company_overview: string;
+  vision: I18nValue;
+  mission: I18nValue;
+  company_overview: I18nValue;
   values: {
-    title: string;
-    description: string;
+    title: I18nValue;
+    description: I18nValue;
     icon: string;
   }[];
   timeline: {
     year: string;
-    title: string;
-    description: string;
+    title: I18nValue;
+    description: I18nValue;
   }[];
+}
+
+function normalizeAboutRow(row: any): AboutPageData {
+  return {
+    id: row.id,
+    title: normalizeI18n(row.title),
+    description: normalizeI18n(row.description),
+    hero_image: row.hero_image || "",
+    vision: normalizeI18n(row.vision),
+    mission: normalizeI18n(row.mission),
+    company_overview: normalizeI18n(row.company_overview),
+    values: Array.isArray(row.values)
+      ? row.values.map((v: any) => ({
+          title: normalizeI18n(v.title),
+          description: normalizeI18n(v.description),
+          icon: v.icon || "Star",
+        }))
+      : [],
+    timeline: Array.isArray(row.timeline)
+      ? row.timeline.map((t: any) => ({
+          year: t.year || "",
+          title: normalizeI18n(t.title),
+          description: normalizeI18n(t.description),
+        }))
+      : [],
+  };
 }
 
 export default function AboutAdmin() {
@@ -63,8 +91,8 @@ export default function AboutAdmin() {
       if (error) {
         console.error("Error fetching about data:", error);
         setData(null);
-      } else {
-        setData(aboutPageData);
+      } else if (aboutPageData) {
+        setData(normalizeAboutRow(aboutPageData));
       }
     } catch (error) {
       console.error("Error:", error);
@@ -86,6 +114,7 @@ export default function AboutAdmin() {
         console.error("Error saving about data:", error);
         toast.error("Error saving data");
       } else {
+        await triggerRevalidate(["page:about", "seo:/about"]);
         setEditing(false);
         toast.success("About page updated successfully!");
       }
@@ -103,7 +132,7 @@ export default function AboutAdmin() {
       ...data!,
       values: [
         ...(data?.values || []),
-        { title: "", description: "", icon: "Star" },
+        { title: seedI18n(""), description: seedI18n(""), icon: "Star" },
       ],
     });
   };
@@ -116,10 +145,10 @@ export default function AboutAdmin() {
     });
   };
 
-  const updateValue = (index: number, field: string, value: string) => {
+  const updateValue = (index: number, field: string, value: string | I18nValue) => {
     if (!data) return;
     const newValues = [...(data?.values || [])];
-    newValues[index] = { ...newValues[index], [field]: value };
+    newValues[index] = { ...newValues[index], [field]: value } as any;
     setData({ ...data!, values: newValues });
   };
 
@@ -129,7 +158,7 @@ export default function AboutAdmin() {
       ...data!,
       timeline: [
         ...(data?.timeline || []),
-        { year: "", title: "", description: "" },
+        { year: "", title: seedI18n(""), description: seedI18n("") },
       ],
     });
   };
@@ -142,10 +171,10 @@ export default function AboutAdmin() {
     });
   };
 
-  const updateTimelineItem = (index: number, field: string, value: string) => {
+  const updateTimelineItem = (index: number, field: string, value: string | I18nValue) => {
     if (!data) return;
     const newTimeline = [...(data?.timeline || [])];
-    newTimeline[index] = { ...newTimeline[index], [field]: value };
+    newTimeline[index] = { ...newTimeline[index], [field]: value } as any;
     setData({ ...data!, timeline: newTimeline });
   };
 
@@ -207,37 +236,37 @@ export default function AboutAdmin() {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <Label htmlFor="vision">Vision</Label>
                 {editing ? (
-                  <Textarea
-                    id="vision"
+                  <I18nTextarea
+                    label="Vision"
                     value={data?.vision}
-                    onChange={(e) =>
-                      setData({ ...data!, vision: e.target.value })
-                    }
+                    onChange={(v) => setData({ ...data!, vision: v })}
                     rows={4}
                   />
                 ) : (
-                  <p className="text-sm text-muted-foreground leading-6">
-                    {data?.vision || "No vision text added yet."}
-                  </p>
+                  <>
+                    <Label>Vision</Label>
+                    <p className="text-sm text-muted-foreground leading-6">
+                      {(data?.vision as any)?.en || "No vision text added yet."}
+                    </p>
+                  </>
                 )}
               </div>
               <div>
-                <Label htmlFor="mission">Mission</Label>
                 {editing ? (
-                  <Textarea
-                    id="mission"
+                  <I18nTextarea
+                    label="Mission"
                     value={data?.mission}
-                    onChange={(e) =>
-                      setData({ ...data!, mission: e.target.value })
-                    }
+                    onChange={(v) => setData({ ...data!, mission: v })}
                     rows={4}
                   />
                 ) : (
-                  <p className="text-sm text-muted-foreground leading-6">
-                    {data?.mission || "No mission text added yet."}
-                  </p>
+                  <>
+                    <Label>Mission</Label>
+                    <p className="text-sm text-muted-foreground leading-6">
+                      {(data?.mission as any)?.en || "No mission text added yet."}
+                    </p>
+                  </>
                 )}
               </div>
             </div>
@@ -254,16 +283,15 @@ export default function AboutAdmin() {
           </CardHeader>
           <CardContent>
             {editing ? (
-              <Textarea
+              <I18nTextarea
+                label="Overview"
                 value={data?.company_overview}
-                onChange={(e) =>
-                  setData({ ...data!, company_overview: e.target.value })
-                }
+                onChange={(v) => setData({ ...data!, company_overview: v })}
                 rows={6}
               />
             ) : (
               <p className="text-sm text-muted-foreground leading-6 whitespace-pre-line">
-                {data?.company_overview || "No company overview added yet."}
+                {(data?.company_overview as any)?.en || "No company overview added yet."}
               </p>
             )}
           </CardContent>
@@ -314,22 +342,24 @@ export default function AboutAdmin() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor={`title-${index}`}>Title</Label>
                     {editing ? (
-                      <Input
-                        id={`title-${index}`}
+                      <I18nTextField
+                        label="Title"
                         value={value.title}
-                        onChange={(e) => updateValue(index, "title", e.target.value)}
+                        onChange={(v) => updateValue(index, "title", v)}
                       />
                     ) : (
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {value.title || "No title"}
-                      </p>
+                      <>
+                        <Label>Title</Label>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {(value.title as any)?.en || "No title"}
+                        </p>
+                      </>
                     )}
                   </div>
 
                   <div>
-                    <Label htmlFor={`icon-${index}`}>Icon</Label>
+                    <Label>Icon</Label>
                     {editing ? (
                       <IconPicker
                         value={value.icon}
@@ -345,18 +375,20 @@ export default function AboutAdmin() {
                 </div>
 
                 <div className="mt-4">
-                  <Label htmlFor={`desc-${index}`}>Description</Label>
                   {editing ? (
-                    <Textarea
-                      id={`desc-${index}`}
+                    <I18nTextarea
+                      label="Description"
                       value={value.description}
-                      onChange={(e) => updateValue(index, "description", e.target.value)}
+                      onChange={(v) => updateValue(index, "description", v)}
                       rows={2}
                     />
                   ) : (
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {value.description || "No description"}
-                    </p>
+                    <>
+                      <Label>Description</Label>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {(value.description as any)?.en || "No description"}
+                      </p>
+                    </>
                   )}
                 </div>
               </div>
@@ -409,8 +441,9 @@ export default function AboutAdmin() {
                   <div>
                     <Label htmlFor={`year-${index}`}>Year</Label>
                     {editing ? (
-                      <Input
+                      <input
                         id={`year-${index}`}
+                        className="border rounded px-2 py-1.5 w-full"
                         value={item.year}
                         onChange={(e) => updateTimelineItem(index, "year", e.target.value)}
                       />
@@ -422,35 +455,37 @@ export default function AboutAdmin() {
                   </div>
 
                   <div>
-                    <Label htmlFor={`timeline-title-${index}`}>Title</Label>
                     {editing ? (
-                      <Input
-                        id={`timeline-title-${index}`}
+                      <I18nTextField
+                        label="Title"
                         value={item.title}
-                        onChange={(e) => updateTimelineItem(index, "title", e.target.value)}
+                        onChange={(v) => updateTimelineItem(index, "title", v)}
                       />
                     ) : (
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {item.title || "No title"}
-                      </p>
+                      <>
+                        <Label>Title</Label>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {(item.title as any)?.en || "No title"}
+                        </p>
+                      </>
                     )}
                   </div>
 
                   <div>
-                    <Label htmlFor={`timeline-desc-${index}`}>Description</Label>
                     {editing ? (
-                      <Textarea
-                        id={`timeline-desc-${index}`}
+                      <I18nTextarea
+                        label="Description"
                         value={item.description}
-                        onChange={(e) =>
-                          updateTimelineItem(index, "description", e.target.value)
-                        }
+                        onChange={(v) => updateTimelineItem(index, "description", v)}
                         rows={2}
                       />
                     ) : (
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {item.description || "No description"}
-                      </p>
+                      <>
+                        <Label>Description</Label>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {(item.description as any)?.en || "No description"}
+                        </p>
+                      </>
                     )}
                   </div>
                 </div>

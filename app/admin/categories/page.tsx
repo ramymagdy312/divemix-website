@@ -45,6 +45,8 @@ import {
   AlertDialogTrigger,
 } from "@/app/components/ui/alert-dialog";
 import { ProductCategory } from "../../types/database";
+import { resolveI18n } from "@/app/lib/i18n/resolve";
+import { defaultLocale } from "@/app/lib/i18n/config";
 
 interface CategoryWithSubcategories extends ProductCategory {
   subcategories?: ProductCategory[];
@@ -194,16 +196,17 @@ export default function CategoriesPage() {
     }
   };
 
-  const filteredCategories = categories.filter(
-    (category) =>
-      category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      category.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      category.subcategories?.some(
-        (sub) =>
-          sub.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          sub.description.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-  );
+  const filteredCategories = categories.filter((category) => {
+    const q = searchTerm.toLowerCase();
+    const n = resolveI18n(category.name as any, defaultLocale).toLowerCase();
+    const d = resolveI18n(category.description as any, defaultLocale).toLowerCase();
+    if (n.includes(q) || d.includes(q)) return true;
+    return category.subcategories?.some((sub) => {
+      const sn = resolveI18n(sub.name as any, defaultLocale).toLowerCase();
+      const sd = resolveI18n(sub.description as any, defaultLocale).toLowerCase();
+      return sn.includes(q) || sd.includes(q);
+    });
+  });
 
   if (loading) {
     return (
@@ -309,7 +312,7 @@ export default function CategoriesPage() {
                         {category.image_url && (
                           <Image
                             src={category.image_url}
-                            alt={category.name}
+                            alt={resolveI18n(category.name as any, defaultLocale)}
                             width={48}
                             height={48}
                             className="h-12 w-12 object-cover rounded-md"
@@ -318,10 +321,10 @@ export default function CategoriesPage() {
                         <div>
                           <div className="font-medium flex items-center">
                             <ChevronRight className="h-4 w-4 mr-1 text-gray-400" />
-                            {category.name}
+                            {resolveI18n(category.name as any, defaultLocale)}
                           </div>
                           <div className="text-sm text-muted-foreground max-w-md truncate">
-                            {category.description}
+                            {resolveI18n(category.description as any, defaultLocale)}
                           </div>
                           {usingFallback && (
                             <Badge variant="outline" className="mt-1">
@@ -342,7 +345,7 @@ export default function CategoriesPage() {
                             variant="outline"
                             className="text-xs"
                           >
-                            {feature}
+                            {resolveI18n(feature as any, defaultLocale)}
                           </Badge>
                         ))}
                         {category.features && category.features.length > 2 && (
@@ -387,8 +390,8 @@ export default function CategoriesPage() {
                               <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                               <AlertDialogDescription>
                                 This action cannot be undone. This will
-                                permanently delete the category "{category.name}
-                                " and all its subcategories.
+                                permanently delete the category &quot;{resolveI18n(category.name as any, defaultLocale)}
+                                &quot; and all its subcategories.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
@@ -414,7 +417,7 @@ export default function CategoriesPage() {
                             {subcategory.image_url && (
                               <Image
                                 src={subcategory.image_url}
-                                alt={subcategory.name}
+                                alt={resolveI18n(subcategory.name as any, defaultLocale)}
                                 width={32}
                                 height={32}
                                 className="h-8 w-8 object-cover rounded-md"
@@ -422,10 +425,10 @@ export default function CategoriesPage() {
                             )}
                             <div>
                               <div className="font-medium">
-                                {subcategory.name}
+                                {resolveI18n(subcategory.name as any, defaultLocale)}
                               </div>
                               <div className="text-sm text-muted-foreground max-w-md truncate">
-                                {subcategory.description}
+                                {resolveI18n(subcategory.description as any, defaultLocale)}
                               </div>
                             </div>
                           </div>
@@ -443,7 +446,7 @@ export default function CategoriesPage() {
                                   variant="outline"
                                   className="text-xs"
                                 >
-                                  {feature}
+                                  {resolveI18n(feature as any, defaultLocale)}
                                 </Badge>
                               ))}
                             {subcategory.features &&
@@ -495,8 +498,8 @@ export default function CategoriesPage() {
                                   </AlertDialogTitle>
                                   <AlertDialogDescription>
                                     This action cannot be undone. This will
-                                    permanently delete the subcategory "
-                                    {subcategory.name}".
+                                    permanently delete the subcategory &quot;
+                                    {resolveI18n(subcategory.name as any, defaultLocale)}&quot;.
                                   </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>

@@ -1,8 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { useLocale } from 'next-intl';
 import { MessageCircle, X } from 'lucide-react';
 import { createClient } from '@/app/lib/supabase';
+import { resolveI18n } from '@/app/lib/i18n/resolve';
+import type { Locale } from '@/app/lib/i18n/config';
 
 interface WhatsAppSettings {
   whatsapp_number: string;
@@ -11,44 +14,63 @@ interface WhatsAppSettings {
 }
 
 const FloatingWhatsApp = () => {
+  const locale = useLocale() as Locale;
   const [settings, setSettings] = useState<WhatsAppSettings | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
+    const resolveSettingValue = (raw: unknown): string => {
+      if (raw == null) return '';
+      if (typeof raw !== 'string') return String(raw);
+      const trimmed = raw.trim();
+      if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+        try {
+          const parsed = JSON.parse(trimmed);
+          if (parsed && typeof parsed === 'object') {
+            const keys = Object.keys(parsed);
+            const isI18n = keys.length > 0 && keys.every((k) => k === 'en' || k === 'ar' || k === 'de');
+            if (isI18n) return resolveI18n(parsed, locale);
+          }
+        } catch {
+          // not JSON, fall through
+        }
+      }
+      return raw;
+    };
+
+    const fetchSettings = async () => {
+      try {
+        const supabase = createClient();
+        const { data, error } = await supabase
+          .from('settings')
+          .select('key, value')
+          .in('key', ['whatsapp_number', 'whatsapp_message', 'show_whatsapp_float']);
+
+        if (error) {
+          console.error('Error fetching WhatsApp settings:', error);
+          return;
+        }
+
+        const settingsObj = data.reduce((acc: WhatsAppSettings, item: any) => {
+          acc[item.key as keyof WhatsAppSettings] = resolveSettingValue(item.value);
+          return acc;
+        }, {} as WhatsAppSettings);
+
+        setSettings(settingsObj);
+      } catch (error) {
+        console.error('Error fetching WhatsApp settings:', error);
+      }
+    };
+
     fetchSettings();
-    
-    // Show button after a delay
+
     const timer = setTimeout(() => {
       setIsVisible(true);
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, []);
-
-  const fetchSettings = async () => {
-    try {
-      const supabase = createClient();
-      const { data, error } = await supabase
-        .from('settings')
-        .select('key, value')
-        .in('key', ['whatsapp_number', 'whatsapp_message', 'show_whatsapp_float']);
-
-      if (error) {
-        console.error('Error fetching WhatsApp settings:', error);
-        return;
-      }
-
-      const settingsObj = data.reduce((acc: WhatsAppSettings, item: any) => {
-        acc[item.key as keyof WhatsAppSettings] = item.value;
-        return acc;
-      }, {} as WhatsAppSettings);
-
-      setSettings(settingsObj);
-    } catch (error) {
-      console.error('Error fetching WhatsApp settings:', error);
-    }
-  };
+  }, [locale]);
 
   const handleWhatsAppClick = () => {
     if (!settings?.whatsapp_number) return;

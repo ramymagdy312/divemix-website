@@ -12,14 +12,16 @@ import { Skeleton } from '@/app/components/ui/skeleton';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import ApplicationForm from '../../components/ApplicationForm';
 import { triggerRevalidate } from '@/app/lib/revalidate-client';
+import { resolveI18n } from '@/app/lib/i18n/resolve';
+import { defaultLocale } from '@/app/lib/i18n/config';
 
 interface Application {
   id: string;
-  name: string;
-  description: string;
+  name: any;
+  description: any;
   image_url: string;
-  use_cases: string[];
-  benefits: string[];
+  use_cases: any[];
+  benefits: any[];
   is_active: boolean;
   display_order: number;
 }
@@ -150,7 +152,7 @@ export default function EditApplicationPage({ params }: { params: { id: string }
           <p className="text-muted-foreground">Edit application data</p>
           {initialData && (
             <div className="text-sm text-muted-foreground">
-              Application ID: {initialData.id} • {initialData.name}
+              Application ID: {initialData.id} • {resolveI18n(initialData.name, defaultLocale)}
             </div>
           )}
         </div>

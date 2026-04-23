@@ -1,7 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useLocale } from "next-intl";
 import { MessageCircle, Phone, Clock, CheckCircle } from "lucide-react";
+import { resolveI18n } from "../../lib/i18n/resolve";
+import type { Locale } from "../../lib/i18n/config";
 import {
   Card,
   CardContent,
@@ -18,49 +21,68 @@ interface WhatsAppCardProps {
 }
 
 const WhatsAppCard: React.FC<WhatsAppCardProps> = ({ className = "" }) => {
+  const locale = useLocale() as Locale;
   const [whatsappNumber, setWhatsappNumber] = useState<string>("");
   const [whatsappMessage, setWhatsappMessage] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchWhatsAppSettings();
-  }, []);
+    const resolveSettingValue = (raw: unknown): string => {
+      if (raw == null) return "";
+      if (typeof raw !== "string") return String(raw);
+      const trimmed = raw.trim();
+      if (trimmed.startsWith("{") && trimmed.endsWith("}")) {
+        try {
+          const parsed = JSON.parse(trimmed);
+          if (parsed && typeof parsed === "object") {
+            const keys = Object.keys(parsed);
+            const isI18n = keys.length > 0 && keys.every((k) => k === "en" || k === "ar" || k === "de");
+            if (isI18n) return resolveI18n(parsed, locale);
+          }
+        } catch {
+          // not JSON, fall through
+        }
+      }
+      return raw;
+    };
 
-  const fetchWhatsAppSettings = async () => {
-    try {
-      const { data: settingsData } = await supabase
-        .from("settings")
-        .select("key, value")
-        .in("key", ["whatsapp_number", "whatsapp_message"]);
+    const fetchWhatsAppSettings = async () => {
+      try {
+        const { data: settingsData } = await supabase
+          .from("settings")
+          .select("key, value")
+          .in("key", ["whatsapp_number", "whatsapp_message"]);
 
-      const settings =
-        settingsData?.reduce((acc: any, setting: any) => {
-          acc[setting.key] = setting.value;
-          return acc;
-        }, {}) || {};
+        const settings =
+          settingsData?.reduce((acc: any, setting: any) => {
+            acc[setting.key] = resolveSettingValue(setting.value);
+            return acc;
+          }, {}) || {};
 
-      setWhatsappNumber(
-        settings.whatsapp_number ||
-          process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ||
-          ""
-      );
-      setWhatsappMessage(
-        settings.whatsapp_message ||
+        setWhatsappNumber(
+          settings.whatsapp_number ||
+            process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ||
+            ""
+        );
+        setWhatsappMessage(
+          settings.whatsapp_message ||
+            "Hello! I would like to get more information about your services."
+        );
+      } catch (error) {
+        console.error("Error fetching WhatsApp settings:", error);
+        setWhatsappNumber(
+          process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || ""
+        );
+        setWhatsappMessage(
           "Hello! I would like to get more information about your services."
-      );
-    } catch (error) {
-      console.error("Error fetching WhatsApp settings:", error);
-      // Use default values
-      setWhatsappNumber(
-        process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || ""
-      );
-      setWhatsappMessage(
-        "Hello! I would like to get more information about your services."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWhatsAppSettings();
+  }, [locale]);
 
   const openWhatsAppChat = () => {
     const cleanNumber = whatsappNumber.replace(/[^\d]/g, "");

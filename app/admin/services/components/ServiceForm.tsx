@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from 'react';
-import { Plus, X } from 'lucide-react';
 import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';
-import { Textarea } from '@/app/components/ui/textarea';
 import { Switch } from '@/app/components/ui/switch';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { IconPicker, IconRenderer } from '@/app/components/admin/iconPicker';
+import I18nTextField, { type I18nValue } from '@/app/components/admin/i18n/I18nTextField';
+import I18nTextarea from '@/app/components/admin/i18n/I18nTextarea';
+import I18nListField from '@/app/components/admin/i18n/I18nListField';
+import { normalizeI18n, seedI18n } from '@/app/lib/i18n/resolve';
 
 interface ServiceFormProps {
   initialData?: any;
@@ -17,48 +19,33 @@ interface ServiceFormProps {
 }
 
 export default function ServiceForm({ initialData, onSubmit, loading }: ServiceFormProps) {
-  const [formData, setFormData] = useState({
-    name: initialData?.name || '',
-    description: initialData?.description || '',
+  const [formData, setFormData] = useState<{
+    name: I18nValue;
+    description: I18nValue;
+    icon: string;
+    features: I18nValue[];
+    is_active: boolean;
+    display_order: number;
+  }>({
+    name: normalizeI18n(initialData?.name ?? initialData?.title),
+    description: normalizeI18n(initialData?.description),
     icon: initialData?.icon || 'Settings',
-    features: initialData?.features || [''],
+    features: Array.isArray(initialData?.features) && initialData.features.length > 0
+      ? initialData.features.map((f: any) => normalizeI18n(f))
+      : [seedI18n('')],
     is_active: initialData?.is_active !== undefined ? initialData.is_active : true,
     display_order: initialData?.display_order || 1,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const cleanedData = {
       ...formData,
-      features: formData.features.filter((feature: string) => feature.trim() !== ''),
+      features: formData.features.filter((f) => (f.en || '').trim() !== ''),
     };
-    
+
     onSubmit(cleanedData);
-  };
-
-  const addFeature = () => {
-    setFormData({
-      ...formData,
-      features: [...formData.features, ''],
-    });
-  };
-
-  const removeFeature = (index: number) => {
-    const newFeatures = formData.features.filter((_: string, i: number) => i !== index);
-    setFormData({
-      ...formData,
-      features: newFeatures.length > 0 ? newFeatures : [''],
-    });
-  };
-
-  const updateFeature = (index: number, value: string) => {
-    const newFeatures = [...formData.features];
-    newFeatures[index] = value;
-    setFormData({
-      ...formData,
-      features: newFeatures,
-    });
   };
 
   return (
@@ -69,20 +56,14 @@ export default function ServiceForm({ initialData, onSubmit, loading }: ServiceF
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Service Name */}
-          <div className="space-y-2">
-            <Label htmlFor="service-name">Service Name *</Label>
-            <Input
-              id="service-name"
-              type="text"
-              required
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Enter service name"
-            />
-          </div>
+          <I18nTextField
+            label="Service Name *"
+            value={formData.name}
+            onChange={(v) => setFormData({ ...formData, name: v })}
+            placeholder="Enter service name"
+            required
+          />
 
-          {/* Icon */}
           <div className="space-y-2">
             <Label htmlFor="icon">Icon</Label>
             <div className="flex items-center gap-2">
@@ -94,53 +75,22 @@ export default function ServiceForm({ initialData, onSubmit, loading }: ServiceF
             </div>
           </div>
 
-          {/* Description */}
-          <div className="space-y-2">
-            <Label htmlFor="description">Description *</Label>
-            <Textarea
-              id="description"
-              required
-              rows={4}
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Enter service description"
-            />
-          </div>
+          <I18nTextarea
+            label="Description *"
+            value={formData.description}
+            onChange={(v) => setFormData({ ...formData, description: v })}
+            placeholder="Enter service description"
+            rows={4}
+            required
+          />
 
-          {/* Features Section */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <Label>Service Features</Label>
-              <Button type="button" variant="outline" size="sm" onClick={addFeature}>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Feature
-              </Button>
-            </div>
-            
-            <div className="space-y-2">
-              {formData.features.map((feature: string, index: number) => (
-                <div key={index} className="flex gap-2">
-                  <Input
-                    value={feature}
-                    onChange={(e) => updateFeature(index, e.target.value)}
-                    placeholder={`Feature ${index + 1}`}
-                  />
-                  {formData.features.length > 1 && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => removeFeature(index)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
+          <I18nListField
+            label="Service Features"
+            values={formData.features}
+            onChange={(features) => setFormData({ ...formData, features })}
+            placeholder="Feature"
+          />
 
-          {/* Settings */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="display-order">Display Order</Label>
@@ -152,7 +102,7 @@ export default function ServiceForm({ initialData, onSubmit, loading }: ServiceF
                 onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 1 })}
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label>Status</Label>
               <div className="flex items-center space-x-2">
@@ -166,7 +116,6 @@ export default function ServiceForm({ initialData, onSubmit, loading }: ServiceF
             </div>
           </div>
 
-          {/* Submit Button */}
           <div className="flex justify-end space-x-4">
             <Button type="submit" disabled={loading}>
               {loading ? 'Saving...' : initialData ? 'Update Service' : 'Create Service'}
